@@ -5,8 +5,11 @@ using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 
 
+
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
+
 public class UsersController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -16,6 +19,7 @@ public class UsersController : ControllerBase
         _context = context;
     }
 
+    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {

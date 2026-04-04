@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class EnrollmentsController : ControllerBase
 {
     private readonly AppDbContext _context;
