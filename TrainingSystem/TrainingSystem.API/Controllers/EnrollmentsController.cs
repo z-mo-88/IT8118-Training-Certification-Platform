@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 using TrainingSystem.API.Hubs;
 
 namespace TrainingSystem.API.Controllers
 {
-    [Route("api/[controller]")]
+
     [ApiController]
+    [Route("api/[controller]")]
     [Authorize]
     public class EnrollmentsController : ControllerBase
     {
@@ -22,24 +23,36 @@ namespace TrainingSystem.API.Controllers
             _hubContext = hubContext;
         }
 
-        // GET: api/enrollments
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments()
         {
             return await _context.Enrollments.ToListAsync();
         }
 
-        // POST: api/enrollments
+
         [HttpPost]
-        public async Task<ActionResult> Enroll(Enrollment enrollment)
+        public async Task<ActionResult> CreateEnrollment(Enrollment enrollment)
         {
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
 
-            // SIGNALR TRIGGER
+
             await _hubContext.Clients.All.SendAsync("EnrollmentUpdated", enrollment.SessionId);
 
             return Ok(enrollment);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEnrollment(int id)
+        {
+            var enrollment = await _context.Enrollments.FindAsync(id);
+            if (enrollment == null) return NotFound();
+
+            _context.Enrollments.Remove(enrollment);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
