@@ -1,32 +1,45 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.API.Hubs;
 
-[Route("api/[controller]")]
-[ApiController]
-[Authorize]
-public class EnrollmentsController : ControllerBase
+namespace TrainingSystem.API.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public EnrollmentsController(AppDbContext context)
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class EnrollmentsController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
+        private readonly IHubContext<EnrollmentHub> _hubContext;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments()
-    {
-        return await _context.Enrollments.ToListAsync();
-    }
+        public EnrollmentsController(AppDbContext context, IHubContext<EnrollmentHub> hubContext)
+        {
+            _context = context;
+            _hubContext = hubContext;
+        }
 
-    [HttpPost]
-    public async Task<ActionResult> Enroll(Enrollment enrollment)
-    {
-        _context.Enrollments.Add(enrollment);
-        await _context.SaveChangesAsync();
-        return Ok(enrollment);
+        // GET: api/enrollments
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments()
+        {
+            return await _context.Enrollments.ToListAsync();
+        }
+
+        // POST: api/enrollments
+        [HttpPost]
+        public async Task<ActionResult> Enroll(Enrollment enrollment)
+        {
+            _context.Enrollments.Add(enrollment);
+            await _context.SaveChangesAsync();
+
+            // SIGNALR TRIGGER
+            await _hubContext.Clients.All.SendAsync("EnrollmentUpdated", enrollment.SessionId);
+
+            return Ok(enrollment);
+        }
     }
 }
