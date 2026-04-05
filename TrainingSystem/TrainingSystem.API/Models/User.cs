@@ -1,20 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TrainingSystem.API.Models;
 
 public partial class User
 {
+    [Key]
     public int UserId { get; set; }
 
+    [Required]
+    [StringLength(50)]
     public string Name { get; set; } = null!;
 
+    [Required]
+    [EmailAddress]
+    [StringLength(255)]
     public string Email { get; set; } = null!;
 
+    [Required]
+    [StringLength(255)]
     public string PasswordHash { get; set; } = null!;
 
+    [Phone]
+    [StringLength(20)]
     public string? PhoneNumber { get; set; }
 
+    [Required]
     public int RoleId { get; set; }
 
     public bool IsActive { get; set; }
