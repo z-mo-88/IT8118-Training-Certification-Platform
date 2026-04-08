@@ -2,24 +2,23 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
+<div class="container mt-5" style="max-width:400px;">
+    <h2 class="text-center mb-4">Login</h2>
 
-<form asp-action="Login" method="post">
-    <div class="mb-3">
-        <label class="form-label">User ID</label>
-        <input type="number" name="userId" class="form-control" required />
-    </div>
+    <form asp-action="Login" method="post">
 
-    <div class="mb-3">
-        <label class="form-label">Role</label>
-        <select name="role" class="form-control" required>
-            <option value="">-- Select Role --</option>
-            <option value="Trainee">Trainee</option>
-            <option value="Instructor">Instructor</option>
-            <option value="Coordinator">Coordinator</option>
-        </select>
-    </div>
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="text" name="email" class="form-control" required />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
 
+        <button class="btn btn-dark w-100">Login</button>
+
+        <p class="text-danger text-center mt-2">@ViewBag.Error</p>
+    </form>
+</div>

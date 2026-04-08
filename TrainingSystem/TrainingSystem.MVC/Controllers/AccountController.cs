@@ -1,10 +1,18 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TrainingSystem.API.Data;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly AppDbContext _context;
+
+        public AccountController(AppDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -12,18 +20,30 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(int userId, string role)
+        public async Task<IActionResult> Login(string email, string password)
         {
-            HttpContext.Session.SetInt32("UserId", userId);
-            HttpContext.Session.SetString("Role", role);
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
 
-            if (role == "Trainee")
+            if (user == null)
+            {
+                ViewBag.Error = "Invalid email or password";
+                return View();
+            }
+
+            // Store session
+            HttpContext.Session.SetInt32("UserId", user.UserId);
+            HttpContext.Session.SetString("UserName", user.Name);
+            HttpContext.Session.SetInt32("RoleId", user.RoleId);
+
+            // Redirect based on role
+            if (user.RoleId == 1) // Trainee
                 return RedirectToAction("Index", "Enrollments");
 
-            if (role == "Instructor")
+            if (user.RoleId == 2) // Instructor
                 return RedirectToAction("Index", "Sessions");
 
-            if (role == "Coordinator")
+            if (user.RoleId == 3) // Coordinator
                 return RedirectToAction("Index", "Users");
 
             return RedirectToAction("Index", "Home");
@@ -36,4 +56,3 @@ namespace TrainingSystem.MVC.Controllers
         }
     }
 }
-

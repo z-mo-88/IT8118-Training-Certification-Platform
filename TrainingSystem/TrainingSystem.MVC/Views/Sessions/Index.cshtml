@@ -1,40 +1,30 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.CourseSession>
-@{
-    ViewData["Title"] = "My Sessions";
-}
-<h1>My Sessions</h1>
-<table class="table table-bordered">
+
+<h1 class="mb-4">My Sessions</h1>
+
+<table class="table table-striped table-hover table-bordered">
     <thead>
         <tr>
-            <th>Session ID</th>
-            <th>Course Title</th>
-            <th>Session Date</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
+            <th>Course</th>
+            <th>Date</th>
             <th>Room</th>
-            <th>Available Seats</th>
             <th>Enrollments</th>
         </tr>
     </thead>
+
     <tbody>
-        @foreach (var session in Model)
+        @foreach (var s in Model)
         {
             <tr>
-                <td>@session.SessionId</td>
-                <td>@session.Course?.Title</td>
-                <td>@session.SessionDate</td>
-                <td>@session.StartTime</td>
-                <td>@session.EndTime</td>
-                <td>@session.Status</td>
-                <td>@session.Room?.RoomName</td>
-                <td>@session.AvailableSeats</td>
+                <td>@s.Course?.Title</td>
+                <td>@s.SessionDate</td>
+                <td>@s.Room?.RoomName</td>
                 <td>
                     <a asp-controller="SessionEnrollments"
                        asp-action="Index"
-                       asp-route-id="@session.SessionId"
+                       asp-route-id="@s.SessionId"
                        class="btn btn-info btn-sm">
-                        View Enrollments
+                        View
                     </a>
                 </td>
             </tr>

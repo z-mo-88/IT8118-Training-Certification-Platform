@@ -5,7 +5,7 @@ using TrainingSystem.API.Models;
 
 namespace TrainingSystem.MVC.Controllers
 {
-    public class CoursesController : Controller
+    public class CoursesController : BaseController
     {
         private readonly AppDbContext _context;
 
@@ -16,19 +16,43 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var courses = await _context.Courses.ToListAsync();
+
+            var enrollmentCounts = await _context.CourseSessions
+                .Select(cs => new
+                {
+                    cs.CourseId,
+                    Count = cs.Enrollments.Count()
+                })
+                .GroupBy(x => x.CourseId)
+                .ToDictionaryAsync(
+                    g => g.Key,
+                    g => g.Sum(x => x.Count)
+                );
+
+            ViewBag.EnrollmentCounts = enrollmentCounts;
+
             return View(courses);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Course course)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             ModelState.Remove("Category");
             ModelState.Remove("CourseSessions");
             ModelState.Remove("Enrollments");
@@ -50,6 +74,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var course = await _context.Courses.FindAsync(id);
             if (course == null)
                 return NotFound();
@@ -60,6 +87,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Course course)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             ModelState.Remove("Category");
             ModelState.Remove("CourseSessions");
             ModelState.Remove("Enrollments");
@@ -81,6 +111,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var course = await _context.Courses.FindAsync(id);
             if (course == null)
                 return NotFound();
@@ -91,6 +124,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var course = await _context.Courses.FindAsync(id);
             if (course != null)
             {

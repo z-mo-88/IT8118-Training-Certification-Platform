@@ -5,7 +5,7 @@ using TrainingSystem.API.Models;
 
 namespace TrainingSystem.MVC.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         private readonly AppDbContext _context;
 
@@ -16,6 +16,9 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var users = await _context.Users.ToListAsync();
             return View(users);
         }
@@ -23,12 +26,18 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             ModelState.Remove("Role");
             ModelState.Remove("Certificates");
             ModelState.Remove("CourseSessions");
@@ -52,6 +61,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var user = await _context.Users.FindAsync(id);
             if (user == null)
                 return NotFound();
@@ -62,6 +74,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(User user)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             ModelState.Remove("Role");
             ModelState.Remove("Certificates");
             ModelState.Remove("CourseSessions");
@@ -85,6 +100,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var user = await _context.Users.FindAsync(id);
             if (user == null)
                 return NotFound();
@@ -95,6 +113,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (RoleId != 3)
+                return RedirectToAction("Login", "Account");
+
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {

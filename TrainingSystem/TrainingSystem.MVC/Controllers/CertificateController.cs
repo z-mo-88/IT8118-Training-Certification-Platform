@@ -7,9 +7,9 @@ namespace TrainingSystem.MVC.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        public CertificateController()
+        public CertificateController(IHttpClientFactory factory)
         {
-            _httpClient = new HttpClient();
+            _httpClient = factory.CreateClient();
             _httpClient.BaseAddress = new Uri("https://localhost:7258/");
         }
 
@@ -41,11 +41,6 @@ namespace TrainingSystem.MVC.Controllers
             }
             else
             {
-                ViewBag.CertificateId = null;
-                ViewBag.CertificateReferenceNumber = null;
-                ViewBag.CertificateStatus = null;
-                ViewBag.IssuedDate = null;
-                ViewBag.TrackName = null;
                 ViewBag.ResultMessage = "Certificate not found";
             }
 

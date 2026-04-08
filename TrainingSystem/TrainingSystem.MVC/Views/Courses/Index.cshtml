@@ -2,43 +2,59 @@
 
 @{
     ViewData["Title"] = "Courses";
+    var enrollmentCounts = ViewBag.EnrollmentCounts as Dictionary<int, int>;
 }
 
-<h1>Courses List</h1>
+<h1 class="mb-4">Courses</h1>
 
-<a asp-action="Create" class="btn btn-primary mb-3">Add New Course</a>
+<a asp-action="Create" class="btn btn-success mb-3">Add Course</a>
 
-<table class="table table-bordered">
+<table class="table table-striped table-hover table-bordered">
     <thead>
         <tr>
-            <th>Course ID</th>
             <th>Title</th>
-            <th>Description</th>
-            <th>Duration Hours</th>
-            <th>Default Capacity</th>
-            <th>Enrollment Fee</th>
-            <th>Category ID</th>
-            <th>Prerequisite Course ID</th>
+            <th>Duration</th>
+            <th>Fee</th>
+            <th>Enrollments</th>
             <th>Actions</th>
         </tr>
     </thead>
+
     <tbody>
-        @foreach (var course in Model)
+        @foreach (var c in Model)
         {
             <tr>
-                <td>@course.CourseId</td>
-                <td>@course.Title</td>
-                <td>@course.Description</td>
-                <td>@course.DurationHours</td>
-                <td>@course.DefaultCapacity</td>
-                <td>@course.EnrollmentFee</td>
-                <td>@course.CategoryId</td>
-                <td>@course.PrerequisiteCourseId</td>
+                <td>@c.Title</td>
+                <td>@c.DurationHours</td>
+                <td>@c.EnrollmentFee</td>
+
+                <td id="count-@c.CourseId">
+                    @(enrollmentCounts != null && enrollmentCounts.ContainsKey(c.CourseId)
+                                    ? enrollmentCounts[c.CourseId]
+                                    : 0)
+            </td>
+
                 <td>
-                    <a asp-action="Edit" asp-route-id="@course.CourseId" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@course.CourseId" class="btn btn-danger btn-sm">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@c.CourseId" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@c.CourseId" class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
-        }
+                }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7258/enrollmentHub")
+            .build();
+
+        connection.on("EnrollmentUpdated", function (courseId, count) {
+            const el = document.getElementById("count-" + courseId);
+            if (el) el.textContent = count;
+        });
+
+        connection.start();
+    </script>
+}

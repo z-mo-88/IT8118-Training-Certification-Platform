@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 
@@ -6,10 +5,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpClient();
 // DbContext 
 builder.Services.AddDbContext<AppDbContext>(options =>
- options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// REQUIRED for session
+builder.Services.AddDistributedMemoryCache();
 
 // Add Session
 builder.Services.AddSession();
@@ -28,15 +30,15 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Use Session
+// Use Session 
 app.UseSession();
 
 app.UseAuthorization();
 
-// Default route
+
+// Default route 
 app.MapControllerRoute(
- name: "default",
- pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
