@@ -15,11 +15,13 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            int traineeId = 1; // temporary (later we use login)
+            int traineeId = 1;
 
             var enrollments = await _context.Enrollments
-                .Where(e => e.UserId == traineeId)
-                .ToListAsync();
+              .Include(e => e.Session)
+              .ThenInclude(cs => cs.Course)
+              .Where(e => e.UserId == traineeId)
+              .ToListAsync();
 
             return View(enrollments);
         }
