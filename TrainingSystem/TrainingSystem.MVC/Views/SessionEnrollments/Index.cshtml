@@ -1,36 +1,38 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Enrollment>
 
 @{
-
-    ViewData["Title"] = "My Enrollments";
-
+    ViewData["Title"] = "Session Enrollments";
 }
-<h1>My Enrollments</h1>
+
+<h1>Session Enrollments</h1>
+
+<h4>Session ID: @ViewBag.SessionId</h4>
+
 <table class="table table-bordered">
     <thead>
         <tr>
             <th>Enrollment ID</th>
+            <th>Trainee Name</th>
+            <th>Email</th>
             <th>Status</th>
             <th>Enrollment Date</th>
             <th>Outstanding Balance</th>
             <th>Is Overdue</th>
-            <th>Course Title</th>
         </tr>
     </thead>
     <tbody>
-
         @foreach (var enrollment in Model)
-
         {
             <tr>
                 <td>@enrollment.EnrollmentId</td>
+                <td>@enrollment.User?.Name</td>
+                <td>@enrollment.User?.Email</td>
                 <td>@enrollment.Status</td>
                 <td>@enrollment.EnrollmentDate</td>
                 <td>@enrollment.OutstandingBalance</td>
                 <td>@enrollment.IsOverdue</td>
-                <td>@enrollment.Session?.Course?.Title</td>
             </tr>
-
         }
     </tbody>
 </table>
+

@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 
@@ -6,9 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Add DbContext (connect to database)
+// DbContext 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Session
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -24,11 +28,15 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Use Session
+app.UseSession();
+
 app.UseAuthorization();
 
 // Default route
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+ name: "default",
+ pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+

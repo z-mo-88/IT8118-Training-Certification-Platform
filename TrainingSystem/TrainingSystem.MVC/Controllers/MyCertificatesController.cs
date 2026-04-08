@@ -8,13 +8,13 @@ namespace TrainingSystem.MVC.Controllers
 
 {
 
-    public class EnrollmentsController : Controller
+    public class MyCertificatesController : Controller
 
     {
 
         private readonly AppDbContext _context;
 
-        public EnrollmentsController(AppDbContext context)
+        public MyCertificatesController(AppDbContext context)
 
         {
 
@@ -32,17 +32,15 @@ namespace TrainingSystem.MVC.Controllers
 
                 return RedirectToAction("Login", "Account");
 
-            var enrollments = await _context.Enrollments
+            var certificates = await _context.Certificates
 
-                .Include(e => e.Session)
+                .Include(c => c.CertificationTrack)
 
-                .ThenInclude(s => s.Course)
-
-                .Where(e => e.UserId == traineeId.Value)
+                .Where(c => c.UserId == traineeId.Value)
 
                 .ToListAsync();
 
-            return View(enrollments);
+            return View(certificates);
 
         }
 

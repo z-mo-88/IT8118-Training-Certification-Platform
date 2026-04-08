@@ -1,0 +1,43 @@
+﻿@model IEnumerable<TrainingSystem.API.Models.CourseSession>
+@{
+    ViewData["Title"] = "My Sessions";
+}
+<h1>My Sessions</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Session ID</th>
+            <th>Course Title</th>
+            <th>Session Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+            <th>Room</th>
+            <th>Available Seats</th>
+            <th>Enrollments</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var session in Model)
+        {
+            <tr>
+                <td>@session.SessionId</td>
+                <td>@session.Course?.Title</td>
+                <td>@session.SessionDate</td>
+                <td>@session.StartTime</td>
+                <td>@session.EndTime</td>
+                <td>@session.Status</td>
+                <td>@session.Room?.RoomName</td>
+                <td>@session.AvailableSeats</td>
+                <td>
+                    <a asp-controller="SessionEnrollments"
+                       asp-action="Index"
+                       asp-route-id="@session.SessionId"
+                       class="btn btn-info btn-sm">
+                        View Enrollments
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
