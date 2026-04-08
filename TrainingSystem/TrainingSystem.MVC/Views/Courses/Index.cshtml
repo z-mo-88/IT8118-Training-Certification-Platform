@@ -1,0 +1,44 @@
+﻿@model IEnumerable<TrainingSystem.API.Models.Course>
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<h1>Courses List</h1>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Add New Course</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Course ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Duration Hours</th>
+            <th>Default Capacity</th>
+            <th>Enrollment Fee</th>
+            <th>Category ID</th>
+            <th>Prerequisite Course ID</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.CourseId</td>
+                <td>@course.Title</td>
+                <td>@course.Description</td>
+                <td>@course.DurationHours</td>
+                <td>@course.DefaultCapacity</td>
+                <td>@course.EnrollmentFee</td>
+                <td>@course.CategoryId</td>
+                <td>@course.PrerequisiteCourseId</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@course.CourseId" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@course.CourseId" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

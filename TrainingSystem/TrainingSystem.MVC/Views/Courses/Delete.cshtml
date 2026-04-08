@@ -1,0 +1,44 @@
+﻿@model TrainingSystem.API.Models.Course
+
+@{
+    ViewData["Title"] = "Delete Course";
+}
+
+<h1>Delete Course</h1>
+
+<h3>Are you sure you want to delete this course?</h3>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Course ID</dt>
+        <dd class="col-sm-9">@Model.CourseId</dd>
+
+        <dt class="col-sm-3">Title</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+
+        <dt class="col-sm-3">Duration Hours</dt>
+        <dd class="col-sm-9">@Model.DurationHours</dd>
+
+        <dt class="col-sm-3">Default Capacity</dt>
+        <dd class="col-sm-9">@Model.DefaultCapacity</dd>
+
+        <dt class="col-sm-3">Enrollment Fee</dt>
+        <dd class="col-sm-9">@Model.EnrollmentFee</dd>
+
+        <dt class="col-sm-3">Category ID</dt>
+        <dd class="col-sm-9">@Model.CategoryId</dd>
+
+        <dt class="col-sm-3">Prerequisite Course ID</dt>
+        <dd class="col-sm-9">@Model.PrerequisiteCourseId</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="CourseId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
