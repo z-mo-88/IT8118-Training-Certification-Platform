@@ -15,15 +15,21 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if (RoleId != 1)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(1); 
+            if (auth != null) return auth;
 
-            int? traineeId = UserId;
+            int userId = UserId.Value;
 
             var certificates = await _context.Certificates
                 .Include(c => c.CertificationTrack)
-                .Where(c => c.UserId == traineeId.Value)
+                .Where(c => c.UserId == userId)
                 .ToListAsync();
+
+            var progress = await _context.TraineeCertificationProgresses
+                .Where(p => p.UserId == userId)
+                .ToListAsync();
+
+            ViewBag.Progress = progress;
 
             return View(certificates);
         }

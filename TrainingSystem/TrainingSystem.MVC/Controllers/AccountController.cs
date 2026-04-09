@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using TrainingSystem.API.Data;
+using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Helpers;
 
 namespace TrainingSystem.MVC.Controllers
 {
@@ -13,6 +17,7 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
+        //  LOGIN 
         [HttpGet]
         public IActionResult Login()
         {
@@ -22,8 +27,18 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
+            // Validation
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                ViewBag.Error = "Email and Password are required";
+                return View();
+            }
+
+            // Hash password before comparing
+            string hashedPassword = HashPassword(password);
+
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
+                .FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == hashedPassword);
 
             if (user == null)
             {
@@ -37,22 +52,77 @@ namespace TrainingSystem.MVC.Controllers
             HttpContext.Session.SetInt32("RoleId", user.RoleId);
 
             // Redirect based on role
-            if (user.RoleId == 1) // Trainee
-                return RedirectToAction("Index", "Enrollments");
+            switch (user.RoleId)
+            {
+                case 1: // Trainee
+                    return RedirectToAction("Index", "Enrollments");
 
-            if (user.RoleId == 2) // Instructor
-                return RedirectToAction("Index", "Sessions");
+                case 2: // Instructor
+                    return RedirectToAction("Index", "CourseSession");
 
-            if (user.RoleId == 3) // Coordinator
-                return RedirectToAction("Index", "Users");
+                case 3: // Coordinator
+                    return RedirectToAction("Index", "Users");
 
-            return RedirectToAction("Index", "Home");
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
         }
 
+        //  REGISTER 
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(string name, string email, string password, int roleId)
+        {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                ViewBag.Error = "All fields are required";
+                return View();
+            }
+
+            // Check if email exists
+            var exists = await _context.Users.AnyAsync(u => u.Email == email);
+            if (exists)
+            {
+                ViewBag.Error = "Email already exists";
+                return View();
+            }
+
+            var user = new User
+            {
+                Name = name,
+                Email = email,
+                PasswordHash = HashPassword(password),
+                RoleId = roleId,
+                IsActive = true
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Login");
+        }
+
+        //  LOGOUT 
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
+        }
+
+        //  HASH FUNCTION 
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                var bytes = Encoding.UTF8.GetBytes(password);
+                var hash = sha.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
         }
     }
 }

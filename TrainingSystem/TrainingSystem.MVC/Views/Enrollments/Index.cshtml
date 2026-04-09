@@ -1,26 +1,38 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Enrollment>
 
-<h1 class="mb-4">My Enrollments</h1>
+<h2>My Enrollments</h2>
 
-<table class="table table-striped table-hover table-bordered">
-    <thead>
+@if (TempData["Error"] != null)
+{
+    <p style="color:red">@TempData["Error"]</p>
+}
+
+<table class="table table-bordered">
+    <tr>
+        <th>Course</th>
+        <th>Status</th>
+        <th>Balance</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var e in Model)
+    {
         <tr>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Balance</th>
-            <th>Course</th>
-        </tr>
-    </thead>
+            <td>@e.Session.Course.Title</td>
+            <td>@e.Status</td>
+            <td>@e.OutstandingBalance</td>
 
-    <tbody>
-        @foreach (var e in Model)
-        {
-            <tr>
-                <td>@e.Status</td>
-                <td>@e.EnrollmentDate</td>
-                <td>@e.OutstandingBalance</td>
-                <td>@e.Session?.Course?.Title</td>
-            </tr>
-        }
-    </tbody>
+            <td>
+                @if (e.Status == "Enrolled")
+                {
+                    <a asp-action="Drop" asp-route-id="@e.EnrollmentId" class="btn btn-danger btn-sm">Drop</a>
+                }
+
+                @if (e.Status == "Enrolled")
+                {
+                    <a asp-action="Confirm" asp-route-id="@e.EnrollmentId" class="btn btn-success btn-sm">Confirm</a>
+                }
+            </td>
+        </tr>
+    }
 </table>

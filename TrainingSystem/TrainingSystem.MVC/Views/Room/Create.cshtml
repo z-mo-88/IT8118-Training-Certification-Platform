@@ -1,0 +1,13 @@
+﻿@model TrainingSystem.API.Models.Room
+
+<h2>Create Room</h2>
+
+<form asp-action="Create">
+    <label>Name</label>
+    <input asp-for="RoomName" />
+
+    <label>Capacity</label>
+    <input asp-for="Capacity" />
+
+    <button type="submit">Save</button>
+</form>

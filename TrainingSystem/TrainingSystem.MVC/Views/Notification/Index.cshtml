@@ -1,0 +1,27 @@
+﻿<h2>Notifications</h2>
+
+<table class="table">
+    <tr>
+        <th>Message</th>
+        <th>Date</th>
+        <th>Status</th>
+    </tr>
+
+    @foreach (var n in Model)
+    {
+        <tr>
+            <td>@n.Message</td>
+            <td>@n.CreatedAt</td>
+            <td>
+                @if (!n.IsRead)
+                {
+                    <a asp-action="MarkAsRead" asp-route-id="@n.NotificationId">Mark Read</a>
+                }
+                else
+                {
+                    <span>Read</span>
+                }
+            </td>
+        </tr>
+    }
+</table>

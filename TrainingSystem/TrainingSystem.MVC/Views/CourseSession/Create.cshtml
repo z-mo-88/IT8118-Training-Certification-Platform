@@ -1,0 +1,48 @@
+﻿@model TrainingSystem.API.Models.CourseSession
+
+@{
+    ViewData["Title"] = "Create Session";
+}
+
+<h2>Create Session</h2>
+
+<form asp-action="Create" method="post">
+
+    <div class="mb-3">
+        <label>Course</label>
+        <select asp-for="CourseId" asp-items="ViewBag.Courses" class="form-control"></select>
+    </div>
+
+    <div class="mb-3">
+        <label>Instructor</label>
+        <select asp-for="UserId" asp-items="ViewBag.Instructors" class="form-control"></select>
+    </div>
+
+    <div class="mb-3">
+        <label>Room</label>
+        <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-control"></select>
+    </div>
+
+    <div class="mb-3">
+        <label>Date</label>
+        <input asp-for="SessionDate" type="date" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Start Time</label>
+        <input asp-for="StartTime" type="time" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>End Time</label>
+        <input asp-for="EndTime" type="time" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Capacity</label>
+        <input asp-for="SessionCapacity" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>

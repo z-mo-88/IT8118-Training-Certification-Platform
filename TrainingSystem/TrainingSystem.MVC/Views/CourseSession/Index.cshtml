@@ -1,0 +1,59 @@
+﻿@model IEnumerable<TrainingSystem.API.Models.CourseSession>
+
+@{
+    ViewData["Title"] = "Sessions";
+}
+
+<h2>Course Sessions</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Create Session</a>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Course</th>
+        <th>Instructor</th>
+        <th>Room</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Seats</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Course.Title</td>
+            <td>@item.User.Name</td>
+            <td>@item.Room.RoomName</td>
+            <td>@item.SessionDate</td>
+            <td>@item.StartTime - @item.EndTime</td>
+
+            <td id="count-@item.CourseId">
+                @item.AvailableSeats / @item.SessionCapacity
+            </td>
+
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SessionId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.SessionId">Delete</a> |
+                <a asp-controller="SessionEnrollments" asp-action="Index" asp-route-id="@item.SessionId">
+                    Students
+                </a>
+            </td>
+        </tr>
+    }
+</table>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/enrollmentHub")
+        .build();
+
+    connection.on("EnrollmentUpdated", function (courseId, count) {
+        const el = document.getElementById("count-" + courseId);
+        if (el) el.textContent = count;
+    });
+
+    connection.start();
+</script>

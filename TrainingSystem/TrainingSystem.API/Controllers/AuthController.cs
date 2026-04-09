@@ -2,9 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using TrainingSystem.API.Data;
-using TrainingSystem.API.Models;
 
 namespace TrainingSystem.API.Controllers
 {
@@ -21,38 +21,46 @@ namespace TrainingSystem.API.Controllers
             _context = context;
         }
 
-        // DTO for login request
         public class LoginRequest
         {
             public string Email { get; set; }
             public string Password { get; set; }
         }
 
+        //  LOGIN 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            // Check user in database
+            //  Validation
+            if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                return BadRequest("Email and password are required");
+
+            // Hash password before checking
+            string hashedPassword = HashPassword(request.Password);
+
             var user = _context.Users
-                .FirstOrDefault(u => u.Email == request.Email && u.PasswordHash == request.Password);
+                .FirstOrDefault(u => u.Email == request.Email && u.PasswordHash == hashedPassword);
 
             if (user == null)
                 return Unauthorized("Invalid email or password");
 
-            // Create claims
+           
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Role, user.RoleId.ToString())
             };
 
-            // Generate key
+            //  KEY 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"])
             );
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            // Create token
+            //  TOKEN 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
@@ -61,10 +69,24 @@ namespace TrainingSystem.API.Controllers
                 signingCredentials: creds
             );
 
+            //  RESPONSE 
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                userId = user.UserId,
+                roleId = user.RoleId
             });
+        }
+
+        //  HASH FUNCTION 
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                var bytes = Encoding.UTF8.GetBytes(password);
+                var hash = sha.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
         }
     }
 }

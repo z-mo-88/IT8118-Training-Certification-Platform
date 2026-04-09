@@ -9,24 +9,37 @@ namespace TrainingSystem.MVC.Controllers
 
         public CertificateController(IHttpClientFactory factory)
         {
-            _httpClient = factory.CreateClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7258/");
+            _httpClient = factory.CreateClient("ApiClient"); 
         }
 
+        //  GET 
         [HttpGet]
         public IActionResult Lookup()
         {
             return View();
         }
 
+        //  POST 
         [HttpPost]
         public async Task<IActionResult> Lookup(int userId, string reference)
         {
-            var response = await _httpClient.GetAsync(
-                $"api/Certificate/lookup?userId={userId}&reference={reference}");
-
-            if (response.IsSuccessStatusCode)
+            if (userId <= 0 || string.IsNullOrEmpty(reference))
             {
+                ViewBag.ResultMessage = "Please enter valid data";
+                return View();
+            }
+
+            try
+            {
+                var response = await _httpClient.GetAsync(
+                    $"api/Certificate/lookup?userId={userId}&reference={reference}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ViewBag.ResultMessage = "Certificate not found";
+                    return View();
+                }
+
                 var jsonData = await response.Content.ReadAsStringAsync();
 
                 using JsonDocument doc = JsonDocument.Parse(jsonData);
@@ -37,11 +50,12 @@ namespace TrainingSystem.MVC.Controllers
                 ViewBag.CertificateStatus = root.GetProperty("certificateStatus").GetString();
                 ViewBag.IssuedDate = root.GetProperty("issuedDate").GetString();
                 ViewBag.TrackName = root.GetProperty("trackName").GetString();
+
                 ViewBag.ResultMessage = null;
             }
-            else
+            catch
             {
-                ViewBag.ResultMessage = "Certificate not found";
+                ViewBag.ResultMessage = "Error connecting to server";
             }
 
             return View();

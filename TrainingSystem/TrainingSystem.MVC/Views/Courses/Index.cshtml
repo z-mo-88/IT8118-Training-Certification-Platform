@@ -5,56 +5,51 @@
     var enrollmentCounts = ViewBag.EnrollmentCounts as Dictionary<int, int>;
 }
 
-<h1 class="mb-4">Courses</h1>
+<h1>Courses</h1>
 
 <a asp-action="Create" class="btn btn-success mb-3">Add Course</a>
 
-<table class="table table-striped table-hover table-bordered">
-    <thead>
+<table class="table table-bordered">
+    <tr>
+        <th>Title</th>
+        <th>Duration</th>
+        <th>Fee</th>
+        <th>Enrollments</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var c in Model)
+    {
         <tr>
-            <th>Title</th>
-            <th>Duration</th>
-            <th>Fee</th>
-            <th>Enrollments</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+            <td>@c.Title</td>
+            <td>@c.DurationHours</td>
+            <td>@c.EnrollmentFee</td>
 
-    <tbody>
-        @foreach (var c in Model)
-        {
-            <tr>
-                <td>@c.Title</td>
-                <td>@c.DurationHours</td>
-                <td>@c.EnrollmentFee</td>
+            <td id="count-@c.CourseId">
+                @(enrollmentCounts != null && enrollmentCounts.ContainsKey(c.CourseId)
+                            ? enrollmentCounts[c.CourseId]
+                            : 0)
+        </td>
 
-                <td id="count-@c.CourseId">
-                    @(enrollmentCounts != null && enrollmentCounts.ContainsKey(c.CourseId)
-                                    ? enrollmentCounts[c.CourseId]
-                                    : 0)
+            <td>
+                <a asp-action="Edit" asp-route-id="@c.CourseId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@c.CourseId">Delete</a>
             </td>
-
-                <td>
-                    <a asp-action="Edit" asp-route-id="@c.CourseId" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@c.CourseId" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-                }
-    </tbody>
+        </tr>
+        }
 </table>
 
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-    <script>
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7258/enrollmentHub")
-            .build();
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
-        connection.on("EnrollmentUpdated", function (courseId, count) {
-            const el = document.getElementById("count-" + courseId);
-            if (el) el.textContent = count;
-        });
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/enrollmentHub")
+        .build();
 
-        connection.start();
-    </script>
-}
+    connection.on("EnrollmentUpdated", function (courseId, count) {
+        const el = document.getElementById("count-" + courseId);
+        if (el) el.textContent = count;
+    });
+
+    connection.start();
+</script>

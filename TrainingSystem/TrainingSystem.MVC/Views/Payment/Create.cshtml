@@ -1,0 +1,22 @@
+﻿@model TrainingSystem.API.Models.Payment
+
+<h2>Add Payment</h2>
+
+<form asp-action="Create">
+
+    <label>Enrollment</label>
+    <select asp-for="EnrollmentId">
+        @foreach (var e in ViewBag.Enrollments)
+        {
+            <option value="@e.EnrollmentId">
+                @e.User.Name - @e.Session.Course.Title
+            </option>
+        }
+    </select>
+
+    <label>Amount</label>
+    <input asp-for="AmountPaid" />
+
+    <br />
+    <button type="submit">Save</button>
+</form>

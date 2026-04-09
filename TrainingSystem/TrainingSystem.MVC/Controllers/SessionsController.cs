@@ -13,20 +13,38 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
+        //  MY SESSIONS 
         public async Task<IActionResult> Index()
         {
-            if (RoleId != 2)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(2); 
+            if (auth != null) return auth;
 
-            int? instructorId = HttpContext.Session.GetInt32("UserId");
+            int instructorId = UserId.Value;
 
             var sessions = await _context.CourseSessions
                 .Include(s => s.Course)
                 .Include(s => s.Room)
-                .Where(s => s.UserId == instructorId.Value)
+                .Where(s => s.UserId == instructorId)
                 .ToListAsync();
 
             return View(sessions);
+        }
+
+        //  SESSION DETAILS 
+        public async Task<IActionResult> Details(int id)
+        {
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
+
+            var session = await _context.CourseSessions
+                .Include(s => s.Course)
+                .Include(s => s.Room)
+                .FirstOrDefaultAsync(s => s.SessionId == id);
+
+            if (session == null)
+                return NotFound();
+
+            return View(session);
         }
     }
 }

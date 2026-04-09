@@ -1,0 +1,20 @@
+﻿@model TrainingSystem.API.Models.CourseSession
+
+@{
+    ViewData["Title"] = "Delete Session";
+}
+
+<h2>Delete Session</h2>
+
+<p>Are you sure you want to delete this session?</p>
+
+<ul>
+    <li><b>Course:</b> @Model.Course.Title</li>
+    <li><b>Date:</b> @Model.SessionDate</li>
+</ul>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="SessionId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

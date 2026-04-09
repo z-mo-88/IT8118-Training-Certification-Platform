@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
@@ -16,50 +17,35 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if (RoleId != 3)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
 
-            var courses = await _context.Courses.ToListAsync();
-
-            var enrollmentCounts = await _context.CourseSessions
-                .Select(cs => new
-                {
-                    cs.CourseId,
-                    Count = cs.Enrollments.Count()
-                })
-                .GroupBy(x => x.CourseId)
-                .ToDictionaryAsync(
-                    g => g.Key,
-                    g => g.Sum(x => x.Count)
-                );
-
-            ViewBag.EnrollmentCounts = enrollmentCounts;
+            var courses = await _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.PrerequisiteCourse)
+                .ToListAsync();
 
             return View(courses);
         }
 
+        //  CREATE 
         [HttpGet]
         public IActionResult Create()
         {
-            if (RoleId != 3)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
 
+            LoadDropdowns();
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Course course)
         {
-            if (RoleId != 3)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
 
-            ModelState.Remove("Category");
-            ModelState.Remove("CourseSessions");
-            ModelState.Remove("Enrollments");
-            ModelState.Remove("CertificationTrackCourses");
-            ModelState.Remove("CourseEquipmentRequirements");
-            ModelState.Remove("InversePrerequisiteCourse");
-            ModelState.Remove("PrerequisiteCourse");
+            ValidateCourse(course);
 
             if (ModelState.IsValid)
             {
@@ -68,35 +54,31 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            LoadDropdowns();
             return View(course);
         }
 
+        //  EDIT 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            if (RoleId != 3)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
 
             var course = await _context.Courses.FindAsync(id);
-            if (course == null)
-                return NotFound();
+            if (course == null) return NotFound();
 
+            LoadDropdowns();
             return View(course);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(Course course)
         {
-            if (RoleId != 3)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
 
-            ModelState.Remove("Category");
-            ModelState.Remove("CourseSessions");
-            ModelState.Remove("Enrollments");
-            ModelState.Remove("CertificationTrackCourses");
-            ModelState.Remove("CourseEquipmentRequirements");
-            ModelState.Remove("InversePrerequisiteCourse");
-            ModelState.Remove("PrerequisiteCourse");
+            ValidateCourse(course); 
 
             if (ModelState.IsValid)
             {
@@ -105,18 +87,19 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            LoadDropdowns();
             return View(course);
         }
 
+        // DELETE 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            if (RoleId != 3)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
 
             var course = await _context.Courses.FindAsync(id);
-            if (course == null)
-                return NotFound();
+            if (course == null) return NotFound();
 
             return View(course);
         }
@@ -124,17 +107,38 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (RoleId != 3)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
 
             var course = await _context.Courses.FindAsync(id);
-            if (course != null)
+
+            if (course != null) // ✅ FIX
             {
                 _context.Courses.Remove(course);
                 await _context.SaveChangesAsync();
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // ================= VALIDATION =================
+        private void ValidateCourse(Course course)
+        {
+            if (course.DurationHours <= 0)
+                ModelState.AddModelError("", "Duration must be greater than 0");
+
+            if (course.DefaultCapacity <= 0)
+                ModelState.AddModelError("", "Capacity must be greater than 0");
+
+            if (course.EnrollmentFee < 0)
+                ModelState.AddModelError("", "Fee cannot be negative");
+        }
+
+        private void LoadDropdowns()
+        {
+            ViewBag.Categories = new SelectList(_context.SubjectCategories, "CategoryId", "CategoryName");
+
+            ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "Title");
         }
     }
 }
