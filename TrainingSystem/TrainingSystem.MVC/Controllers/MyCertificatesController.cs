@@ -26,6 +26,7 @@ namespace TrainingSystem.MVC.Controllers
                 .ToListAsync();
 
             var progress = await _context.TraineeCertificationProgresses
+                .Include(p => p.CertificationTrack)
                 .Where(p => p.UserId == userId)
                 .ToListAsync();
 

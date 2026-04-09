@@ -1,38 +1,40 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Enrollment>
 
-<h2>My Enrollments</h2>
-
-@if (TempData["Error"] != null)
-{
-    <p style="color:red">@TempData["Error"]</p>
+@{
+    ViewData["Title"] = "My Enrollments";
 }
 
+<h2>My Enrollments</h2>
+
 <table class="table table-bordered">
-    <tr>
-        <th>Course</th>
-        <th>Status</th>
-        <th>Balance</th>
-        <th>Actions</th>
-    </tr>
-
-    @foreach (var e in Model)
-    {
+    <thead>
         <tr>
-            <td>@e.Session.Course.Title</td>
-            <td>@e.Status</td>
-            <td>@e.OutstandingBalance</td>
-
-            <td>
-                @if (e.Status == "Enrolled")
-                {
-                    <a asp-action="Drop" asp-route-id="@e.EnrollmentId" class="btn btn-danger btn-sm">Drop</a>
-                }
-
-                @if (e.Status == "Enrolled")
-                {
-                    <a asp-action="Confirm" asp-route-id="@e.EnrollmentId" class="btn btn-success btn-sm">Confirm</a>
-                }
-            </td>
+            <th>Course</th>
+            <th>Session Date</th>
+            <th>Status</th>
+            <th>Balance</th>
+            <th>Overdue</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Session?.Course?.Title</td>
+                <td>@item.Session?.SessionDate.ToShortDateString()</td>
+                <td>@item.Status</td>
+                <td>@item.OutstandingBalance</td>
+                <td>
+                    @if (item.IsOverdue)
+                    {
+                        <span class="text-danger">Yes</span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

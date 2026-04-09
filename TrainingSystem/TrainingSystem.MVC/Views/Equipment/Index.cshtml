@@ -2,21 +2,13 @@
 
 <h2>Equipment</h2>
 
-<a asp-action="Create">Add Equipment</a>
+<a asp-action="Create" class="btn btn-primary">Add Equipment</a>
 
 <table class="table">
-    <tr>
-        <th>Name</th>
-        <th>Actions</th>
-    </tr>
-
     @foreach (var e in Model)
     {
         <tr>
             <td>@e.EquipmentName</td>
-            <td>
-                <a asp-action="Delete" asp-route-id="@e.EquipmentId">Delete</a>
-            </td>
         </tr>
     }
 </table>

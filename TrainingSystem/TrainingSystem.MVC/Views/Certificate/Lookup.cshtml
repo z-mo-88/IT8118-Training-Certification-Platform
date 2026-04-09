@@ -2,26 +2,35 @@
     ViewData["Title"] = "Certificate Lookup";
 }
 
-<div class="container" style="max-width:500px;">
-    <h2 class="text-center mb-3">Certificate Lookup</h2>
+<h2>Certificate Lookup</h2>
 
-    <form method="post">
-        <input name="userId" class="form-control mb-2" placeholder="User ID" required />
-        <input name="reference" class="form-control mb-2" placeholder="Reference" required />
-        <button class="btn btn-primary w-100">Search</button>
-    </form>
+<form method="post">
+    <div class="form-group">
+        <label>Trainee ID</label>
+        <input name="userId" class="form-control" />
+    </div>
 
-    @if (ViewBag.CertificateId != null)
-    {
-        <div class="alert alert-success mt-3">
-            Found: @ViewBag.TrackName
-        </div>
-    }
+    <div class="form-group">
+        <label>Certificate Reference</label>
+        <input name="reference" class="form-control" />
+    </div>
 
-    @if (ViewBag.ResultMessage != null)
-    {
-        <div class="alert alert-danger mt-3">
-            @ViewBag.ResultMessage
-        </div>
-    }
-</div>
+    <br />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+@if (ViewBag.ResultMessage != null)
+{
+    <p class="text-danger">@ViewBag.ResultMessage</p>
+}
+
+@if (ViewBag.CertificateId != null)
+{
+    <hr />
+    <h4>Certificate Details</h4>
+
+    <p><strong>Reference:</strong> @ViewBag.CertificateReferenceNumber</p>
+    <p><strong>Status:</strong> @ViewBag.CertificateStatus</p>
+    <p><strong>Issued Date:</strong> @ViewBag.IssuedDate</p>
+    <p><strong>Track:</strong> @ViewBag.TrackName</p>
+}

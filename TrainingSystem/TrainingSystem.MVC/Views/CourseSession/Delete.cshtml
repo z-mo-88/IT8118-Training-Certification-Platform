@@ -6,14 +6,15 @@
 
 <h2>Delete Session</h2>
 
-<p>Are you sure you want to delete this session?</p>
+<h4>Are you sure?</h4>
 
-<ul>
-    <li><b>Course:</b> @Model.Course.Title</li>
-    <li><b>Date:</b> @Model.SessionDate</li>
-</ul>
+<div>
+    <p><strong>Course:</strong> @Model.Course?.Title</p>
+    <p><strong>Date:</strong> @Model.SessionDate</p>
+    <p><strong>Time:</strong> @Model.StartTime - @Model.EndTime</p>
+</div>
 
-<form asp-action="Delete" method="post">
+<form asp-action="Delete">
     <input type="hidden" asp-for="SessionId" />
     <button type="submit" class="btn btn-danger">Delete</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>

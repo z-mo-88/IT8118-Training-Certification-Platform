@@ -1,22 +1,45 @@
 ﻿@model TrainingSystem.API.Models.Payment
 
-<h2>Add Payment</h2>
+@{
+    ViewData["Title"] = "Record Payment";
+}
+
+<h2>Record Payment</h2>
 
 <form asp-action="Create">
 
-    <label>Enrollment</label>
-    <select asp-for="EnrollmentId">
-        @foreach (var e in ViewBag.Enrollments)
-        {
-            <option value="@e.EnrollmentId">
-                @e.User.Name - @e.Session.Course.Title
-            </option>
-        }
-    </select>
+    <div class="form-group">
+        <label>Enrollment</label>
+        <select asp-for="EnrollmentId"
+                asp-items="ViewBag.Enrollments"
+                class="form-control">
+        </select>
+    </div>
 
-    <label>Amount</label>
-    <input asp-for="AmountPaid" />
+    <div class="form-group">
+        <label>Amount Paid</label>
+        <input asp-for="AmountPaid" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Status</label>
+        <select asp-for="PaymentStatus" class="form-control">
+            <option value="Paid">Paid</option>
+            <option value="Partial">Partial</option>
+            <option value="Pending">Pending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Date</label>
+        <input asp-for="PaidDate" type="date" class="form-control" />
+    </div>
 
     <br />
-    <button type="submit">Save</button>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+
 </form>
+
+<div asp-validation-summary="All" class="text-danger"></div>

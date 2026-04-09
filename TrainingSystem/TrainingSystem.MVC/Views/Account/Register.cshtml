@@ -1,5 +1,9 @@
 ﻿@model TrainingSystem.API.Models.User
 
+@{
+    ViewData["Title"] = "Register";
+}
+
 <h2>Create Account</h2>
 
 <form asp-action="Register" method="post">
@@ -26,3 +30,5 @@
 <br />
 
 <a asp-action="Login">Back to Login</a>
+
+<div asp-validation-summary="All" class="text-danger"></div>

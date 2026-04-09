@@ -1,27 +1,57 @@
-﻿<h2>Notifications</h2>
+﻿@model IEnumerable<TrainingSystem.API.Models.Notification>
 
-<table class="table">
-    <tr>
-        <th>Message</th>
-        <th>Date</th>
-        <th>Status</th>
-    </tr>
+@{
+    ViewData["Title"] = "Notifications";
+}
 
-    @foreach (var n in Model)
-    {
+<h2>My Notifications</h2>
+
+<table class="table table-bordered">
+    <thead>
         <tr>
-            <td>@n.Message</td>
-            <td>@n.CreatedAt</td>
-            <td>
-                @if (!n.IsRead)
-                {
-                    <a asp-action="MarkAsRead" asp-route-id="@n.NotificationId">Mark Read</a>
-                }
-                else
-                {
-                    <span>Read</span>
-                }
-            </td>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="@(item.IsRead ? "" : "table-warning")">
+
+                <td>@item.Message</td>
+
+                <td>@item.CreatedAt</td>
+
+                <td>
+                    @if (item.IsRead)
+                    {
+                        <span class="badge bg-success">Read</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Unread</span>
+                    }
+                </td>
+
+                <td>
+                    @if (!item.IsRead)
+                    {
+                        <a asp-action="MarkAsRead"
+                           asp-route-id="@item.NotificationId"
+                           class="btn btn-primary btn-sm">
+                            Mark as Read
+                        </a>
+                    }
+
+                    <a asp-action="Delete"
+                       asp-route-id="@item.NotificationId"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

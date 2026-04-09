@@ -1,0 +1,22 @@
+﻿@model TrainingSystem.API.Models.Certificate
+
+<h2>Issue Certificate</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label>Trainee</label>
+        <select asp-for="UserId" asp-items="ViewBag.Users" class="form-control"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Track</label>
+        <select asp-for="CertificationTrackId" asp-items="ViewBag.Tracks" class="form-control"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Reference Number</label>
+        <input asp-for="CertificateReferenceNumber" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Issue</button>
+</form>

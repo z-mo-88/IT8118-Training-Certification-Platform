@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.MVC.Helpers;
+using TrainingSystem.MVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
-
+builder.Services.AddScoped<NotificationService>();
 
 // DbContext 
 builder.Services.AddDbContext<AppDbContext>(options =>

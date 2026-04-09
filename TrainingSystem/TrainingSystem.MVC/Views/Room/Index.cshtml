@@ -2,13 +2,12 @@
 
 <h2>Rooms</h2>
 
-<a asp-action="Create">Add Room</a>
+<a asp-action="Create" class="btn btn-primary">Add Room</a>
 
 <table class="table">
     <tr>
         <th>Name</th>
         <th>Capacity</th>
-        <th>Actions</th>
     </tr>
 
     @foreach (var r in Model)
@@ -16,9 +15,6 @@
         <tr>
             <td>@r.RoomName</td>
             <td>@r.Capacity</td>
-            <td>
-                <a asp-action="Delete" asp-route-id="@r.RoomId">Delete</a>
-            </td>
         </tr>
     }
 </table>

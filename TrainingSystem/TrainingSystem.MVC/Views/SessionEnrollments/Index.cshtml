@@ -1,34 +1,79 @@
-﻿<h2>Students</h2>
+﻿@model IEnumerable<TrainingSystem.API.Models.Enrollment>
 
-<table class="table">
-    <tr>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
+@{
+    ViewData["Title"] = "Session Enrollments";
+}
 
-    @foreach (var item in Model)
-    {
+<h2>Session Students</h2>
+
+<table class="table table-bordered">
+    <thead>
         <tr>
-            <td>@item.User.Name</td>
-            <td>@item.Status</td>
-
-            <td>
-                <a asp-action="MarkAttending" asp-route-id="@item.EnrollmentId">Attend</a>
-
-                <form asp-action="RecordResult" method="post">
-                    <input type="hidden" name="enrollmentId" value="@item.EnrollmentId" />
-
-                    <select name="isPassed">
-                        <option value="true">Pass</option>
-                        <option value="false">Fail</option>
-                    </select>
-
-                    <input type="text" name="remarks" placeholder="Remarks" />
-
-                    <button type="submit">Submit</button>
-                </form>
-            </td>
+            <th>Student Name</th>
+            <th>Status</th>
+            <th>Mark Attending</th>
+            <th>Record Result</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.User?.Name</td>
+
+                <td>
+                    <span class="badge bg-info">@item.Status</span>
+                </td>
+
+               
+                <td>
+                    @if (item.Status != "Attending" && item.Status != "Completed")
+                    {
+                        <a asp-action="MarkAttending"
+                           asp-route-id="@item.EnrollmentId"
+                           class="btn btn-primary btn-sm">
+                            Mark Attending
+                        </a>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+
+                <td>
+                    @if (item.Status == "Attending")
+                    {
+                        <form asp-action="RecordResult" method="post" class="d-flex gap-2">
+                            <input type="hidden" name="enrollmentId" value="@item.EnrollmentId" />
+
+                            <select name="isPassed" class="form-control" style="width:120px;">
+                                <option value="true">Pass</option>
+                                <option value="false">Fail</option>
+                            </select>
+
+                            <input name="remarks"
+                                   placeholder="Remarks"
+                                   class="form-control"
+                                   style="width:150px;" />
+
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Submit
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
+
+<a asp-controller="InstructorSessions"
+   asp-action="Index"
+   class="btn btn-secondary">
+    Back to My Sessions
+</a>

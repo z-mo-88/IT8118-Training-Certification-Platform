@@ -1,35 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class UsersController : BaseController
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public UsersController(AppDbContext context)
+        public UsersController(AppDbContext context, NotificationService notification)
         {
             _context = context;
+            _notification = notification;
         }
 
         public async Task<IActionResult> Index()
         {
-            var auth = AuthorizeRole(3); // Coordinator
+            var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
             var users = await _context.Users.ToListAsync();
             return View(users);
         }
 
-        // CREATE 
         [HttpGet]
         public IActionResult Create()
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
+            LoadRoles();
             return View();
         }
 
@@ -41,21 +45,25 @@ namespace TrainingSystem.MVC.Controllers
 
             CleanModelState();
 
+            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("", "Email already exists");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                await new NotificationController(_context)
-                    .CreateNotification(user.UserId, "Your account has been created");
+                await _notification.Create(user.UserId, "Your account has been created");
 
                 return RedirectToAction(nameof(Index));
             }
 
+            LoadRoles();
             return View(user);
         }
 
-        // EDIT 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -66,6 +74,7 @@ namespace TrainingSystem.MVC.Controllers
             if (user == null)
                 return NotFound();
 
+            LoadRoles();
             return View(user);
         }
 
@@ -85,10 +94,10 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            LoadRoles();
             return View(user);
         }
 
-        // DELETE 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -118,6 +127,12 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        private void LoadRoles()
+        {
+            ViewBag.Roles = new SelectList(_context.Roles, "RoleId", "RoleName");
+        }
+
+      
         private void CleanModelState()
         {
             ModelState.Remove("Role");

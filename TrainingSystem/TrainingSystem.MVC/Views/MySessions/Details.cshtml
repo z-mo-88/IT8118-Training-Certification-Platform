@@ -1,0 +1,22 @@
+﻿@model TrainingSystem.API.Models.CourseSession
+
+@{
+    ViewData["Title"] = "Session Details";
+}
+
+<h2>Session Details</h2>
+
+<div class="card p-3">
+    <h4>@Model.Course?.Title</h4>
+
+    <p><strong>Room:</strong> @Model.Room?.RoomName</p>
+    <p><strong>Date:</strong> @Model.SessionDate.ToShortDateString()</p>
+    <p><strong>Time:</strong> @Model.StartTime - @Model.EndTime</p>
+    <p><strong>Status:</strong> @Model.Status</p>
+    <p><strong>Capacity:</strong> @Model.SessionCapacity</p>
+    <p><strong>Available Seats:</strong> @Model.AvailableSeats</p>
+</div>
+
+<br />
+
+<a asp-action="Index" class="btn btn-secondary">Back</a>

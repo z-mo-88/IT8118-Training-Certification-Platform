@@ -1,0 +1,20 @@
+﻿@model TrainingSystem.API.Models.Enrollment
+
+@{
+    ViewData["Title"] = "Enroll";
+}
+
+<h2>Enroll in Session</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label>Session</label>
+        <select asp-for="SessionId" asp-items="ViewBag.Sessions" class="form-control"></select>
+    </div>
+
+    <br />
+    <button type="submit" class="btn btn-success">Enroll</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+
+<div asp-validation-summary="All" class="text-danger"></div>

@@ -2,28 +2,30 @@
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class SessionEnrollmentsController : BaseController
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public SessionEnrollmentsController(AppDbContext context)
+        public SessionEnrollmentsController(AppDbContext context, NotificationService notification)
         {
             _context = context;
+            _notification = notification;
         }
 
-        // VIEW STUDENTS
         public async Task<IActionResult> Index(int id)
         {
-            var auth = AuthorizeRole(2);
+            var auth = AuthorizeRole(2); 
             if (auth != null) return auth;
 
             var enrollments = await _context.Enrollments
                 .Include(e => e.User)
                 .Include(e => e.Session)
-                .ThenInclude(s => s.Course)
+                    .ThenInclude(s => s.Course)
                 .Where(e => e.SessionId == id)
                 .ToListAsync();
 
@@ -32,14 +34,12 @@ namespace TrainingSystem.MVC.Controllers
             return View(enrollments);
         }
 
-        // MARK ATTENDING
         public async Task<IActionResult> MarkAttending(int id)
         {
             var auth = AuthorizeRole(2);
             if (auth != null) return auth;
 
             var enrollment = await _context.Enrollments.FindAsync(id);
-
             if (enrollment == null)
                 return NotFound();
 
@@ -50,7 +50,6 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
         }
 
-        //RECORD RESULT
         [HttpPost]
         public async Task<IActionResult> RecordResult(int enrollmentId, bool isPassed, string remarks)
         {
@@ -64,7 +63,11 @@ namespace TrainingSystem.MVC.Controllers
             if (enrollment == null)
                 return NotFound();
 
-            //Update status
+            if (await _context.AssessmentResults.AnyAsync(a => a.EnrollmentId == enrollmentId))
+            {
+                return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
+            }
+
             enrollment.Status = "Completed";
 
             var result = new AssessmentResult
@@ -77,19 +80,13 @@ namespace TrainingSystem.MVC.Controllers
             };
 
             _context.AssessmentResults.Add(result);
-            await _context.SaveChangesAsync();
 
-            //NOTIFICATION (PASS/FAIL) 
             string message = isPassed
                 ? "You passed the course"
                 : "You did not pass the course";
 
-            await new NotificationController(_context)
-                .CreateNotification(enrollment.UserId, message);
+            await _notification.Create(enrollment.UserId, message);
 
-
-
-           //CERTIFICATION PROGRESS 
             if (isPassed)
             {
                 int userId = enrollment.UserId;
@@ -110,7 +107,7 @@ namespace TrainingSystem.MVC.Controllers
 
                     var passedCourses = await _context.AssessmentResults
                         .Include(a => a.Enrollment)
-                        .ThenInclude(e => e.Session)
+                            .ThenInclude(e => e.Session)
                         .Where(a => a.Enrollment.UserId == userId && a.IsPassed)
                         .Select(a => a.Enrollment.Session.CourseId)
                         .Distinct()
@@ -135,7 +132,9 @@ namespace TrainingSystem.MVC.Controllers
                             CertificationTrackId = trackId,
                             Status = completed ? "Eligible" : "In Progress",
                             ProgressPercent = percent,
-                            EligibleDate = DateOnly.FromDateTime(DateTime.Now)
+                            EligibleDate = completed
+    ? DateOnly.FromDateTime(DateTime.Now)
+    : progress?.EligibleDate ?? DateOnly.MinValue
                         };
 
                         _context.TraineeCertificationProgresses.Add(progress);
@@ -149,17 +148,15 @@ namespace TrainingSystem.MVC.Controllers
                             progress.EligibleDate = DateOnly.FromDateTime(DateTime.Now);
                     }
 
-                    await _context.SaveChangesAsync();
-
-                    //  Notify ONLY when eligible
                     if (completed)
                     {
-                        await new NotificationController(_context)
-                            .CreateNotification(userId, "You are now eligible for certification");
+                        await _notification.Create(userId, "You are now eligible for certification");
                     }
                 }
             }
-  
+
+            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
         }
     }

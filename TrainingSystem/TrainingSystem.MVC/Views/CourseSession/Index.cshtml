@@ -1,46 +1,50 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.CourseSession>
 
 @{
-    ViewData["Title"] = "Sessions";
+    ViewData["Title"] = "Course Sessions";
 }
 
 <h2>Course Sessions</h2>
 
-<a asp-action="Create" class="btn btn-success mb-3">Create Session</a>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Session</a>
+</p>
 
 <table class="table table-bordered">
-    <tr>
-        <th>Course</th>
-        <th>Instructor</th>
-        <th>Room</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Seats</th>
-        <th>Actions</th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+    <thead>
         <tr>
-            <td>@item.Course.Title</td>
-            <td>@item.User.Name</td>
-            <td>@item.Room.RoomName</td>
-            <td>@item.SessionDate</td>
-            <td>@item.StartTime - @item.EndTime</td>
-
-            <td id="count-@item.CourseId">
-                @item.AvailableSeats / @item.SessionCapacity
-            </td>
-
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SessionId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.SessionId">Delete</a> |
-                <a asp-controller="SessionEnrollments" asp-action="Index" asp-route-id="@item.SessionId">
-                    Students
-                </a>
-            </td>
+            <th>Course</th>
+            <th>Instructor</th>
+            <th>Room</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Capacity</th>
+            <th>Available Seats</th>
+            <th>Status</th>
+            <th></th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Course?.Title</td>
+                <td>@item.User?.Name</td>
+                <td>@item.Room?.RoomName</td>
+                <td>@item.SessionDate.ToShortDateString()</td>
+                <td>@item.StartTime - @item.EndTime</td>
+                <td>@item.SessionCapacity</td>
+
+                <td id="seats-@item.SessionId">@item.AvailableSeats</td>
+
+                <td>@item.Status</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SessionId">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SessionId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
@@ -50,9 +54,11 @@
         .withUrl("/enrollmentHub")
         .build();
 
-    connection.on("EnrollmentUpdated", function (courseId, count) {
-        const el = document.getElementById("count-" + courseId);
-        if (el) el.textContent = count;
+    connection.on("ReceiveSeatsUpdate", function (sessionId, seats) {
+        const element = document.getElementById("seats-" + sessionId);
+        if (element) {
+            element.innerText = seats;
+        }
     });
 
     connection.start();

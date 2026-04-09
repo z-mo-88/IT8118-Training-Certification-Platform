@@ -2,54 +2,54 @@
 
 @{
     ViewData["Title"] = "Courses";
-    var enrollmentCounts = ViewBag.EnrollmentCounts as Dictionary<int, int>;
 }
 
-<h1>Courses</h1>
+<h2>Courses</h2>
 
-<a asp-action="Create" class="btn btn-success mb-3">Add Course</a>
+@if (User.IsInRole("TrainingCoordinator"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New Course</a>
+    </p>
+}
 
 <table class="table table-bordered">
-    <tr>
-        <th>Title</th>
-        <th>Duration</th>
-        <th>Fee</th>
-        <th>Enrollments</th>
-        <th>Actions</th>
-    </tr>
-
-    @foreach (var c in Model)
-    {
+    <thead>
         <tr>
-            <td>@c.Title</td>
-            <td>@c.DurationHours</td>
-            <td>@c.EnrollmentFee</td>
-
-            <td id="count-@c.CourseId">
-                @(enrollmentCounts != null && enrollmentCounts.ContainsKey(c.CourseId)
-                            ? enrollmentCounts[c.CourseId]
-                            : 0)
-        </td>
-
-            <td>
-                <a asp-action="Edit" asp-route-id="@c.CourseId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@c.CourseId">Delete</a>
-            </td>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Duration</th>
+            <th>Capacity</th>
+            <th>Fee</th>
+            <th>Prerequisite</th>
+            <th></th>
         </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Category?.CategoryName</td>
+                <td>@item.DurationHours hrs</td>
+                <td>@item.DefaultCapacity</td>
+                <td>@item.EnrollmentFee</td>
+                <td>@item.PrerequisiteCourse?.Title</td>
+
+                <td>
+                    @if (User.IsInRole("TrainingCoordinator"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.CourseId">Edit</a>
+                        <span>|</span>
+                        <a asp-action="Delete" asp-route-id="@item.CourseId">Delete</a>
+                    }
+                    else if (User.IsInRole("Trainee"))
+                    {
+                        <a asp-controller="Enrollments" asp-action="Create" asp-route-courseId="@item.CourseId"
+                           class="btn btn-success btn-sm">Enroll</a>
+                    }
+                </td>
+            </tr>
         }
+    </tbody>
 </table>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-
-<script>
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/enrollmentHub")
-        .build();
-
-    connection.on("EnrollmentUpdated", function (courseId, count) {
-        const el = document.getElementById("count-" + courseId);
-        if (el) el.textContent = count;
-    });
-
-    connection.start();
-</script>

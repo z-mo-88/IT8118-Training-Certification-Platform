@@ -1,24 +1,39 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Payment>
 
+@{
+    ViewData["Title"] = "Payments";
+}
+
 <h2>Payments</h2>
 
-<a asp-action="Create">Add Payment</a>
-
-<table class="table">
-    <tr>
-        <th>User</th>
-        <th>Course</th>
-        <th>Amount</th>
-        <th>Date</th>
-    </tr>
-
-    @foreach (var p in Model)
-    {
+<table class="table table-bordered">
+    <thead>
         <tr>
-            <td>@p.Enrollment.User.Name</td>
-            <td>@p.Enrollment.Session.Course.Title</td>
-            <td>@p.AmountPaid</td>
-            <td>@p.PaidDate</td>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Amount Paid</th>
+            <th>Status</th>
+            <th>Date</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Enrollment?.User?.Name</td>
+                <td>@item.Enrollment?.Session?.Course?.Title</td>
+                <td>@item.AmountPaid</td>
+
+                <td>
+                    <span class="badge
+                        @(item.PaymentStatus == "Paid" ? "bg-success" :
+                                                item.PaymentStatus == "Partial" ? "bg-warning" : "bg-danger")">
+                    @item.PaymentStatus
+                </span>
+            </td>
+
+                <td>@item.PaidDate</td>
+            </tr>
+                }
+    </tbody>
 </table>

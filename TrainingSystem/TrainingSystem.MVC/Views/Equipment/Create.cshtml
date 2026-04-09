@@ -1,10 +1,9 @@
 ﻿@model TrainingSystem.API.Models.Equipment
 
-<h2>Create Equipment</h2>
+<h2>Add Equipment</h2>
 
 <form asp-action="Create">
-    <label>Name</label>
-    <input asp-for="EquipmentName" />
-
-    <button type="submit">Save</button>
+    <input asp-for="EquipmentName" class="form-control" />
+    <br />
+    <button class="btn btn-success">Save</button>
 </form>

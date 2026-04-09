@@ -1,0 +1,25 @@
+﻿@model IEnumerable<TrainingSystem.API.Models.Certificate>
+
+<h2>All Certificates</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Track</th>
+            <th>Status</th>
+            <th>Issued</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.User?.Name</td>
+                <td>@item.CertificationTrack?.TrackName</td>
+                <td>@item.CertificateStatus</td>
+                <td>@item.IssuedDate</td>
+            </tr>
+        }
+    </tbody>
+</table>

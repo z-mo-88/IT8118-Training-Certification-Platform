@@ -112,7 +112,7 @@ namespace TrainingSystem.MVC.Controllers
 
             var course = await _context.Courses.FindAsync(id);
 
-            if (course != null) // ✅ FIX
+            if (course != null) 
             {
                 _context.Courses.Remove(course);
                 await _context.SaveChangesAsync();
@@ -121,7 +121,7 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ================= VALIDATION =================
+        //  VALIDATION 
         private void ValidateCourse(Course course)
         {
             if (course.DurationHours <= 0)

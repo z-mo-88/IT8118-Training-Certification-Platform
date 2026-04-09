@@ -2,19 +2,21 @@
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class EnrollmentsController : BaseController
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public EnrollmentsController(AppDbContext context)
+        public EnrollmentsController(AppDbContext context, NotificationService notification)
         {
             _context = context;
+            _notification = notification;
         }
 
-        //  VIEW 
         public async Task<IActionResult> Index()
         {
             var auth = AuthorizeRole(1);
@@ -24,13 +26,14 @@ namespace TrainingSystem.MVC.Controllers
 
             var enrollments = await _context.Enrollments
                 .Include(e => e.Session)
-                .ThenInclude(s => s.Course)
+                    .ThenInclude(s => s.Course)
+                .Where(e => e.UserId == userId)
+                .OrderByDescending(e => e.EnrollmentDate)
                 .ToListAsync();
 
-            return View(enrollments.Where(e => e.UserId == userId));
+            return View(enrollments);
         }
 
-        //  ENROLL 
         [HttpPost]
         public async Task<IActionResult> Enroll(int sessionId)
         {
@@ -46,7 +49,6 @@ namespace TrainingSystem.MVC.Controllers
             if (session == null)
                 return NotFound();
 
-            // Duplicate check
             if (await _context.Enrollments
                 .AnyAsync(e => e.UserId == userId && e.SessionId == sessionId))
             {
@@ -54,19 +56,17 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction("Index", "CourseSession");
             }
 
-            // Capacity check
             if (session.AvailableSeats <= 0)
             {
                 TempData["Error"] = "No available seats";
                 return RedirectToAction("Index", "CourseSession");
             }
 
-            // Prerequisite check
             if (session.Course.PrerequisiteCourseId != null)
             {
                 bool passed = await _context.AssessmentResults
                     .Include(a => a.Enrollment)
-                    .ThenInclude(e => e.Session)
+                        .ThenInclude(e => e.Session)
                     .AnyAsync(a =>
                         a.Enrollment.UserId == userId &&
                         a.IsPassed &&
@@ -79,7 +79,6 @@ namespace TrainingSystem.MVC.Controllers
                 }
             }
 
-            // Create enrollment
             var enrollment = new Enrollment
             {
                 UserId = userId,
@@ -95,13 +94,11 @@ namespace TrainingSystem.MVC.Controllers
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
 
-            await new NotificationController(_context)
-                .CreateNotification(userId, "Enrollment successful");
+            await _notification.Create(userId, "Enrollment successful");
 
             return RedirectToAction(nameof(Index));
         }
 
-        // CONFIRM 
         public async Task<IActionResult> Confirm(int id)
         {
             var auth = AuthorizeRole(3);
@@ -111,15 +108,14 @@ namespace TrainingSystem.MVC.Controllers
             if (enrollment == null) return NotFound();
 
             enrollment.Status = "Confirmed";
+
             await _context.SaveChangesAsync();
 
-            await new NotificationController(_context)
-                .CreateNotification(enrollment.UserId, "Enrollment confirmed");
+            await _notification.Create(enrollment.UserId, "Enrollment confirmed");
 
             return RedirectToAction("Index", "CourseSession");
         }
 
-        // DROP 
         public async Task<IActionResult> Drop(int id)
         {
             var auth = AuthorizeRole(1);
@@ -128,11 +124,14 @@ namespace TrainingSystem.MVC.Controllers
             var enrollment = await _context.Enrollments.FindAsync(id);
             if (enrollment == null) return NotFound();
 
+            if (enrollment.Status == "Dropped")
+                return RedirectToAction(nameof(Index));
+
             enrollment.Status = "Dropped";
 
             var session = await _context.CourseSessions.FindAsync(enrollment.SessionId);
             if (session != null)
-                session.AvailableSeats++; 
+                session.AvailableSeats++;
 
             await _context.SaveChangesAsync();
 

@@ -1,34 +1,65 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Certificate>
 
 @{
-
     ViewData["Title"] = "My Certificates";
-
+    var progressList = ViewBag.Progress as List<TrainingSystem.API.Models.TraineeCertificationProgress>;
 }
-<h1>My Certificates</h1>
+
+<h2>My Certificates</h2>
+
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Certificate ID</th>
-            <th>Reference Number</th>
+            <th>Track</th>
             <th>Status</th>
             <th>Issued Date</th>
-            <th>Track Name</th>
+            <th>Reference</th>
         </tr>
     </thead>
     <tbody>
-
-        @foreach (var certificate in Model)
-
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@certificate.CertificateId</td>
-                <td>@certificate.CertificateReferenceNumber</td>
-                <td>@certificate.CertificateStatus</td>
-                <td>@certificate.IssuedDate</td>
-                <td>@certificate.CertificationTrack?.TrackName</td>
+                <td>@item.CertificationTrack?.TrackName</td>
+                <td>@item.CertificateStatus</td>
+                <td>@item.IssuedDate</td>
+                <td>@item.CertificateReferenceNumber</td>
             </tr>
+        }
+    </tbody>
+</table>
 
+<hr />
+
+<h3>Certification Progress</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Track</th>
+            <th>Status</th>
+            <th>Progress %</th>
+            <th>Eligible Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in progressList)
+        {
+            <tr>
+                <td>@p.CertificationTrackId</td>
+                <td>@p.Status</td>
+                <td>@p.ProgressPercent %</td>
+                <td>
+                    @if (p.EligibleDate != DateOnly.MinValue)
+                    {
+                        @p.EligibleDate
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+            </tr>
         }
     </tbody>
 </table>
