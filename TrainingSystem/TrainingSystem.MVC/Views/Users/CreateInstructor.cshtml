@@ -1,0 +1,51 @@
+﻿@model TrainingSystem.API.Models.User
+
+@{
+    ViewData["Title"] = "Add Instructor";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="mb-4">Add Instructor</h2>
+
+                <form asp-action="CreateInstructor" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PasswordHash" class="form-label">Temporary Password</label>
+                        <input asp-for="PasswordHash" type="password" class="form-control" />
+                    </div>
+
+                    <input type="hidden" asp-for="RoleId" value="2" />
+                    <input type="hidden" asp-for="IsActive" value="true" />
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">Create Instructor</button>
+                        <a asp-action="Index" class="btn btn-secondary">Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,27 @@
+﻿@model TrainingSystem.API.Models.RoomEquipment
+
+@{
+    ViewData["Title"] = "Add Room Equipment";
+}
+
+<h2>Add Room Equipment</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label>Room</label>
+        <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-control"></select>
+    </div>
+
+    <div class="mb-3">
+        <label>Equipment</label>
+        <select asp-for="EquipmentId" asp-items="ViewBag.Equipments" class="form-control"></select>
+    </div>
+
+    <div class="mb-3">
+        <label>Quantity</label>
+        <input asp-for="Quantity" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>

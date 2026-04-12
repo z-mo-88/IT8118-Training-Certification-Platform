@@ -17,24 +17,32 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-        //  LOGIN 
+        // LOGIN
         [HttpGet]
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectUserByRole();
+            }
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            // Validation
+            if (HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectUserByRole();
+            }
+
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 ViewBag.Error = "Email and Password are required";
                 return View();
             }
 
-            // Hash password before comparing
             string hashedPassword = HashPassword(password);
 
             var user = await _context.Users
@@ -46,45 +54,41 @@ namespace TrainingSystem.MVC.Controllers
                 return View();
             }
 
-            // Store session
             HttpContext.Session.SetInt32("UserId", user.UserId);
             HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetInt32("RoleId", user.RoleId);
 
-            // Redirect based on role
-            switch (user.RoleId)
-            {
-                case 1: // Trainee
-                    return RedirectToAction("Index", "Enrollments");
+await _context.SaveChangesAsync();
 
-                case 2: // Instructor
-                    return RedirectToAction("Index", "CourseSession");
-
-                case 3: // Coordinator
-                    return RedirectToAction("Index", "Users");
-
-                default:
-                    return RedirectToAction("Index", "Home");
-            }
+            return RedirectUserByRole();
         }
 
-        //  REGISTER 
+        // REGISTER
         [HttpGet]
         public IActionResult Register()
         {
+            if (HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectUserByRole();
+            }
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(string name, string email, string password, int roleId)
         {
+            if (HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectUserByRole();
+            }
+
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 ViewBag.Error = "All fields are required";
                 return View();
             }
 
-            // Check if email exists
             var exists = await _context.Users.AnyAsync(u => u.Email == email);
             if (exists)
             {
@@ -107,14 +111,35 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction("Login");
         }
 
-        //  LOGOUT 
+        // LOGOUT
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
 
-        //  HASH FUNCTION 
+        // ROLE-BASED REDIRECT
+        private IActionResult RedirectUserByRole()
+        {
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+
+            switch (roleId)
+            {
+                case 1: // Trainee
+                    return RedirectToAction("Index", "Enrollments");
+
+                case 2: // Instructor
+                    return RedirectToAction("Index", "InstructorSessions");
+
+                case 3: // Coordinator
+                    return RedirectToAction("Index", "Users");
+
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
+        }
+
+        // HASH FUNCTION
         private string HashPassword(string password)
         {
             using (SHA256 sha = SHA256.Create())

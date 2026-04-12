@@ -49,8 +49,7 @@ namespace TrainingSystem.MVC.Controllers
             if (session == null)
                 return NotFound();
 
-            if (await _context.Enrollments
-                .AnyAsync(e => e.UserId == userId && e.SessionId == sessionId))
+            if (await _context.Enrollments.AnyAsync(e => e.UserId == userId && e.SessionId == sessionId))
             {
                 TempData["Error"] = "Already enrolled";
                 return RedirectToAction("Index", "CourseSession");
@@ -94,7 +93,10 @@ namespace TrainingSystem.MVC.Controllers
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
 
-            await _notification.Create(userId, "Enrollment successful");
+            await _notification.Create(
+                userId,
+                $"You enrolled in {session.Course.Title}"
+            );
 
             return RedirectToAction(nameof(Index));
         }
@@ -108,10 +110,19 @@ namespace TrainingSystem.MVC.Controllers
             if (enrollment == null) return NotFound();
 
             enrollment.Status = "Confirmed";
-
             await _context.SaveChangesAsync();
 
-            await _notification.Create(enrollment.UserId, "Enrollment confirmed");
+            var session = await _context.CourseSessions
+                .Include(s => s.Course)
+                .FirstOrDefaultAsync(s => s.SessionId == enrollment.SessionId);
+
+            if (session != null)
+            {
+                await _notification.Create(
+                    enrollment.UserId,
+                    $"Your enrollment in {session.Course.Title} has been confirmed"
+                );
+            }
 
             return RedirectToAction("Index", "CourseSession");
         }
@@ -121,7 +132,11 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(1);
             if (auth != null) return auth;
 
-            var enrollment = await _context.Enrollments.FindAsync(id);
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Session)
+                    .ThenInclude(s => s.Course)
+                .FirstOrDefaultAsync(e => e.EnrollmentId == id);
+
             if (enrollment == null) return NotFound();
 
             if (enrollment.Status == "Dropped")
@@ -134,6 +149,11 @@ namespace TrainingSystem.MVC.Controllers
                 session.AvailableSeats++;
 
             await _context.SaveChangesAsync();
+
+            await _notification.Create(
+                enrollment.UserId,
+                $"You dropped {enrollment.Session?.Course?.Title ?? "a course session"}"
+            );
 
             return RedirectToAction(nameof(Index));
         }

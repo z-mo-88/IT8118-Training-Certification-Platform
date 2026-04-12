@@ -3,19 +3,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class CourseSessionController : BaseController
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public CourseSessionController(AppDbContext context)
+        public CourseSessionController(AppDbContext context, NotificationService notification)
         {
             _context = context;
+            _notification = notification;
         }
 
-        
         public async Task<IActionResult> Index()
         {
             var auth = AuthorizeRole(3);
@@ -30,7 +32,6 @@ namespace TrainingSystem.MVC.Controllers
             return View(sessions);
         }
 
-        // CREATE 
         [HttpGet]
         public IActionResult Create()
         {
@@ -48,6 +49,15 @@ namespace TrainingSystem.MVC.Controllers
             if (auth != null) return auth;
 
             ValidateSession(session);
+
+            var selectedCourse = await _context.Courses
+                .Include(c => c.Category)
+                .FirstOrDefaultAsync(c => c.CourseId == session.CourseId);
+
+            if (selectedCourse == null)
+            {
+                ModelState.AddModelError("", "Selected course is invalid");
+            }
 
             // Instructor availability
             bool isAvailable = await _context.InstructorAvailabilities
@@ -82,6 +92,21 @@ namespace TrainingSystem.MVC.Controllers
             if (roomConflict)
                 ModelState.AddModelError("", "Room already booked");
 
+            // Instructor expertise must match course category
+            if (selectedCourse != null)
+            {
+                bool hasMatchingExpertise = await _context.InstructorExpertises
+                    .Include(i => i.Expertise)
+                    .AnyAsync(i =>
+                        i.UserId == session.UserId &&
+                        i.Expertise.ExpertiseName == selectedCourse.Category.CategoryName);
+
+                if (!hasMatchingExpertise)
+                {
+                    ModelState.AddModelError("", "Instructor expertise does not match the selected course category");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 session.AvailableSeats = session.SessionCapacity;
@@ -90,22 +115,20 @@ namespace TrainingSystem.MVC.Controllers
                 _context.CourseSessions.Add(session);
                 await _context.SaveChangesAsync();
 
+                var createdSession = await _context.CourseSessions
+                    .Include(s => s.Course)
+                    .FirstOrDefaultAsync(s => s.SessionId == session.SessionId);
+
+                if (createdSession != null)
+                {
+                    await _notification.Create(
+                        createdSession.UserId,
+                        $"You have been assigned to teach {createdSession.Course?.Title}"
+                    );
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-
-            LoadDropdowns();
-            return View(session);
-        }
-
-        // EDIT 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            var auth = AuthorizeRole(3);
-            if (auth != null) return auth;
-
-            var session = await _context.CourseSessions.FindAsync(id);
-            if (session == null) return NotFound();
 
             LoadDropdowns();
             return View(session);
@@ -117,7 +140,7 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            ValidateSession(session); 
+            ValidateSession(session);
 
             if (ModelState.IsValid)
             {
@@ -131,7 +154,6 @@ namespace TrainingSystem.MVC.Controllers
             return View(session);
         }
 
-        //  DELETE 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -155,7 +177,7 @@ namespace TrainingSystem.MVC.Controllers
 
             var session = await _context.CourseSessions.FindAsync(id);
 
-            if (session != null) 
+            if (session != null)
             {
                 _context.CourseSessions.Remove(session);
                 await _context.SaveChangesAsync();
