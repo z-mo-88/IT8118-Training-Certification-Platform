@@ -1,20 +1,47 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Room>
 
-<h2>Rooms</h2>
+@{
+    ViewData["Title"] = "Rooms";
+}
 
-<a asp-action="Create" class="btn btn-primary">Add Room</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Rooms</h2>
+    <a asp-action="Create" class="btn btn-primary">Add Room</a>
+</div>
 
-<table class="table">
-    <tr>
-        <th>Name</th>
-        <th>Capacity</th>
-    </tr>
-
-    @foreach (var r in Model)
-    {
-        <tr>
-            <td>@r.RoomName</td>
-            <td>@r.Capacity</td>
-        </tr>
-    }
-</table>
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Capacity</th>
+                    <th>Location</th>
+                    <th style="width: 160px;" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.RoomName</td>
+                            <td>@item.Capacity</td>
+                            <td>@item.Location</td>
+                            <td class="text-center">
+                                <a asp-action="Delete" asp-route-id="@item.RoomId" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No rooms found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

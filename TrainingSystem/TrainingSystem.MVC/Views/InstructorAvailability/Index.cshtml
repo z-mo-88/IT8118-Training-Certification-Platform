@@ -1,0 +1,62 @@
+﻿@model IEnumerable<TrainingSystem.API.Models.InstructorAvailability>
+
+@{
+    ViewData["Title"] = "My Availability";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">My Availability</h2>
+    <a asp-action="Create" class="btn btn-primary">Add Availability</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Day</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Available</th>
+                    <th style="width: 160px;" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.DayOfWeek</td>
+                            <td>@item.StartTime.ToString(@"hh\:mm")</td>
+                            <td>@item.EndTime.ToString(@"hh\:mm")</td>
+                            <td>
+                                @if (item.IsAvailable)
+                                {
+                                    <span class="badge bg-success">Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">No</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.AvailabilityId"
+                                   class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No availability added yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,57 +1,65 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Notification>
 
 @{
-    ViewData["Title"] = "Notifications";
+    ViewData["Title"] = "My Notifications";
 }
 
-<h2>My Notifications</h2>
+<h2 class="mb-4">My Notifications</h2>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Message</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="@(item.IsRead ? "" : "table-warning")">
-
-                <td>@item.Message</td>
-
-                <td>@item.CreatedAt</td>
-
-                <td>
-                    @if (item.IsRead)
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th style="width: 220px;" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
                     {
-                        <span class="badge bg-success">Read</span>
+                        <tr class="@(item.IsRead ? "" : "table-warning")">
+                            <td>@item.Message</td>
+                            <td>@item.CreatedAt.ToShortDateString()</td>
+                            <td>
+                                @if (item.IsRead)
+                                {
+                                    <span class="badge bg-success">Read</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Unread</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (!item.IsRead)
+                                {
+                                    <a asp-action="MarkAsRead"
+                                       asp-route-id="@item.NotificationId"
+                                       class="btn btn-primary btn-sm me-1">
+                                        Mark as Read
+                                    </a>
+                                }
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.NotificationId"
+                                   class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
                     }
-                    else
-                    {
-                        <span class="badge bg-danger">Unread</span>
-                    }
-                </td>
-
-                <td>
-                    @if (!item.IsRead)
-                    {
-                        <a asp-action="MarkAsRead"
-                           asp-route-id="@item.NotificationId"
-                           class="btn btn-primary btn-sm">
-                            Mark as Read
-                        </a>
-                    }
-
-                    <a asp-action="Delete"
-                       asp-route-id="@item.NotificationId"
-                       class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No notifications found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

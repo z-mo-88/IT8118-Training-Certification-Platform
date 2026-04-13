@@ -1,12 +1,12 @@
-﻿@model IEnumerable<TrainingSystem.API.Models.Equipment>
+﻿@model IEnumerable<TrainingSystem.API.Models.InstructorExpertise>
 
 @{
-    ViewData["Title"] = "Equipment";
+    ViewData["Title"] = "My Expertise";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Equipment</h2>
-    <a asp-action="Create" class="btn btn-primary">Add Equipment</a>
+    <h2 class="mb-0">My Expertise</h2>
+    <a asp-action="Create" class="btn btn-primary">Add Expertise</a>
 </div>
 
 <div class="card shadow-sm border-0">
@@ -14,8 +14,7 @@
         <table class="table table-bordered table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Equipment Name</th>
-                    <th>Description</th>
+                    <th>Expertise</th>
                     <th style="width: 160px;" class="text-center">Actions</th>
                 </tr>
             </thead>
@@ -25,10 +24,13 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.EquipmentName</td>
-                            <td>@item.Description</td>
+                            <td>@item.Expertise?.ExpertiseName</td>
                             <td class="text-center">
-                                <a asp-action="Delete" asp-route-id="@item.EquipmentId" class="btn btn-danger btn-sm">Delete</a>
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.InstructorExpertiseId"
+                                   class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
                             </td>
                         </tr>
                     }
@@ -36,7 +38,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="3" class="text-center text-muted">No equipment found.</td>
+                        <td colspan="2" class="text-center text-muted">No expertise added yet.</td>
                     </tr>
                 }
             </tbody>

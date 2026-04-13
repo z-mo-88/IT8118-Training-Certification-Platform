@@ -13,9 +13,8 @@
 
 <body>
 
-   
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
+        <div class="container">
 
             <a class="navbar-brand" href="/">Training System</a>
 
@@ -25,58 +24,48 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
 
-               
                 <ul class="navbar-nav me-auto">
 
-                    
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="/">Home</a>
+                        <a class="nav-link" href="/">Home</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="/Certificate/Lookup">
-                            Certificate Lookup
-                        </a>
+                        <a class="nav-link" href="/Certificate/Lookup">Certificate Lookup</a>
                     </li>
 
-                   
                     @if (Context.Session.GetInt32("RoleId") == 3)
                     {
-                        <li class="nav-item"><a class="nav-link text-white" href="/Courses">Courses</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/CourseSession">Sessions</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Users">Users</a></li>
-
-                        <li class="nav-item"><a class="nav-link text-white" href="/Room">Rooms</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Equipment">Equipment</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/RoomEquipment">Room Equipment</a></li>
-
-                        <li class="nav-item"><a class="nav-link text-white" href="/Instructor">Instructors</a></li>
-
-                        <li class="nav-item"><a class="nav-link text-white" href="/Payment">Payments</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Notification">Notifications</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/CourseSession">Sessions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Users">Users</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Room">Rooms</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Equipment">Equipment</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/RoomEquipment">Room Equipment</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Instructor">Instructors</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Payment">Payments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
                     }
 
-                   
                     @if (Context.Session.GetInt32("RoleId") == 1)
                     {
-                        <li class="nav-item"><a class="nav-link text-white" href="/Courses">Courses</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Enrollments">My Enrollments</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/MyCertificates">My Certificates</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Notification">Notifications</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Enrollments">My Enrollments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/MyCertificates">My Certificates</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
                     }
 
-                  
                     @if (Context.Session.GetInt32("RoleId") == 2)
                     {
-                        <li class="nav-item"><a class="nav-link text-white" href="/InstructorSessions">My Sessions</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/InstructorAvailability">My Availability</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Notification">Notifications</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/InstructorSessions">My Sessions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/InstructorAvailability">My Availability</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/InstructorExpertise">My Expertise</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
                     }
 
                 </ul>
 
                 <ul class="navbar-nav">
-
                     @if (Context.Session.GetInt32("UserId") != null)
                     {
                         <li class="nav-item">
@@ -92,10 +81,9 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="/Account/Login">Login</a>
+                            <a class="nav-link" href="/Account/Login">Login</a>
                         </li>
                     }
-
                 </ul>
 
             </div>
