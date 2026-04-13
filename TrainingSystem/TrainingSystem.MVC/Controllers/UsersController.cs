@@ -117,6 +117,55 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpGet]
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound();
+
+            LoadRoles();
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(User user)
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            CleanModelState();
+
+            var existingUser = await _context.Users.FindAsync(user.UserId);
+            if (existingUser == null)
+                return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                existingUser.Name = user.Name;
+                existingUser.Email = user.Email;
+                existingUser.PhoneNumber = user.PhoneNumber;
+                existingUser.RoleId = user.RoleId;
+                existingUser.IsActive = user.IsActive;
+
+                if (!string.IsNullOrWhiteSpace(user.PasswordHash))
+                {
+                    existingUser.PasswordHash = HashPassword(user.PasswordHash);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            LoadRoles();
+            return View(user);
+        }
+
+        [HttpGet]
+
         public async Task<IActionResult> Delete(int id)
         {
             var auth = AuthorizeRole(3);
