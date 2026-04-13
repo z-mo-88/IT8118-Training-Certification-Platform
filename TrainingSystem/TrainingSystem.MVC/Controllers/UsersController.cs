@@ -117,8 +117,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpGet]
-<<<<<<< Updated upstream
-=======
+
         public async Task<IActionResult> Edit(int id)
         {
             var auth = AuthorizeRole(3);
@@ -166,7 +165,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpGet]
->>>>>>> Stashed changes
+
         public async Task<IActionResult> Delete(int id)
         {
             var auth = AuthorizeRole(3);
