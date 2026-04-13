@@ -52,13 +52,13 @@ namespace TrainingSystem.MVC.Controllers
             if (await _context.Enrollments.AnyAsync(e => e.UserId == userId && e.SessionId == sessionId))
             {
                 TempData["Error"] = "Already enrolled";
-                return RedirectToAction("Index", "Course");
+                return RedirectToAction("Index", "Courses");
             }
 
             if (session.AvailableSeats <= 0)
             {
                 TempData["Error"] = "No available seats";
-                return RedirectToAction("Index", "Course");
+                return RedirectToAction("Index", "Courses");
             }
 
             if (session.Course.PrerequisiteCourseId != null)
@@ -74,7 +74,7 @@ namespace TrainingSystem.MVC.Controllers
                 if (!passed)
                 {
                     TempData["Error"] = "Complete prerequisite first";
-                    return RedirectToAction("Index", "Course");
+                    return RedirectToAction("Index", "Courses");
                 }
             }
 
@@ -124,7 +124,7 @@ namespace TrainingSystem.MVC.Controllers
                 );
             }
 
-            return RedirectToAction("Index", "Course");
+            return RedirectToAction("Index", "Courses");
         }
 
         public async Task<IActionResult> Drop(int id)
