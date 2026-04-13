@@ -1,18 +1,4 @@
 ﻿
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-
-<script>
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/enrollmentHub")
-        .build();
-
-    connection.on("ReceiveSeatsUpdate", function (sessionId, seats) {
-        const el = document.getElementById("seats-" + sessionId);
-        if (el) el.innerText = seats;
-    });
-
-    connection.start();
-</script>
 @model IEnumerable<TrainingSystem.API.Models.Course>
 
 @{
@@ -21,53 +7,104 @@
 
 <h2>Courses</h2>
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (roleId == 3)
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create Course</a>
+    </p>
+}
+
 @foreach (var course in Model)
 {
     <div class="card mb-3 p-3">
 
         <h4>@course.Title</h4>
-        <p>@course.Category?.CategoryName</p>
+        <p>Category: @course.Category?.CategoryName</p>
+        <p>Duration: @course.DurationHours hrs</p>
+        <p>Fee: @course.EnrollmentFee</p>
 
-        <h5>Available Sessions</h5>
+        @if (roleId == 3)
+        {
+            <div class="mb-2">
+                <a asp-action="Edit" asp-route-id="@course.CourseId"
+                   class="btn btn-warning btn-sm">Edit</a>
 
-        <table class="table table-sm">
-            <tr>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Seats</th>
-                <th></th>
-            </tr>
+                <a asp-action="Delete" asp-route-id="@course.CourseId"
+                   class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        }
 
-            @foreach (var session in course.CourseSessions)
-            {
+        @if (roleId == 1)
+        {
+            <h5>Available Sessions</h5>
+
+            <table class="table table-sm">
                 <tr>
-                    <td>@session.SessionDate.ToShortDateString()</td>
-                    <td>@session.StartTime - @session.EndTime</td>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Seats</th>
+                    <th></th>
+                </tr>
 
-                    <!-- 🔥 THIS IS IMPORTANT -->
-                    <td id="seats-@session.SessionId">
-                        @session.AvailableSeats
-                    </td>
+                @foreach (var session in course.CourseSessions)
+                {
+                    <tr>
+                        <td>@session.SessionDate.ToShortDateString()</td>
+                        <td>@session.StartTime - @session.EndTime</td>
 
-                    <td>
-                        @if (roleId == 1)
-                        {
+                        <td id="seats-@session.SessionId">
+                            @session.AvailableSeats
+                        </td>
+
+                        <td>
                             <form asp-controller="Enrollments"
                                   asp-action="Enroll"
                                   method="post">
 
-                                <input type="hidden" name="sessionId" value="@session.SessionId" />
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" name="sessionId"
+                                       value="@session.SessionId" />
 
                                 <button class="btn btn-success btn-sm"
                                         @(session.AvailableSeats == 0 ? "disabled" : "")>
                                     Enroll
                                 </button>
                             </form>
-                        }
-                    </td>
-                </tr>
-            }
-        </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
 
     </div>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:5001/enrollmentHub") 
+            .build();
+
+        connection.on("ReceiveSeatsUpdate", function (sessionId, seats) {
+            const el = document.getElementById("seats-" + sessionId);
+            if (el) el.innerText = seats;
+        });
+
+        connection.start()
+            .then(() => console.log("SignalR connected"))
+            .catch(err => console.error(err));
+    </script>
 }
