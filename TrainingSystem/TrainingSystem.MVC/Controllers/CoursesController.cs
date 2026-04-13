@@ -17,12 +17,12 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var auth = AuthorizeRole(3);
-            if (auth != null) return auth;
+           
 
             var courses = await _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.PrerequisiteCourse)
+                .Include(c => c.CourseSessions)
                 .ToListAsync();
 
             return View(courses);

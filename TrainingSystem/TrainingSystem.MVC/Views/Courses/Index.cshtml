@@ -1,55 +1,73 @@
-﻿@model IEnumerable<TrainingSystem.API.Models.Course>
+﻿
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/enrollmentHub")
+        .build();
+
+    connection.on("ReceiveSeatsUpdate", function (sessionId, seats) {
+        const el = document.getElementById("seats-" + sessionId);
+        if (el) el.innerText = seats;
+    });
+
+    connection.start();
+</script>
+@model IEnumerable<TrainingSystem.API.Models.Course>
 
 @{
-    ViewData["Title"] = "Courses";
+    var roleId = Context.Session.GetInt32("RoleId");
 }
 
 <h2>Courses</h2>
 
-@if (User.IsInRole("TrainingCoordinator"))
+@foreach (var course in Model)
 {
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Create New Course</a>
-    </p>
-}
+    <div class="card mb-3 p-3">
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Duration</th>
-            <th>Capacity</th>
-            <th>Fee</th>
-            <th>Prerequisite</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+        <h4>@course.Title</h4>
+        <p>@course.Category?.CategoryName</p>
+
+        <h5>Available Sessions</h5>
+
+        <table class="table table-sm">
             <tr>
-                <td>@item.Title</td>
-                <td>@item.Category?.CategoryName</td>
-                <td>@item.DurationHours hrs</td>
-                <td>@item.DefaultCapacity</td>
-                <td>@item.EnrollmentFee</td>
-                <td>@item.PrerequisiteCourse?.Title</td>
-
-                <td>
-                    @if (User.IsInRole("TrainingCoordinator"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.CourseId">Edit</a>
-                        <span>|</span>
-                        <a asp-action="Delete" asp-route-id="@item.CourseId">Delete</a>
-                    }
-                    else if (User.IsInRole("Trainee"))
-                    {
-                        <a asp-controller="Enrollments" asp-action="Create" asp-route-courseId="@item.CourseId"
-                           class="btn btn-success btn-sm">Enroll</a>
-                    }
-                </td>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Seats</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+
+            @foreach (var session in course.CourseSessions)
+            {
+                <tr>
+                    <td>@session.SessionDate.ToShortDateString()</td>
+                    <td>@session.StartTime - @session.EndTime</td>
+
+                    <!-- 🔥 THIS IS IMPORTANT -->
+                    <td id="seats-@session.SessionId">
+                        @session.AvailableSeats
+                    </td>
+
+                    <td>
+                        @if (roleId == 1)
+                        {
+                            <form asp-controller="Enrollments"
+                                  asp-action="Enroll"
+                                  method="post">
+
+                                <input type="hidden" name="sessionId" value="@session.SessionId" />
+
+                                <button class="btn btn-success btn-sm"
+                                        @(session.AvailableSeats == 0 ? "disabled" : "")>
+                                    Enroll
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+
+    </div>
+}
