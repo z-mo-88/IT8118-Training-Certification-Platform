@@ -9,15 +9,204 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        :root {
+            --blue-dark: #0a1f5c;
+            --blue: #123a9b;
+            --border: #e6eaf2;
+            --bg: #f5f7fb;
+            --text-muted: #667085;
+        }
+
+        html, body {
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            margin: 0;
+            padding-top: 76px;
+            font-family: "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .custom-navbar {
+            background: #ffffff !important;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 18px rgba(16, 24, 40, 0.06);
+            padding-top: 0.55rem;
+            padding-bottom: 0.55rem;
+        }
+
+            .custom-navbar .container-fluid {
+                padding-left: 10px;
+                padding-right: 14px;
+            }
+
+        .navbar-brand.custom-brand {
+            color: var(--blue-dark) !important;
+            font-weight: 800;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 1.2rem;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .custom-navbar .navbar-nav.me-auto {
+            margin-left: auto !important;
+            margin-right: 0 !important;
+            gap: 4px;
+        }
+
+        .custom-navbar .nav-link {
+            color: var(--blue-dark) !important;
+            font-weight: 600;
+            font-size: 14px;
+            position: relative;
+            padding-bottom: 6px !important;
+            white-space: nowrap;
+        }
+
+            .custom-navbar .nav-link::after {
+                content: "";
+                position: absolute;
+                left: 0.5rem;
+                right: 0.5rem;
+                bottom: 2px;
+                height: 2px;
+                background: var(--blue-dark);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.25s ease;
+            }
+
+            .custom-navbar .nav-link:hover::after {
+                transform: scaleX(1);
+            }
+
+            .navbar-right-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-left: 18px;
+            }
+
+            .hello-user {
+                color: var(--blue-dark);
+                font-weight: 600;
+                font-size: 14px;
+                white-space: nowrap;
+                pointer-events: none;
+                cursor: default;
+            }
+
+        .login-link-btn,
+        .logout-link-btn {
+            display: inline-block;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none !important;
+            line-height: 1.2;
+        }
+
+        .login-link-btn {
+            background: var(--blue-dark);
+            color: white !important;
+        }
+
+            .login-link-btn:hover {
+                background: var(--blue);
+            }
+
+        .logout-link-btn {
+            background: #b42318;
+            color: white !important;
+        }
+
+            .logout-link-btn:hover {
+                background: #8f1c13;
+            }
+
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            padding-top: 0;
+            flex: 1;
+        }
+
+        .site-footer {
+            background: #ffffff;
+            border-top: 1px solid var(--border);
+            padding: 22px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: auto;
+        }
+
+        .navbar-toggler {
+            border-color: rgba(10, 31, 92, 0.18);
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+
+        .navbar-toggler-icon {
+            filter: invert(16%) sepia(38%) saturate(2684%) hue-rotate(210deg) brightness(83%) contrast(99%);
+        }
+
+        @@media (max-width: 991.98px) {
+            body {
+                padding-top: 86px;
+            }
+
+            .custom-navbar .navbar-nav.me-auto {
+                margin-left: 0 !important;
+                margin-top: 10px;
+            }
+
+            .navbar-right-actions {
+                margin-left: 0;
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+
+            .custom-navbar .nav-link::after {
+                left: 0;
+                right: auto;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
-   
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
         <div class="container-fluid">
 
-            <a class="navbar-brand" href="/">Training System</a>
+            <a class="navbar-brand custom-brand" href="/">
+                <img src="/images/trainingsystemicon.png" alt="Training System Logo" class="brand-logo" />
+                <span>Training System</span>
+            </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -25,90 +214,76 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
 
-               
                 <ul class="navbar-nav me-auto">
 
-                    
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="/">Home</a>
+                        <a class="nav-link" href="/">Home</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="/Certificate/Lookup">
-                            Certificate Lookup
-                        </a>
+                        <a class="nav-link" href="/Certificate/Lookup">Certificate Lookup</a>
                     </li>
 
-                   
                     @if (Context.Session.GetInt32("RoleId") == 3)
                     {
-                        <li class="nav-item"><a class="nav-link text-white" href="/Courses">Courses</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/CourseSession">Sessions</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Users">Users</a></li>
-
-                        <li class="nav-item"><a class="nav-link text-white" href="/Room">Rooms</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Equipment">Equipment</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/RoomEquipment">Room Equipment</a></li>
-
-                        <li class="nav-item"><a class="nav-link text-white" href="/Instructor">Instructors</a></li>
-
-                        <li class="nav-item"><a class="nav-link text-white" href="/Payment">Payments</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Notification">Notifications</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/CourseSession">Sessions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Users">Users</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Room">Rooms</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Equipment">Equipment</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/RoomEquipment">Room Equipment</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Instructor">Instructors</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Payment">Payments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
                     }
 
-                   
                     @if (Context.Session.GetInt32("RoleId") == 1)
                     {
-                        <li class="nav-item"><a class="nav-link text-white" href="/Courses">Courses</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Enrollments">My Enrollments</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/MyCertificates">My Certificates</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Notification">Notifications</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Enrollments">My Enrollments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/MyCertificates">My Certificates</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
                     }
 
-                  
                     @if (Context.Session.GetInt32("RoleId") == 2)
                     {
-                        <li class="nav-item"><a class="nav-link text-white" href="/InstructorSessions">My Sessions</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/InstructorAvailability">My Availability</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Notification">Notifications</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/InstructorSessions">My Sessions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/InstructorAvailability">My Availability</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
                     }
 
                 </ul>
 
-                <ul class="navbar-nav">
-
+                <div class="navbar-right-actions">
                     @if (Context.Session.GetInt32("UserId") != null)
                     {
-                        <li class="nav-item">
-                            <span class="nav-link text-white">
-                                Hello, @Context.Session.GetString("UserName")
-                            </span>
-                        </li>
+                        <span class="hello-user">
+                            Hello, @Context.Session.GetString("UserName")
+                        </span>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-danger" href="/Account/Logout">Logout</a>
-                        </li>
+                        <a class="logout-link-btn" href="/Account/Logout">Logout</a>
                     }
                     else
                     {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="/Account/Login">Login</a>
-                        </li>
+                        <a class="login-link-btn" href="/Account/Login">Login</a>
                     }
-
-                </ul>
+                </div>
 
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        @RenderBody()
+    <div class="page-wrapper">
+        <main role="main" class="container main-content mt-0">
+            @RenderBody()
+        </main>
     </div>
 
+    <footer class="site-footer">
+        © 2026 Training System. All rights reserved.
+    </footer>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
     @RenderSection("Scripts", required: false)
-
 </body>
 </html>
