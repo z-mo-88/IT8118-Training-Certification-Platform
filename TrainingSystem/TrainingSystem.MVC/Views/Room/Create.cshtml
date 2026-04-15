@@ -1,13 +1,55 @@
 ﻿@model TrainingSystem.API.Models.Room
 
-<h2>Add Room</h2>
+@{
+    ViewData["Title"] = "Add Room";
+}
 
-<form asp-action="Create">
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
 
-    <input asp-for="RoomName" class="form-control" placeholder="Room Name" />
-    <input asp-for="Capacity" class="form-control" placeholder="Capacity" />
+            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+                <div class="card-body p-4 p-lg-5">
 
-    <br />
-    <button class="btn btn-success">Save</button>
+                    <div class="mb-4 text-center">
+                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Add Room</h3>
+                        <p class="text-muted mb-0">Enter room details below.</p>
+                    </div>
 
-</form>
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                Room Name
+                            </label>
+                            <input asp-for="RoomName"
+                                   class="form-control"
+                                   placeholder="Enter room name"
+                                   style="height: 50px; border-radius: 10px;" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                Capacity
+                            </label>
+                            <input asp-for="Capacity"
+                                   class="form-control"
+                                   placeholder="Enter capacity"
+                                   style="height: 50px; border-radius: 10px;" />
+                        </div>
+
+                        <div class="d-grid">
+                            <button class="btn text-white fw-semibold"
+                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                                Save
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

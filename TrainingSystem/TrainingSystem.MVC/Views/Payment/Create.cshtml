@@ -4,42 +4,89 @@
     ViewData["Title"] = "Record Payment";
 }
 
-<h2>Record Payment</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
 
-<form asp-action="Create">
+            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+                <div class="card-body p-4 p-lg-5">
 
-    <div class="form-group">
-        <label>Enrollment</label>
-        <select asp-for="EnrollmentId"
-                asp-items="ViewBag.Enrollments"
-                class="form-control">
-        </select>
+                    <div class="mb-4 text-center">
+                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Record Payment</h3>
+                        <p class="text-muted mb-0">Enter payment details for an enrollment.</p>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All"
+                             class="alert alert-danger rounded-3 mb-4"></div>
+                    }
+
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                Enrollment
+                            </label>
+                            <select asp-for="EnrollmentId"
+                                    asp-items="ViewBag.Enrollments"
+                                    class="form-select"
+                                    style="height: 50px; border-radius: 10px;">
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                Amount Paid
+                            </label>
+                            <input asp-for="AmountPaid"
+                                   class="form-control"
+                                   placeholder="Enter amount"
+                                   style="height: 50px; border-radius: 10px;" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                Status
+                            </label>
+                            <select asp-for="PaymentStatus"
+                                    class="form-select"
+                                    style="height: 50px; border-radius: 10px;">
+                                <option value="Paid">Paid</option>
+                                <option value="Partial">Partial</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                Date
+                            </label>
+                            <input asp-for="PaidDate"
+                                   type="date"
+                                   class="form-control"
+                                   style="height: 50px; border-radius: 10px;" />
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index"
+                               class="btn btn-light fw-semibold"
+                               style="border-radius: 10px;">
+                                Back
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4"
+                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                                Save
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <div class="form-group">
-        <label>Amount Paid</label>
-        <input asp-for="AmountPaid" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label>Status</label>
-        <select asp-for="PaymentStatus" class="form-control">
-            <option value="Paid">Paid</option>
-            <option value="Partial">Partial</option>
-            <option value="Pending">Pending</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label>Date</label>
-        <input asp-for="PaidDate" type="date" class="form-control" />
-    </div>
-
-    <br />
-
-    <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
-
-</form>
-
-<div asp-validation-summary="All" class="text-danger"></div>
+</div>

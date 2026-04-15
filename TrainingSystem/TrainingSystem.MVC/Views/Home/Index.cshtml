@@ -2,8 +2,527 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Training and Certification Platform</h1>
-    <p>Welcome to the Training and Certification Platform system.</p>
-    <p>This system helps trainees, instructors, and training coordinators manage courses, sessions, enrollments, and certificates.</p>
+<style>
+    .page-wrap {
+        width: 100%;
+    }
+
+    .hero {
+        position: relative;
+        height: 500px;
+        background: #0a1f5c;
+        overflow: hidden;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-bottom: 40px;
+    }
+
+    .slide-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.35;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(10, 31, 92, 0.72);
+        z-index: 1;
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        height: 100%;
+        margin: 0 auto;
+        padding: 95px 30px 70px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        margin-bottom: 14px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.22);
+        background: rgba(255,255,255,0.08);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .hero-text h1 {
+        margin: 0;
+        font-size: clamp(26px, 3.2vw, 42px);
+        line-height: 1.08;
+        color: white;
+        font-weight: 800;
+    }
+
+    .hero-text p {
+        margin: 14px auto 0;
+        max-width: 620px;
+        color: #dbe4ff;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .hero-actions {
+        margin-top: 24px;
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .hero-primary-btn,
+    .hero-secondary-btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.25s ease;
+    }
+
+    .hero-primary-btn {
+        background: white;
+        color: #0a1f5c;
+    }
+
+    .hero-secondary-btn {
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255,255,255,0.35);
+    }
+
+        .hero-secondary-btn:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+    .arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.14);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        line-height: 1;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .left {
+        left: 24px;
+    }
+
+    .right {
+        right: 24px;
+    }
+
+    .dots {
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 3;
+    }
+
+        .dots span {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.45);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+            .dots span.active {
+                width: 30px;
+                border-radius: 999px;
+                background: white;
+            }
+
+    .content-area {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 8px;
+    }
+
+    .section {
+        margin-bottom: 0px;
+    }
+
+        .section + .section {
+            margin-top: 100px;
+        }
+
+    #about {
+        margin-bottom: 100px;
+    }
+
+    #lookup {
+        margin-bottom: 100px;
+    }
+
+    .button-group {
+        display: flex;
+        align-items: end;
+    }
+
+    .section-header {
+        margin-bottom: 22px;
+    }
+
+        .section-header h2 {
+            margin: 0 0 10px;
+            font-size: 32px;
+            color: #0a1f5c;
+        }
+
+        .section-header p {
+            margin: 0;
+            color: #667085;
+            line-height: 1.7;
+            max-width: 100%;
+            font-size: 15px;
+        }
+
+    .courses-flex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .course-card {
+        background: white;
+        border: 1px solid #e6eaf2;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+        padding: 20px;
+        width: calc((100% - 40px) / 3);
+        min-width: 260px;
+        max-width: 420px;
+        text-align: center;
+    }
+
+        .course-card h3 {
+            margin: 0 0 12px;
+            color: #0a1f5c;
+            font-size: 19px;
+        }
+
+        .course-card p {
+            margin: 0;
+            color: #667085;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+    .pill {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #eaf0ff;
+        color: #0a1f5c;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .lookup-box {
+        background: white;
+        border: 1px solid #e6eaf2;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+        padding: 24px;
+        width: 100%;
+    }
+
+    .lookup-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #0a1f5c;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .form-group input {
+        width: 100%;
+        border: 1px solid #e6eaf2;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .primary-btn {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        background: #0a1f5c;
+        color: white;
+        text-decoration: none;
+        border: none;
+    }
+
+    .about-text {
+        margin: 0;
+        color: #667085;
+        line-height: 1.85;
+        max-width: 100%;
+        font-size: 16px;
+        text-align: justify;
+    }
+
+    @@media (max-width: 1100px) {
+        .course-card {
+            width: calc((100% - 20px) / 2);
+        }
+    }
+
+    @@media (max-width: 900px) {
+        .lookup-form {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 760px) {
+        .hero {
+            height: 430px;
+        }
+
+        .hero-inner {
+            padding: 75px 20px 60px;
+        }
+
+        .left {
+            left: 12px;
+        }
+
+        .right {
+            right: 12px;
+        }
+
+        .content-area {
+            padding: 0 8px;
+        }
+
+        .course-card {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(24px, 7vw, 34px);
+        }
+
+        .hero-text p {
+            font-size: 13px;
+        }
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="hero">
+        <img id="slideImage" class="slide-img" src="/images/Stack10.jpeg" alt="Slide Image" />
+        <div class="hero-overlay"></div>
+
+        <div class="arrow left" onclick="prevSlide()">&#8249;</div>
+
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="hero-badge">Professional Learning Platform</div>
+                <h1 id="slideTitle">Training & Certification Made Simple</h1>
+                <p id="slideText">
+                    Manage instructor-led courses, schedules, enrollments, assessments,
+                    payments, and certification progress through one clear and modern platform.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#courses" class="hero-primary-btn">View Courses</a>
+                    <a href="#about" class="hero-secondary-btn">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow right" onclick="nextSlide()">&#8250;</div>
+
+        <div class="dots">
+            <span onclick="goSlide(0)"></span>
+            <span onclick="goSlide(1)"></span>
+            <span onclick="goSlide(2)"></span>
+        </div>
+    </div>
+
+    <div class="content-area">
+
+        <div class="section" id="courses">
+            <div class="section-header">
+                <h2>Featured Courses</h2>
+                <p>
+                    Browse some of the available training categories in the platform.
+                </p>
+            </div>
+
+            <div class="courses-flex">
+                <div class="course-card">
+                    <span class="pill">Featured</span>
+                    <h3>Programming</h3>
+                    <p>Learn coding fundamentals, software development concepts, and practical programming skills.</p>
+                </div>
+
+                <div class="course-card">
+                    <span class="pill">Featured</span>
+                    <h3>Networking</h3>
+                    <p>Build knowledge in network infrastructure, communication protocols, and connectivity principles.</p>
+                </div>
+
+                <div class="course-card">
+                    <span class="pill">Featured</span>
+                    <h3>Database</h3>
+                    <p>Understand database design, SQL querying, data management, and administration concepts.</p>
+                </div>
+
+                <div class="course-card">
+                    <span class="pill">Featured</span>
+                    <h3>Cybersecurity</h3>
+                    <p>Explore security practices, threat awareness, risk reduction, and protection techniques.</p>
+                </div>
+
+                <div class="course-card">
+                    <span class="pill">Featured</span>
+                    <h3>Cloud</h3>
+                    <p>Discover cloud services, infrastructure models, virtual platforms, and deployment basics.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="lookup">
+            <div class="section-header">
+                <h2>Certificate Lookup</h2>
+                <p>
+                    Verify issued certificates and support employers, trainees, and staff with fast certification checks.
+                </p>
+            </div>
+
+            <div class="lookup-box">
+                <form class="lookup-form" method="get" action="/Certificate/Lookup">
+                    <div class="form-group">
+                        <label>Certificate ID</label>
+                        <input type="text" name="certificateId" placeholder="Enter certificate ID" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Trainee Name</label>
+                        <input type="text" name="traineeName" placeholder="Enter trainee name" />
+                    </div>
+
+                    <div class="form-group button-group">
+                        <button type="submit" class="primary-btn">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="section" id="about">
+            <div class="section-header">
+                <h2>About Us</h2>
+            </div>
+
+            <p class="about-text">
+                Our Training & Certification Platform is designed to support the full professional training lifecycle,
+                from course creation and scheduling to assessments, certification progress, and completion tracking.
+                The system helps training coordinators organize classrooms, assign instructors, prevent scheduling
+                conflicts, and monitor payments. It also gives trainees a clearer way to explore courses, enroll in
+                available sessions, and understand where they stand in a certification track. Instructors can use the
+                platform to manage delivery and record training outcomes, while the organization benefits from replacing
+                manual spreadsheets and email-based processes with a more accurate, reliable, and centralized digital workflow.
+                This creates a smoother experience for all users while improving visibility, coordination, and overall efficiency
+                across the entire training and certification process.
+            </p>
+        </div>
+
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        let slides = [
+            {
+                img: "/images/Stack10.jpeg",
+                title: "Training & Certification Made Simple",
+                text: "Manage instructor-led courses, schedules, enrollments, assessments, payments, and certification progress through one clear and modern platform."
+            },
+            {
+                img: "/images/Stack11.jpeg",
+                title: "Schedule, Train, and Track",
+                text: "Support trainees, instructors, and coordinators with a complete platform for the full training lifecycle."
+            },
+            {
+                img: "/images/Stack12.jpeg",
+                title: "Verify Progress and Certificates",
+                text: "Track course completion, certification eligibility, and training outcomes in one place."
+            }
+        ];
+
+        let index = 0;
+
+        function updateSlide() {
+            document.getElementById("slideImage").src = slides[index].img;
+            document.getElementById("slideTitle").innerText = slides[index].title;
+            document.getElementById("slideText").innerText = slides[index].text;
+
+            let dots = document.querySelectorAll(".dots span");
+            dots.forEach(dot => dot.classList.remove("active"));
+            dots[index].classList.add("active");
+        }
+
+        function nextSlide() {
+            index = (index + 1) % slides.length;
+            updateSlide();
+        }
+
+        function prevSlide() {
+            index = (index - 1 + slides.length) % slides.length;
+            updateSlide();
+        }
+
+        function goSlide(i) {
+            index = i;
+            updateSlide();
+        }
+
+        window.onload = updateSlide;
+    </script>
+}

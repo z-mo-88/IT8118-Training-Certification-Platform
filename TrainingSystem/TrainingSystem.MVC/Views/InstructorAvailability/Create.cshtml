@@ -4,38 +4,89 @@
     ViewData["Title"] = "Add Availability";
 }
 
-<h2>Add Availability</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
 
-<div asp-validation-summary="All" class="text-danger"></div>
+                <div class="card-body p-4 p-lg-5">
+                    <div class="mb-4 text-center">
+                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Add Availability</h3>
+                        <p class="text-muted mb-0">Set your available day and time.</p>
+                    </div>
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="DayOfWeek" class="form-label"></label>
-        <select asp-for="DayOfWeek" class="form-control">
-            <option value="">Select Day</option>
-            <option>Sunday</option>
-            <option>Monday</option>
-            <option>Tuesday</option>
-            <option>Wednesday</option>
-            <option>Thursday</option>
-            <option>Friday</option>
-            <option>Saturday</option>
-        </select>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All"
+                             class="alert alert-danger rounded-3 mb-4"></div>
+                    }
+
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                Day of Week
+                            </label>
+
+                            <select asp-for="DayOfWeek"
+                                    class="form-select"
+                                    style="height: 50px; border-radius: 10px;">
+                                <option value="">Select Day</option>
+                                <option>Sunday</option>
+                                <option>Monday</option>
+                                <option>Tuesday</option>
+                                <option>Wednesday</option>
+                                <option>Thursday</option>
+                                <option>Friday</option>
+                                <option>Saturday</option>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                    Start Time
+                                </label>
+
+                                <input asp-for="StartTime"
+                                       type="time"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                    End Time
+                                </label>
+
+                                <input asp-for="EndTime"
+                                       type="time"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index"
+                               class="btn btn-light fw-semibold"
+                               style="border-radius: 10px;">
+                                Back
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4"
+                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                                Save
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="StartTime" class="form-label"></label>
-        <input asp-for="StartTime" type="time" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="EndTime" class="form-label"></label>
-        <input asp-for="EndTime" type="time" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

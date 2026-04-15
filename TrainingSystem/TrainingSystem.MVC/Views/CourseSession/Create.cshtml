@@ -4,47 +4,105 @@
     ViewData["Title"] = "Create Session";
 }
 
-<h2>Create Course Session</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-9">
+            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
 
-<form asp-action="Create">
-    <div class="form-group">
-        <label>Course</label>
-        <select asp-for="CourseId" asp-items="ViewBag.Courses" class="form-control"></select>
+                <div class="card-body p-4 p-lg-5">
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Create Course Session</h3>
+                        <p class="text-muted mb-0">Schedule a new session for a course.</p>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All" class="alert alert-danger rounded-3 mb-4"></div>
+                    }
+
+                    <form asp-action="Create" method="post">
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Course</label>
+                                <select asp-for="CourseId"
+                                        asp-items="ViewBag.Courses"
+                                        class="form-select"
+                                        style="height: 50px; border-radius: 10px;">
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Instructor</label>
+                                <select asp-for="UserId"
+                                        asp-items="ViewBag.Instructors"
+                                        class="form-select"
+                                        style="height: 50px; border-radius: 10px;">
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Room</label>
+                                <select asp-for="RoomId"
+                                        asp-items="ViewBag.Rooms"
+                                        class="form-select"
+                                        style="height: 50px; border-radius: 10px;">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Date</label>
+                                <input asp-for="SessionDate"
+                                       type="date"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Start Time</label>
+                                <input asp-for="StartTime"
+                                       type="time"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">End Time</label>
+                                <input asp-for="EndTime"
+                                       type="time"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">Capacity</label>
+                            <input asp-for="SessionCapacity"
+                                   class="form-control"
+                                   placeholder="Enter session capacity"
+                                   style="height: 50px; border-radius: 10px;" />
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index"
+                               class="btn btn-light fw-semibold"
+                               style="border-radius: 10px;">
+                                Back
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4"
+                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                                Create Session
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label>Instructor</label>
-        <select asp-for="UserId" asp-items="ViewBag.Instructors" class="form-control"></select>
-    </div>
-
-    <div class="form-group">
-        <label>Room</label>
-        <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-control"></select>
-    </div>
-
-    <div class="form-group">
-        <label>Date</label>
-        <input asp-for="SessionDate" type="date" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label>Start Time</label>
-        <input asp-for="StartTime" type="time" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label>End Time</label>
-        <input asp-for="EndTime" type="time" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label>Capacity</label>
-        <input asp-for="SessionCapacity" class="form-control" />
-    </div>
-
-    <br />
-    <button type="submit" class="btn btn-success">Create</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
-</form>
-
-<div asp-validation-summary="All" class="text-danger"></div>
+</div>

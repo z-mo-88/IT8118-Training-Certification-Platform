@@ -4,62 +4,99 @@
     ViewData["Title"] = "My Notifications";
 }
 
-<h2 class="mb-4">My Notifications</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
 
-<div class="card shadow-sm border-0">
-    <div class="card-body">
-        <table class="table table-bordered table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Message</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th style="width: 220px;" class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    @foreach (var item in Model)
-                    {
-                        <tr class="@(item.IsRead ? "" : "table-warning")">
-                            <td>@item.Message</td>
-                            <td>@item.CreatedAt.ToShortDateString()</td>
-                            <td>
-                                @if (item.IsRead)
-                                {
-                                    <span class="badge bg-success">Read</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">Unread</span>
-                                }
-                            </td>
-                            <td class="text-center">
-                                @if (!item.IsRead)
-                                {
-                                    <a asp-action="MarkAsRead"
-                                       asp-route-id="@item.NotificationId"
-                                       class="btn btn-primary btn-sm me-1">
-                                        Mark as Read
-                                    </a>
-                                }
-                                <a asp-action="Delete"
-                                   asp-route-id="@item.NotificationId"
-                                   class="btn btn-danger btn-sm">
-                                    Delete
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">No notifications found.</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1" style="color: #0a1f5c;">My Notifications</h2>
+        <p class="text-muted mb-0">Stay updated with your latest alerts and messages.</p>
     </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
+                        <tr>
+                            <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Message</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Date</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
+                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 220px;">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr class="@(item.IsRead ? "" : "table-warning")">
+
+                                    <td class="px-4 py-3 @(item.IsRead ? "text-muted" : "fw-semibold")">
+                                        @item.Message
+                                    </td>
+
+                                    <td class="py-3 text-muted">
+                                        @item.CreatedAt.ToShortDateString()
+                                    </td>
+
+                                    <td class="py-3">
+                                        @if (item.IsRead)
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background-color: #198754; color: white;">
+                                                Read
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background-color: #dc3545; color: white;">
+                                                Unread
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="text-center py-3">
+                                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                                            @if (!item.IsRead)
+                                            {
+                                                <a asp-action="MarkAsRead"
+                                                   asp-route-id="@item.NotificationId"
+                                                   class="btn btn-sm fw-semibold text-white px-3"
+                                                   style="background-color: #0a1f5c; border-radius: 10px; border: none;">
+                                                    Mark as Read
+                                                </a>
+                                            }
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.NotificationId"
+                                               class="btn btn-sm fw-semibold px-3 text-white"
+                                               style="background-color: #dc3545; border-radius: 10px; border: none;">
+                                                Delete
+                                            </a>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-5">
+                                    No notifications found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
 </div>

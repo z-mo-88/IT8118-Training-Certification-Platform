@@ -4,17 +4,53 @@
     ViewData["Title"] = "Delete Course";
 }
 
-<h2>Delete Course</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-7 col-xl-6">
+            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
 
-<h4>Are you sure?</h4>
+                <div class="card-body p-4 p-lg-5 text-center">
 
-<div>
-    <p><strong>@Model.Title</strong></p>
-    <p>@Model.Description</p>
+                    <!-- Title -->
+                    <h3 class="fw-bold mb-4" style="color: #0a1f5c;">Delete Course</h3>
+
+                    <!-- Course Info FIRST -->
+                    <div class="mb-4">
+                        <h5 class="fw-semibold mb-2" style="color: #0a1f5c;">
+                            @Model.Title
+                        </h5>
+                        <p class="text-muted mb-0">
+                            @Model.Description
+                        </p>
+                    </div>
+
+                    <!-- Warning AFTER -->
+                    <div class="alert alert-danger rounded-3 mb-4">
+                        <strong>Are you sure?</strong><br />
+                        This action cannot be undone.
+                    </div>
+
+                    <!-- Actions -->
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="CourseId" />
+
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a asp-action="Index"
+                               class="btn btn-light fw-semibold px-4"
+                               style="border-radius: 10px;">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn fw-semibold px-4 text-white"
+                                    style="background-color: #dc3545; border-radius: 10px;">
+                                Delete
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<form asp-action="Delete">
-    <input type="hidden" asp-for="CourseId" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>

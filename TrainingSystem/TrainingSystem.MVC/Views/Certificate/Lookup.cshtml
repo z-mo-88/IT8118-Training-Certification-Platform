@@ -2,35 +2,106 @@
     ViewData["Title"] = "Certificate Lookup";
 }
 
-<h2>Certificate Lookup</h2>
+<div class="container-fluid py-5 px-4 px-lg-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
 
-<form method="post">
-    <div class="form-group">
-        <label>Trainee ID</label>
-        <input name="userId" class="form-control" />
+            <!-- Search Card -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
+                <div class="card-body p-4 p-lg-5">
+
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Certificate Lookup</h3>
+                        <p class="text-muted mb-0">Search for a certificate using trainee ID and reference.</p>
+                    </div>
+
+                    <form method="post">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                    Trainee ID
+                                </label>
+                                <input name="userId"
+                                       class="form-control"
+                                       placeholder="Enter trainee ID"
+                                       style="height: 50px; border-radius: 10px;" />
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                                    Certificate Reference
+                                </label>
+                                <input name="reference"
+                                       class="form-control"
+                                       placeholder="Enter reference number"
+                                       style="height: 50px; border-radius: 10px;" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-5"
+                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                                Search
+                            </button>
+                        </div>
+
+                    </form>
+
+                    @if (ViewBag.ResultMessage != null)
+                    {
+
+                        <div class="alert alert-danger mt-4 rounded-3">
+                            @ViewBag.ResultMessage
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            @if (ViewBag.CertificateId != null)
+            {
+                <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+                    <div class="card-body p-4 p-lg-5">
+
+                        <h5 class="fw-bold mb-4" style="color: #0a1f5c;">
+                            Certificate Details
+                        </h5>
+
+                        <div class="row">
+
+                            <div class="col-md-3 mb-3">
+                                <div class="fw-semibold" style="color: #0a1f5c;">Reference</div>
+                                <div class="text-muted">@ViewBag.CertificateReferenceNumber</div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <div class="fw-semibold" style="color: #0a1f5c;">Status</div>
+                                <div>
+                                    <span class="badge rounded-pill px-3 py-2"
+                                          style="background-color: rgba(10,31,92,0.08); color: #0a1f5c;">
+                                        @ViewBag.CertificateStatus
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <div class="fw-semibold" style="color: #0a1f5c;">Issued Date</div>
+                                <div class="text-muted">@ViewBag.IssuedDate</div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <div class="fw-semibold" style="color: #0a1f5c;">Track</div>
+                                <div class="text-muted">@ViewBag.TrackName</div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+        </div>
     </div>
-
-    <div class="form-group">
-        <label>Certificate Reference</label>
-        <input name="reference" class="form-control" />
-    </div>
-
-    <br />
-    <button type="submit" class="btn btn-primary">Search</button>
-</form>
-
-@if (ViewBag.ResultMessage != null)
-{
-    <p class="text-danger">@ViewBag.ResultMessage</p>
-}
-
-@if (ViewBag.CertificateId != null)
-{
-    <hr />
-    <h4>Certificate Details</h4>
-
-    <p><strong>Reference:</strong> @ViewBag.CertificateReferenceNumber</p>
-    <p><strong>Status:</strong> @ViewBag.CertificateStatus</p>
-    <p><strong>Issued Date:</strong> @ViewBag.IssuedDate</p>
-    <p><strong>Track:</strong> @ViewBag.TrackName</p>
-}
+</div>

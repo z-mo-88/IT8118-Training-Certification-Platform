@@ -4,36 +4,75 @@
     ViewData["Title"] = "Payments";
 }
 
-<h2>Payments</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Amount Paid</th>
-            <th>Status</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Enrollment?.User?.Name</td>
-                <td>@item.Enrollment?.Session?.Course?.Title</td>
-                <td>@item.AmountPaid</td>
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1" style="color: #0a1f5c;">Payments</h2>
+        <p class="text-muted mb-0">Track all recorded payments and their status.</p>
+    </div>
 
-                <td>
-                    <span class="badge
-                        @(item.PaymentStatus == "Paid" ? "bg-success" :
-                                                item.PaymentStatus == "Partial" ? "bg-warning" : "bg-danger")">
-                    @item.PaymentStatus
-                </span>
-            </td>
+    <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
+        <div class="card-body p-0">
 
-                <td>@item.PaidDate</td>
-            </tr>
-                }
-    </tbody>
-</table>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
+                        <tr>
+                            <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Student</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Course</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Amount Paid</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
+                                        @item.Enrollment?.User?.Name
+                                    </td>
+
+                                    <td class="py-3 text-muted">
+                                        @item.Enrollment?.Session?.Course?.Title
+                                    </td>
+
+                                    <td class="py-3 fw-semibold"
+                                        style="color: #0a1f5c;">
+                                        @item.AmountPaid
+                                    </td>
+
+                                    <td class="py-3">
+                                        <span class="badge rounded-pill px-3 py-2
+                                                    @(item.PaymentStatus == "Paid" ? "bg-success" :
+                                                                                            item.PaymentStatus == "Partial" ? "bg-warning text-dark" : "bg-danger")">
+                                    @item.PaymentStatus
+                                </span>
+                            </td>
+
+                                    <td class="py-3 text-muted">
+                                        @item.PaidDate
+                                    </td>
+                                </tr>
+                                                }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-5">
+                                    No payments found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>

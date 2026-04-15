@@ -2,29 +2,83 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
 
-@if (ViewBag.Error != null)
-{
-    <p class="text-danger">@ViewBag.Error</p>
-}
+                <div class="row g-0">
+                    <!-- Left Side -->
+                    <div class="col-md-5 d-none d-md-flex flex-column justify-content-center text-white p-4 p-lg-5"
+                         style="background: linear-gradient(135deg, #0a1f5c, #163d8f); min-height: 500px;">
+                        <h2 class="fw-bold mb-3">Welcome Back</h2>
+                        <p class="mb-0" style="line-height: 1.7;">
+                            Sign in to continue accessing your account and manage everything easily from one place.
+                        </p>
+                    </div>
 
-<form asp-action="Login" method="post">
+                    <!-- Right Side -->
+                    <div class="col-md-7 bg-white">
+                        <div class="p-4 p-lg-5">
+                            <div class="mb-4">
+                                <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Login</h3>
+                                <p class="text-muted mb-0">Please enter your email and password.</p>
+                            </div>
 
-    <div class="mb-3">
-        <label>Email</label>
-        <input type="email" name="email" class="form-control" required />
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="alert alert-danger rounded-3 mb-4" role="alert">
+                                    @ViewBag.Error
+                                </div>
+                            }
+
+                            <form asp-action="Login" method="post">
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label fw-semibold" style="color: #0a1f5c;">Email</label>
+                                    <input id="email"
+                                           type="email"
+                                           name="email"
+                                           class="form-control"
+                                           placeholder="Enter your email"
+                                           style="height: 50px; border-radius: 10px;"
+                                           required />
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-semibold" style="color: #0a1f5c;">Password</label>
+                                    <input id="password"
+                                           type="password"
+                                           name="password"
+                                           class="form-control"
+                                           placeholder="Enter your password"
+                                           style="height: 50px; border-radius: 10px;"
+                                           required />
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit"
+                                            class="btn text-white fw-semibold"
+                                            style="background-color: #0a1f5c; height: 50px; border-radius: 10px; border: none;">
+                                        Login
+                                    </button>
+                                </div>
+
+                            </form>
+
+                            <div class="text-center mt-4">
+                                <span class="text-muted">Don’t have an account?</span>
+                                <a asp-action="Register"
+                                   class="fw-semibold text-decoration-none ms-1"
+                                   style="color: #0a1f5c;">
+                                    Create Account
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Password</label>
-        <input type="password" name="password" class="form-control" required />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Login</button>
-
-</form>
-
-<br />
-
-<a asp-action="Register">Create Account</a>
+</div>

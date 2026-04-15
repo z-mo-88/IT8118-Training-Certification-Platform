@@ -4,36 +4,88 @@
     ViewData["Title"] = "My Sessions";
 }
 
-<h2>My Sessions</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Course</th>
-            <th>Room</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Available Seats</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Course?.Title</td>
-                <td>@item.Room?.RoomName</td>
-                <td>@item.SessionDate.ToShortDateString()</td>
-                <td>@item.StartTime - @item.EndTime</td>
-                <td>@item.Status</td>
-                <td>@item.AvailableSeats</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.SessionId" class="btn btn-info btn-sm">
-                        Details
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1" style="color: #0a1f5c;">My Sessions</h2>
+        <p class="text-muted mb-0">View your assigned course sessions.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
+                        <tr>
+                            <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Course</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Room</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Date</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Time</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Available Seats</th>
+                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
+                                        @item.Course?.Title
+                                    </td>
+
+                                    <td class="py-3 text-muted">
+                                        @item.Room?.RoomName
+                                    </td>
+
+                                    <td class="py-3">
+                                        @item.SessionDate.ToShortDateString()
+                                    </td>
+
+                                    <td class="py-3">
+                                        @item.StartTime - @item.EndTime
+                                    </td>
+
+                                    <td class="py-3">
+                                        <span class="badge rounded-pill px-3 py-2"
+                                              style="background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c;">
+                                            @item.Status
+                                        </span>
+                                    </td>
+
+                                    <td class="py-3 fw-semibold" style="color: #0a1f5c;">
+                                        @item.AvailableSeats
+                                    </td>
+
+                                    <td class="text-center py-3">
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.SessionId"
+                                           class="btn btn-sm fw-semibold px-3 text-white"
+                                           style="background-color: #0a1f5c; border-radius: 10px; border: none;">
+                                            Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    No sessions found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>

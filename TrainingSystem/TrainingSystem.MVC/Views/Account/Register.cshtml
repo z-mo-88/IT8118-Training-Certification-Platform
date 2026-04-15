@@ -4,31 +4,87 @@
     ViewData["Title"] = "Register";
 }
 
-<h2>Create Account</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
 
-<form asp-action="Register" method="post">
+                <div class="row g-0">
+                    <div class="col-md-5 d-none d-md-flex flex-column justify-content-center text-white p-4 p-lg-5"
+                         style="background: linear-gradient(135deg, #0a1f5c, #163d8f); min-height: 520px;">
+                        <h2 class="fw-bold mb-3">Join Us</h2>
+                        <p class="mb-0" style="line-height: 1.7;">
+                            Create your account to start managing your training system and access all features.
+                        </p>
+                    </div>
 
-    <div class="mb-3">
-        <label>Name</label>
-        <input asp-for="Name" class="form-control" />
+                    <div class="col-md-7 bg-white">
+                        <div class="p-4 p-lg-5">
+                            <div class="mb-4">
+                                <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Create Account</h3>
+                                <p class="text-muted mb-0">Fill in your details below.</p>
+                            </div>
+
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <div asp-validation-summary="All"
+                                     class="alert alert-danger rounded-3 mb-4">
+                                </div>
+                            }
+
+                            <form asp-action="Register" method="post">
+
+                                <div class="mb-3">
+                                    <label asp-for="Name" class="form-label fw-semibold" style="color: #0a1f5c;">Name</label>
+                                    <input asp-for="Name"
+                                           class="form-control"
+                                           placeholder="Enter your name"
+                                           style="height: 50px; border-radius: 10px;" />
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label fw-semibold" style="color: #0a1f5c;">Email</label>
+                                    <input asp-for="Email"
+                                           class="form-control"
+                                           placeholder="Enter your email"
+                                           style="height: 50px; border-radius: 10px;" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="PasswordHash" class="form-label fw-semibold" style="color: #0a1f5c;">Password</label>
+                                    <input asp-for="PasswordHash"
+                                           type="password"
+                                           class="form-control"
+                                           placeholder="Enter your password"
+                                           style="height: 50px; border-radius: 10px;" />
+                                    <span asp-validation-for="PasswordHash" class="text-danger small"></span>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit"
+                                            class="btn text-white fw-semibold"
+                                            style="background-color: #0a1f5c; height: 50px; border-radius: 10px; border: none;">
+                                        Register
+                                    </button>
+                                </div>
+
+                            </form>
+
+                            <div class="text-center mt-4">
+                                <span class="text-muted">Already have an account?</span>
+                                <a asp-action="Login"
+                                   class="fw-semibold text-decoration-none ms-1"
+                                   style="color: #0a1f5c;">
+                                    Back to Login
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Email</label>
-        <input asp-for="Email" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label>Password</label>
-        <input asp-for="PasswordHash" type="password" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-success">Register</button>
-
-</form>
-
-<br />
-
-<a asp-action="Login">Back to Login</a>
-
-<div asp-validation-summary="All" class="text-danger"></div>
+</div>
