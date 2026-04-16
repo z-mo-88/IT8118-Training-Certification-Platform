@@ -134,7 +134,7 @@ namespace TrainingSystem.MVC.Controllers
                             ProgressPercent = percent,
                             EligibleDate = completed
     ? DateOnly.FromDateTime(DateTime.Now)
-    : progress?.EligibleDate ?? DateOnly.MinValue
+    : DateOnly.MinValue
                         };
 
                         _context.TraineeCertificationProgresses.Add(progress);

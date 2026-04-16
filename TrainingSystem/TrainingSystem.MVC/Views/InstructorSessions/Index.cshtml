@@ -24,7 +24,7 @@
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Time</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Available Seats</th>
-                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;"></th>
+                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Actions</th>
                         </tr>
                     </thead>
 
@@ -62,12 +62,24 @@
                                     </td>
 
                                     <td class="text-center py-3">
+
+                                        <!-- Details -->
                                         <a asp-action="Details"
                                            asp-route-id="@item.SessionId"
                                            class="btn btn-sm fw-semibold px-3 text-white"
                                            style="background-color: #0a1f5c; border-radius: 10px; border: none;">
                                             Details
                                         </a>
+
+                                        <!-- Students -->
+                                        <a asp-controller="SessionEnrollments"
+                                           asp-action="Index"
+                                           asp-route-id="@item.SessionId"
+                                           class="btn btn-sm fw-semibold px-3 text-white"
+                                           style="background-color: #198754; border-radius: 10px; border: none;">
+                                            Students
+                                        </a>
+
                                     </td>
                                 </tr>
                             }

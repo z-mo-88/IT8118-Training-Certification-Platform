@@ -47,6 +47,11 @@ namespace TrainingSystem.MVC.Controllers
 
             ValidateCourse(course);
 
+            if (course.CategoryId == 0)
+            {
+                ModelState.AddModelError("CategoryId", "Please select a category");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Courses.Add(course);
@@ -78,7 +83,12 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            ValidateCourse(course); 
+            ValidateCourse(course);
+
+            if (course.CategoryId == 0)
+            {
+                ModelState.AddModelError("CategoryId", "Please select a category");
+            }
 
             if (ModelState.IsValid)
             {

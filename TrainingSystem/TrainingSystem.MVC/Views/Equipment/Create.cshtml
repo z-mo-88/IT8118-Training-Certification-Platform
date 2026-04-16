@@ -19,13 +19,15 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold" style="color: #0a1f5c;">
-                                Equipment Name
+                                Description
                             </label>
 
-                            <input asp-for="EquipmentName"
+                            <input asp-for="Description"
                                    class="form-control"
-                                   placeholder="Enter equipment name"
+                                   placeholder="Enter description"
                                    style="height: 50px; border-radius: 10px;" />
+
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid">

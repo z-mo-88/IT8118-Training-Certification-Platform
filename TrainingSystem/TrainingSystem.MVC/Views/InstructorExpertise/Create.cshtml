@@ -22,6 +22,7 @@
                     }
 
                     <form asp-action="Create" method="post">
+                        <input type="hidden" asp-for="UserId" value="@Context.Session.GetInt32("UserId")" />
                         <div class="mb-4">
                             <label asp-for="ExpertiseId"
                                    class="form-label fw-semibold"

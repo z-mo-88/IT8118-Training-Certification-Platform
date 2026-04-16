@@ -30,17 +30,41 @@ namespace TrainingSystem.MVC.Controllers
             return View(data);
         }
 
+        // GET
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Expertise = new SelectList(_context.ExpertiseAreas, "ExpertiseId", "ExpertiseName");
+            LoadDropdown();
             return View();
         }
 
+        // POST
         [HttpPost]
         public async Task<IActionResult> Create(InstructorExpertise model)
         {
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
+
             model.UserId = UserId.Value;
+
+            
+            bool exists = await _context.InstructorExpertises
+                .AnyAsync(e => e.UserId == model.UserId && e.ExpertiseId == model.ExpertiseId);
+
+            if (exists)
+            {
+                ModelState.AddModelError("", "This expertise already added");
+                LoadDropdown();
+                return View(model);
+            }
+
+          
+            if (model.ExpertiseId == 0)
+            {
+                ModelState.AddModelError("", "Please select expertise");
+                LoadDropdown();
+                return View(model);
+            }
 
             _context.InstructorExpertises.Add(model);
             await _context.SaveChangesAsync();
@@ -48,14 +72,27 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // DELETE
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _context.InstructorExpertises.FindAsync(id);
 
-            _context.InstructorExpertises.Remove(item);
-            await _context.SaveChangesAsync();
+            if (item != null)
+            {
+                _context.InstructorExpertises.Remove(item);
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void LoadDropdown()
+        {
+            ViewBag.Expertise = new SelectList(
+                _context.ExpertiseAreas,
+                "ExpertiseId",
+                "ExpertiseName"
+            );
         }
     }
 }
