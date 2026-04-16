@@ -9,93 +9,259 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        .custom-navbar {
+            background-color: #ffffff;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+            .custom-navbar .navbar-brand {
+                color: #0a1f5c !important;
+                font-weight: 700;
+                font-size: 1.75rem;
+                text-decoration: none !important;
+            }
+
+                .custom-navbar .navbar-brand:hover,
+                .custom-navbar .navbar-brand:focus {
+                    color: #0a1f5c !important;
+                    text-decoration: none !important;
+                }
+
+            .custom-navbar .nav-link {
+                color: #0a1f5c !important;
+                font-weight: 500;
+                padding: 0.5rem 0.9rem;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                text-decoration: none !important;
+                box-shadow: none !important;
+                border: none !important;
+                background-image: none !important;
+            }
+
+                .custom-navbar .nav-link:hover,
+                .custom-navbar .nav-link:focus,
+                .custom-navbar .nav-link:active {
+                    color: #0a1f5c !important;
+                    background-color: rgba(10, 31, 92, 0.08) !important;
+                    text-decoration: none !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                    outline: none !important;
+                }
+
+                .custom-navbar .nav-link::after,
+                .custom-navbar .nav-link::before {
+                    display: none !important;
+                }
+
+            .custom-navbar .nav-text {
+                color: #0a1f5c !important;
+                font-weight: 600;
+                padding: 0.5rem 0.9rem;
+                display: inline-block;
+                text-decoration: none !important;
+                border: none !important;
+                box-shadow: none !important;
+                background: transparent !important;
+            }
+
+                .custom-navbar .nav-text:hover,
+                .custom-navbar .nav-text:focus {
+                    color: #0a1f5c !important;
+                    text-decoration: none !important;
+                    background: transparent !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    outline: none !important;
+                }
+
+        .auth-btn {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 8px 18px;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+            display: inline-block;
+            border: none;
+        }
+
+        .login-btn {
+            background-color: #0a1f5c;
+            color: white !important;
+        }
+
+            .login-btn:hover,
+            .login-btn:focus {
+                background-color: #0a1f5c !important;
+                color: white !important;
+                opacity: 0.92;
+                text-decoration: none !important;
+            }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white !important;
+        }
+
+            .logout-btn:hover,
+            .logout-btn:focus {
+                background-color: #c82333 !important;
+                color: white !important;
+                text-decoration: none !important;
+            }
+
+        .content-container {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 24px;
+        }
+
+        footer {
+            background-color: #ffffff;
+            color: #0a1f5c;
+            padding: 14px 0;
+            margin-top: auto;
+            border-top: 1px solid #e9ecef;
+        }
+
+            footer small {
+                color: #0a1f5c;
+            }
+    </style>
 </head>
 
 <body>
+    <div class="page-wrapper">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
+        <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
+            <div class="container-fluid px-4">
 
-            <a class="navbar-brand" href="/">Training System</a>
+                <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png"
+                         alt="logo"
+                         width="28"
+                         height="28" />
+                    Training System
+                </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbarNav">
 
-                <ul class="navbar-nav me-auto">
+                    <ul class="navbar-nav ms-auto d-flex gap-lg-2">
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Certificate/Lookup">Certificate Lookup</a>
-                    </li>
-
-                    @if (Context.Session.GetInt32("RoleId") == 3)
-                    {
-                        <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/CourseSession">Sessions</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Users">Users</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Room">Rooms</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Equipment">Equipment</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/RoomEquipment">Room Equipment</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Instructor">Instructors</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Payment">Payments</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
-                    }
-
-                    @if (Context.Session.GetInt32("RoleId") == 1)
-                    {
-                        <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Enrollments">My Enrollments</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/MyCertificates">My Certificates</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
-                    }
-
-                    @if (Context.Session.GetInt32("RoleId") == 2)
-                    {
-                        <li class="nav-item"><a class="nav-link" href="/InstructorSessions">My Sessions</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/InstructorAvailability">My Availability</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/InstructorExpertise">My Expertise</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
-                    }
-
-                </ul>
-
-                <ul class="navbar-nav">
-                    @if (Context.Session.GetInt32("UserId") != null)
-                    {
                         <li class="nav-item">
-                            <span class="nav-link text-white">
-                                Hello, @Context.Session.GetString("UserName")
-                            </span>
+                            <a class="nav-link" href="/">Home</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-danger" href="/Account/Logout">Logout</a>
+                            <a class="nav-link" href="/Certificate/Lookup">Certificate Lookup</a>
                         </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Account/Login">Login</a>
-                        </li>
-                    }
-                </ul>
 
+                        @if (Context.Session.GetInt32("RoleId") == 3)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/CourseSession">Sessions</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Users">Users</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Room">Rooms</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Equipment">Equipment</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/RoomEquipment">Room Equipment</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Instructor">Instructors</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Payment">Payments</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
+                        }
+
+                        @if (Context.Session.GetInt32("RoleId") == 1)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Enrollments">My Enrollments</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/MyCertificates">My Certificates</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
+                        }
+
+                        @if (Context.Session.GetInt32("RoleId") == 2)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/InstructorSessions">My Sessions</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/InstructorAvailability">My Availability</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/InstructorExpertise">My Expertise</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
+                        }
+
+                    </ul>
+
+                    <ul class="navbar-nav align-items-lg-center gap-2 ms-lg-3">
+                        @if (Context.Session.GetInt32("UserId") != null)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-text">
+                                    Hello, @Context.Session.GetString("UserName")
+                                </span>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="auth-btn logout-btn" href="/Account/Logout">
+                                    Logout
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="auth-btn login-btn" href="/Account/Login">
+                                    Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <div class="container mt-4">
-        @RenderBody()
+        <main class="main-content">
+            <div class="container-fluid content-container px-4">
+                @RenderBody()
+            </div>
+        </main>
+
+        <footer class="text-center">
+            <div class="container-fluid px-4">
+                <small>© 2026 Training System. All rights reserved.</small>
+            </div>
+        </footer>
+
     </div>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
     @RenderSection("Scripts", required: false)
 
 </body>
