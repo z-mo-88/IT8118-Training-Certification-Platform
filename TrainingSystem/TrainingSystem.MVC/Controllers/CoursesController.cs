@@ -17,18 +17,36 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-           
-
             var courses = await _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.PrerequisiteCourse)
                 .Include(c => c.CourseSessions)
                 .ToListAsync();
 
+            if (IsTrainee && UserId != null)
+            {
+                int userId = UserId.Value;
+
+                var enrolledSessionIds = await _context.Enrollments
+                    .Where(e => e.UserId == userId && e.Status != "Dropped")
+                    .Select(e => e.SessionId)
+                    .ToListAsync();
+
+                var passedCourseIds = await _context.AssessmentResults
+                    .Include(a => a.Enrollment)
+                        .ThenInclude(e => e.Session)
+                    .Where(a => a.Enrollment.UserId == userId && a.IsPassed)
+                    .Select(a => a.Enrollment.Session.CourseId)
+                    .Distinct()
+                    .ToListAsync();
+
+                ViewBag.EnrolledSessionIds = enrolledSessionIds;
+                ViewBag.PassedCourseIds = passedCourseIds;
+            }
+
             return View(courses);
         }
 
-        //  CREATE 
         [HttpGet]
         public IActionResult Create()
         {
@@ -63,7 +81,6 @@ namespace TrainingSystem.MVC.Controllers
             return View(course);
         }
 
-        //  EDIT 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -101,7 +118,6 @@ namespace TrainingSystem.MVC.Controllers
             return View(course);
         }
 
-        // DELETE 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -122,7 +138,7 @@ namespace TrainingSystem.MVC.Controllers
 
             var course = await _context.Courses.FindAsync(id);
 
-            if (course != null) 
+            if (course != null)
             {
                 _context.Courses.Remove(course);
                 await _context.SaveChangesAsync();
@@ -131,7 +147,6 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //  VALIDATION 
         private void ValidateCourse(Course course)
         {
             if (course.DurationHours <= 0)
@@ -147,7 +162,6 @@ namespace TrainingSystem.MVC.Controllers
         private void LoadDropdowns()
         {
             ViewBag.Categories = new SelectList(_context.SubjectCategories, "CategoryId", "CategoryName");
-
             ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "Title");
         }
     }

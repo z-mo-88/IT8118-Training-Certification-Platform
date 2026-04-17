@@ -92,15 +92,17 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
 <script>
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("https://localhost:7258/enrollmentHub")
         .build();
 
-    connection.on("EnrollmentUpdated", function (sessionId, seats) {
+    connection.on("EnrollmentUpdated", function (sessionId, availableSeats) {
         const element = document.getElementById("seats-" + sessionId);
         if (element) {
-            element.innerText = seats;
+            element.innerText = availableSeats;
         }
     });
 

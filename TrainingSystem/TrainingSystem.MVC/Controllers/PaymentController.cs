@@ -25,7 +25,7 @@ namespace TrainingSystem.MVC.Controllers
                     .ThenInclude(e => e.User)
                 .Include(p => p.Enrollment)
                     .ThenInclude(e => e.Session)
-                        .ThenInclude(s => s.Course) 
+                        .ThenInclude(s => s.Course)
                 .ToListAsync();
 
             return View(payments);
@@ -47,44 +47,59 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            if (payment.AmountPaid <= 0)
-                ModelState.AddModelError("", "Amount must be greater than 0");
+            ModelState.Remove("Enrollment");
+            ModelState.Remove("PaymentStatus");
+            ModelState.Remove("PaidDate");
 
-            var enrollment = await _context.Enrollments.FindAsync(payment.EnrollmentId);
+            if (payment.EnrollmentId == 0)
+                ModelState.AddModelError("EnrollmentId", "Enrollment is required");
+
+            if (payment.AmountPaid <= 0)
+                ModelState.AddModelError("AmountPaid", "Amount must be greater than 0");
+
+            var enrollment = await _context.Enrollments
+                .Include(e => e.User)
+                .Include(e => e.Session)
+                    .ThenInclude(s => s.Course)
+                .FirstOrDefaultAsync(e => e.EnrollmentId == payment.EnrollmentId);
 
             if (enrollment == null)
-                ModelState.AddModelError("", "Invalid enrollment");
+                ModelState.AddModelError("EnrollmentId", "Invalid enrollment");
 
-            if (ModelState.IsValid)
+            if (enrollment != null)
             {
-                payment.PaidDate = DateOnly.FromDateTime(DateTime.Now);
-
-                if (payment.AmountPaid >= enrollment.OutstandingBalance)
-                {
-                    payment.PaymentStatus = "Paid";
-                }
-                else
-                {
-                    payment.PaymentStatus = "Partial";
-                }
-
-                _context.Payments.Add(payment);
-
-                enrollment.OutstandingBalance -= payment.AmountPaid;
-
                 if (enrollment.OutstandingBalance <= 0)
-                {
-                    enrollment.OutstandingBalance = 0;
-                    enrollment.IsOverdue = false;
-                }
+                    ModelState.AddModelError("EnrollmentId", "This enrollment is already fully paid.");
 
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                if (payment.AmountPaid > enrollment.OutstandingBalance)
+                    ModelState.AddModelError("AmountPaid", $"Amount cannot be more than the remaining balance ({enrollment.OutstandingBalance}).");
             }
 
-            LoadEnrollments();
-            return View(payment);
+            if (!ModelState.IsValid)
+            {
+                LoadEnrollments();
+                return View(payment);
+            }
+
+            payment.PaidDate = DateOnly.FromDateTime(DateTime.Now);
+
+            enrollment!.OutstandingBalance -= payment.AmountPaid;
+
+            if (enrollment.OutstandingBalance <= 0)
+            {
+                enrollment.OutstandingBalance = 0;
+                enrollment.IsOverdue = false;
+                payment.PaymentStatus = "Paid";
+            }
+            else
+            {
+                payment.PaymentStatus = "Partial";
+            }
+
+            _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         private void LoadEnrollments()
@@ -94,11 +109,13 @@ namespace TrainingSystem.MVC.Controllers
                     .Include(e => e.User)
                     .Include(e => e.Session)
                         .ThenInclude(s => s.Course)
+                    .Where(e => e.OutstandingBalance > 0)
                     .Select(e => new
                     {
                         e.EnrollmentId,
-                        Display = e.User.Name + " - " + e.Session.Course.Title
-                    }),
+                        Display = e.User.Name + " - " + e.Session.Course.Title + " (Remaining: " + e.OutstandingBalance + ")"
+                    })
+                    .ToList(),
                 "EnrollmentId",
                 "Display"
             );

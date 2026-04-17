@@ -23,20 +23,47 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(Room room)
         {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            if (string.IsNullOrWhiteSpace(room.RoomName))
+                ModelState.AddModelError("RoomName", "Room name is required");
+
+            if (room.Capacity <= 0)
+                ModelState.AddModelError("Capacity", "Capacity must be greater than 0");
+
+            if (string.IsNullOrWhiteSpace(room.Location))
+                ModelState.AddModelError("Location", "Location is required");
+
+            if (!ModelState.IsValid)
+                return View(room);
+
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             var room = await _context.Rooms.FindAsync(id);
+            if (room == null)
+                return NotFound();
 
             _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();

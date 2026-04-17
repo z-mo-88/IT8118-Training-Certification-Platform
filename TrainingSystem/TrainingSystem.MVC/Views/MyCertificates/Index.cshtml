@@ -3,16 +3,18 @@
 @{
     ViewData["Title"] = "My Certificates";
     var progressList = ViewBag.Progress as List<TrainingSystem.API.Models.TraineeCertificationProgress>;
+    var issuedCertificates = Model?.Where(c => c.CertificateStatus == "Issued").ToList()
+                            ?? new List<TrainingSystem.API.Models.Certificate>();
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
 
     <div class="mb-4">
         <h2 class="fw-bold mb-1" style="color: #0a1f5c;">My Certificates</h2>
-        <p class="text-muted mb-0">View your earned certificates and progress.</p>
+        <p class="text-muted mb-0">View your issued certificates and certification progress.</p>
     </div>
 
-    <!-- Certificates Table -->
+    <!-- Issued Certificates Table -->
     <div class="card border-0 shadow-sm mb-5" style="border-radius: 18px; overflow: hidden;">
         <div class="card-body p-0">
 
@@ -28,9 +30,9 @@
                     </thead>
 
                     <tbody>
-                        @if (Model != null && Model.Any())
+                        @if (issuedCertificates.Any())
                         {
-                            @foreach (var item in Model)
+                            @foreach (var item in issuedCertificates)
                             {
                                 <tr>
                                     <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
@@ -39,8 +41,8 @@
 
                                     <td class="py-3">
                                         <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c;">
-                                            @item.CertificateStatus
+                                              style="background-color: #198754; color: white;">
+                                            Issued
                                         </span>
                                     </td>
 
@@ -58,7 +60,7 @@
                         {
                             <tr>
                                 <td colspan="4" class="text-center text-muted py-5">
-                                    No certificates found.
+                                    No issued certificates yet.
                                 </td>
                             </tr>
                         }
@@ -95,15 +97,21 @@
                         {
                             @foreach (var p in progressList)
                             {
+                                var displayStatus = p.Status;
+                                if (displayStatus == "Certified")
+                                {
+                                    displayStatus = "Issued";
+                                }
+
                                 <tr>
                                     <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
-                                        @p.CertificationTrackId
+                                        @p.CertificationTrack?.TrackName
                                     </td>
 
                                     <td class="py-3">
                                         <span class="badge rounded-pill px-3 py-2"
                                               style="background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c;">
-                                            @p.Status
+                                            @displayStatus
                                         </span>
                                     </td>
 

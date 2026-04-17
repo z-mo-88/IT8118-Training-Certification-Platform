@@ -19,11 +19,12 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index(int id)
         {
-            var auth = AuthorizeRole(2); 
+            var auth = AuthorizeRole(2);
             if (auth != null) return auth;
 
             var enrollments = await _context.Enrollments
                 .Include(e => e.User)
+                .Include(e => e.AssessmentResults)
                 .Include(e => e.Session)
                     .ThenInclude(s => s.Course)
                 .Where(e => e.SessionId == id)

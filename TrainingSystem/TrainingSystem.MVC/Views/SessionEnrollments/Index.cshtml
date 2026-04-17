@@ -30,6 +30,8 @@
                         {
                             @foreach (var item in Model)
                             {
+                                var result = item.AssessmentResults?.FirstOrDefault();
+
                                 <tr>
                                     <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
                                         @item.User?.Name
@@ -51,6 +53,13 @@
                                                style="background-color: #0a1f5c; border-radius: 10px; border: none;">
                                                 Mark Attending
                                             </a>
+                                        }
+                                        else if (item.Status == "Completed")
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background-color: #198754; color: white;">
+                                                Recorded
+                                            </span>
                                         }
                                         else
                                         {
@@ -87,6 +96,30 @@
                                                     Submit
                                                 </button>
                                             </form>
+                                        }
+                                        else if (item.Status == "Completed")
+                                        {
+                                            if (result != null)
+                                            {
+                                                if (result.IsPassed)
+                                                {
+                                                    <span class="badge rounded-pill px-3 py-2"
+                                                          style="background-color: #198754; color: white;">
+                                                        Pass
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge rounded-pill px-3 py-2"
+                                                          style="background-color: #dc3545; color: white;">
+                                                        Fail
+                                                    </span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
                                         }
                                         else
                                         {

@@ -28,14 +28,27 @@ namespace TrainingSystem.MVC.Controllers
             var enrollments = await _context.Enrollments
                 .Include(e => e.Session)
                     .ThenInclude(s => s.Course)
-                .Where(e => e.UserId == userId)
+                .Where(e => e.UserId == userId && e.Status != "Dropped")
                 .OrderByDescending(e => e.EnrollmentDate)
                 .ToListAsync();
+
+            foreach (var e in enrollments)
+            {
+                if (e.Status == "Completed")
+                {
+                    e.OutstandingBalance = 0;
+                    e.IsOverdue = false;
+                }
+                else
+                {
+                    e.IsOverdue = e.OutstandingBalance > 0;
+                }
+            }
 
             return View(enrollments);
         }
 
-        // ENROLL 
+        // ENROLL
         [HttpPost]
         public async Task<IActionResult> Enroll(int sessionId)
         {
@@ -51,15 +64,15 @@ namespace TrainingSystem.MVC.Controllers
             if (session == null)
                 return NotFound();
 
-            //  Already enrolled
+            // Already enrolled (ignore dropped enrollments)
             if (await _context.Enrollments
-                .AnyAsync(e => e.UserId == userId && e.SessionId == sessionId))
+                .AnyAsync(e => e.UserId == userId && e.SessionId == sessionId && e.Status != "Dropped"))
             {
                 TempData["Error"] = "Already enrolled";
                 return RedirectToAction("Index", "Courses");
             }
 
-            //  No seats
+            // No seats
             if (session.AvailableSeats <= 0)
             {
                 TempData["Error"] = "No available seats";
@@ -84,7 +97,6 @@ namespace TrainingSystem.MVC.Controllers
                 }
             }
 
-            // Create enrollment
             var enrollment = new Enrollment
             {
                 UserId = userId,
@@ -95,19 +107,16 @@ namespace TrainingSystem.MVC.Controllers
                 IsOverdue = session.Course.EnrollmentFee > 0
             };
 
-            // Decrease seats
             session.AvailableSeats--;
 
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
 
-            // Notification
             await _notification.Create(
                 userId,
                 $"You enrolled in {session.Course.Title}"
             );
 
-            //  Success message
             TempData["Success"] = "Enrollment successful!";
 
             return RedirectToAction("Index", "Courses");
@@ -158,7 +167,6 @@ namespace TrainingSystem.MVC.Controllers
 
             enrollment.Status = "Dropped";
 
-            // Increase seats
             var session = await _context.CourseSessions.FindAsync(enrollment.SessionId);
             if (session != null)
                 session.AvailableSeats++;

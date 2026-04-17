@@ -16,38 +16,45 @@
                         <p class="text-muted mb-0">Enter room details below.</p>
                     </div>
 
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All"
+                             class="alert alert-danger rounded-3 mb-4"></div>
+                    }
+
                     <form asp-action="Create" method="post">
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                            <label asp-for="RoomName" class="form-label fw-semibold" style="color: #0a1f5c;">
                                 Room Name
                             </label>
                             <input asp-for="RoomName"
                                    class="form-control"
                                    placeholder="Enter room name"
                                    style="height: 50px; border-radius: 10px;" />
+                            <span asp-validation-for="RoomName" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                        <div class="mb-3">
+                            <label asp-for="Capacity" class="form-label fw-semibold" style="color: #0a1f5c;">
                                 Capacity
                             </label>
                             <input asp-for="Capacity"
                                    class="form-control"
                                    placeholder="Enter capacity"
                                    style="height: 50px; border-radius: 10px;" />
+                            <span asp-validation-for="Capacity" class="text-danger"></span>
                         </div>
 
-                        
                         <div class="mb-4">
-                            <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                            <label asp-for="Location" class="form-label fw-semibold" style="color: #0a1f5c;">
                                 Location
                             </label>
-
                             <input asp-for="Location"
                                    class="form-control"
                                    placeholder="Enter location"
                                    style="height: 50px; border-radius: 10px;" />
+                            <span asp-validation-for="Location" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid">
@@ -65,3 +72,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
