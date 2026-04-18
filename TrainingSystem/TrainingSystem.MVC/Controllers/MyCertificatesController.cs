@@ -15,40 +15,25 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var auth = AuthorizeRole(1); // Trainee role
-            if (auth != null) return auth;
-
-            // ✅ FIX: Safe UserId extraction (no warning, no crash)
-            var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null)
-            {
+            if (UserId == null)
                 return RedirectToAction("Login", "Account");
-            }
 
-            int userId = int.Parse(userIdClaim.Value);
+            int userId = UserId.Value;
 
-            // ✅ Get Certificates
-            var certificates = await _context.Certificates
-                .Include(c => c.CertificationTrack)
-                .Where(c => c.UserId == userId)
-                .ToListAsync();
-
-            // ✅ Get Progress
+            // Get progress
             var progress = await _context.TraineeCertificationProgresses
                 .Include(p => p.CertificationTrack)
                 .Where(p => p.UserId == userId)
                 .ToListAsync();
 
-            // ✅ FIX: Prevent progress > 100%
-            foreach (var p in progress)
-            {
-                p.ProgressPercent = Math.Min(p.ProgressPercent, 100);
-            }
+            // Get certificates separately
+            var certificates = await _context.Certificates
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
 
-            // ✅ Send to View
-            ViewBag.Progress = progress;
+            ViewBag.Certificates = certificates;
 
-            return View(certificates);
+            return View(progress);
         }
     }
 }

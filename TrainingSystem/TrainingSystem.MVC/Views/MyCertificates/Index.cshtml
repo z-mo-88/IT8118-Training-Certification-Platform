@@ -1,159 +1,74 @@
-﻿@model IEnumerable<TrainingSystem.API.Models.Certificate>
+﻿@model IEnumerable<TrainingSystem.API.Models.TraineeCertificationProgress>
 
 @{
-    ViewData["Title"] = "My Certificates";
-    var progressList = ViewBag.Progress as List<TrainingSystem.API.Models.TraineeCertificationProgress>;
-    var issuedCertificates = Model?.Where(c => c.CertificateStatus == "Issued").ToList()
-                            ?? new List<TrainingSystem.API.Models.Certificate>();
+    ViewData["Title"] = "My Certification Progress";
+    var certs = ViewBag.Certificates as List<TrainingSystem.API.Models.Certificate>;
 }
 
-<div class="container-fluid py-5 px-3 px-md-5">
+<div class="container py-5">
 
-    <div class="mb-4">
-        <h2 class="fw-bold mb-1" style="color: #0a1f5c;">My Certificates</h2>
-        <p class="text-muted mb-0">View your issued certificates and certification progress.</p>
-    </div>
+    <h2 class="mb-4 fw-bold" style="color:#0a1f5c;">
+        My Certification Progress
+    </h2>
 
-    <!-- Issued Certificates Table -->
-    <div class="card border-0 shadow-sm mb-5" style="border-radius: 18px; overflow: hidden;">
-        <div class="card-body p-0">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            var cert = certs?.FirstOrDefault(c =>
+            c.CertificationTrackId == item.CertificationTrackId);
 
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
-                        <tr>
-                            <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Track</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Issued Date</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Reference</th>
-                        </tr>
-                    </thead>
+            <div class="card mb-4 shadow-sm" style="border-radius:15px;">
+                <div class="card-body">
 
-                    <tbody>
-                        @if (issuedCertificates.Any())
-                        {
-                            @foreach (var item in issuedCertificates)
-                            {
-                                <tr>
-                                    <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
-                                        @item.CertificationTrack?.TrackName
-                                    </td>
+                    <h5 class="fw-bold mb-3" style="color:#0a1f5c;">
+                        @item.CertificationTrack?.TrackName
+                    </h5>
 
-                                    <td class="py-3">
-                                        <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color: #198754; color: white;">
-                                            Issued
-                                        </span>
-                                    </td>
+                    <!-- Progress -->
+                    <p><strong>Progress:</strong> @item.ProgressPercent %</p>
 
-                                    <td class="py-3 text-muted">
-                                        @item.IssuedDate
-                                    </td>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success"
+                             style="width:@item.ProgressPercent%">
+                            @item.ProgressPercent%
+                        </div>
+                    </div>
 
-                                    <td class="py-3 text-muted">
-                                        @item.CertificateReferenceNumber
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-5">
-                                    No issued certificates yet.
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
+                    <!-- Status -->
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="badge bg-info">@item.Status</span>
+                    </p>
 
-                </table>
+                    <!-- Eligible date -->
+                    @if (item.Status == "Eligible")
+                    {
+                        <p><strong>Eligible Date:</strong> @item.EligibleDate</p>
+                    }
+
+                    <!-- Certificate -->
+                    @if (item.Status == "Eligible" && cert != null)
+                    {
+                        <div class="alert alert-success mt-3">
+                            🎓 <strong>Certificate Issued!</strong><br />
+                            Reference: <b>@cert.CertificateReferenceNumber</b>
+                        </div>
+                    }
+                    else if (item.Status == "Eligible")
+                    {
+                        <div class="alert alert-warning mt-3">
+                            Certificate is being generated...
+                        </div>
+                    }
+
+                </div>
             </div>
-
-        </div>
-    </div>
-
-    <!-- Progress Section -->
-    <div class="mb-4">
-        <h3 class="fw-bold mb-1" style="color: #0a1f5c;">Certification Progress</h3>
-        <p class="text-muted mb-0">Track your progress toward certifications.</p>
-    </div>
-
-    <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
-        <div class="card-body p-0">
-
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
-                        <tr>
-                            <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Track</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Progress</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Eligible Date</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (progressList != null && progressList.Any())
-                        {
-                            @foreach (var p in progressList)
-                            {
-                                var displayStatus = p.Status;
-                                if (displayStatus == "Certified")
-                                {
-                                    displayStatus = "Issued";
-                                }
-
-                                <tr>
-                                    <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
-                                        @p.CertificationTrack?.TrackName
-                                    </td>
-
-                                    <td class="py-3">
-                                        <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c;">
-                                            @displayStatus
-                                        </span>
-                                    </td>
-
-                                    <td class="py-3">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="progress w-100" style="height: 8px; border-radius: 10px;">
-                                                <div class="progress-bar"
-                                                     role="progressbar"
-                                                     style="width: @p.ProgressPercent%; background-color: #0a1f5c;">
-                                                </div>
-                                            </div>
-                                            <span class="small text-muted">@p.ProgressPercent%</span>
-                                        </div>
-                                    </td>
-
-                                    <td class="py-3 text-muted">
-                                        @if (p.EligibleDate != DateOnly.MinValue)
-                                        {
-                                            @p.EligibleDate
-                                        }
-                                        else
-                                        {
-                                            <span>-</span>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-5">
-                                    No progress data available.
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-
-                </table>
-            </div>
-
-        </div>
-    </div>
+        }
+    }
+    else
+    {
+        <p class="text-muted">No certification progress found.</p>
+    }
 
 </div>

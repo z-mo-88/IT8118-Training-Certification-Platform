@@ -12,7 +12,7 @@ namespace TrainingSystem.MVC.Services
             _context = context;
         }
 
-        public async Task Create(int userId, string message)
+        public async Task CreateNotification(int userId, string message)
         {
             var notification = new Notification
             {
