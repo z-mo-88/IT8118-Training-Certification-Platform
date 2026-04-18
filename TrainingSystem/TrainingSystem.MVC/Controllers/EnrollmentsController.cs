@@ -17,7 +17,7 @@ namespace TrainingSystem.MVC.Controllers
             _notification = notification;
         }
 
-        // VIEW MY ENROLLMENTS
+        // ================= VIEW MY ENROLLMENTS =================
         public async Task<IActionResult> Index()
         {
             var auth = AuthorizeRole(1);
@@ -32,23 +32,10 @@ namespace TrainingSystem.MVC.Controllers
                 .OrderByDescending(e => e.EnrollmentDate)
                 .ToListAsync();
 
-            foreach (var e in enrollments)
-            {
-                if (e.Status == "Completed")
-                {
-                    e.OutstandingBalance = 0;
-                    e.IsOverdue = false;
-                }
-                else
-                {
-                    e.IsOverdue = e.OutstandingBalance > 0;
-                }
-            }
-
             return View(enrollments);
         }
 
-        // ENROLL
+        // ================= ENROLL =================
         [HttpPost]
         public async Task<IActionResult> Enroll(int sessionId)
         {
@@ -62,24 +49,33 @@ namespace TrainingSystem.MVC.Controllers
                 .FirstOrDefaultAsync(s => s.SessionId == sessionId);
 
             if (session == null)
-                return NotFound();
-
-            // Already enrolled (ignore dropped enrollments)
-            if (await _context.Enrollments
-                .AnyAsync(e => e.UserId == userId && e.SessionId == sessionId && e.Status != "Dropped"))
             {
-                TempData["Error"] = "Already enrolled";
+                TempData["Error"] = "Session not found";
                 return RedirectToAction("Index", "Courses");
             }
 
-            // No seats
+            // Prevent enrolling in same COURSE 
+            bool alreadyEnrolledInCourse = await _context.Enrollments
+                .Include(e => e.Session)
+                .AnyAsync(e =>
+                    e.UserId == userId &&
+                    e.Status != "Dropped" &&
+                    e.Session.CourseId == session.CourseId);
+
+            if (alreadyEnrolledInCourse)
+            {
+                TempData["Error"] = "You are already enrolled in this course";
+                return RedirectToAction("Index", "Courses");
+            }
+
+            //No seats
             if (session.AvailableSeats <= 0)
             {
                 TempData["Error"] = "No available seats";
                 return RedirectToAction("Index", "Courses");
             }
 
-            // Prerequisite check
+            //Prerequisite check
             if (session.Course.PrerequisiteCourseId != null)
             {
                 bool passed = await _context.AssessmentResults
@@ -92,11 +88,12 @@ namespace TrainingSystem.MVC.Controllers
 
                 if (!passed)
                 {
-                    TempData["Error"] = "Complete prerequisite first";
+                    TempData["Error"] = "You must complete prerequisite first";
                     return RedirectToAction("Index", "Courses");
                 }
             }
 
+            // Create enrollment
             var enrollment = new Enrollment
             {
                 UserId = userId,
@@ -112,17 +109,11 @@ namespace TrainingSystem.MVC.Controllers
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
 
-            await _notification.Create(
-                userId,
-                $"You enrolled in {session.Course.Title}"
-            );
-
             TempData["Success"] = "Enrollment successful!";
 
             return RedirectToAction("Index", "Courses");
         }
-
-        // CONFIRM (Coordinator)
+        // ================= CONFIRM =================
         public async Task<IActionResult> Confirm(int id)
         {
             var auth = AuthorizeRole(3);
@@ -131,25 +122,21 @@ namespace TrainingSystem.MVC.Controllers
             var enrollment = await _context.Enrollments.FindAsync(id);
             if (enrollment == null) return NotFound();
 
+            if (enrollment.OutstandingBalance > 0)
+            {
+                TempData["Error"] = "Cannot confirm until payment is completed";
+                return RedirectToAction("Index", "Courses");
+            }
+
             enrollment.Status = "Confirmed";
             await _context.SaveChangesAsync();
 
-            var session = await _context.CourseSessions
-                .Include(s => s.Course)
-                .FirstOrDefaultAsync(s => s.SessionId == enrollment.SessionId);
-
-            if (session != null)
-            {
-                await _notification.Create(
-                    enrollment.UserId,
-                    $"Your enrollment in {session.Course.Title} has been confirmed"
-                );
-            }
+            TempData["Success"] = "Enrollment confirmed!";
 
             return RedirectToAction("Index", "Courses");
         }
 
-        // DROP
+        // ================= DROP =================
         public async Task<IActionResult> Drop(int id)
         {
             var auth = AuthorizeRole(1);
@@ -160,24 +147,21 @@ namespace TrainingSystem.MVC.Controllers
                     .ThenInclude(s => s.Course)
                 .FirstOrDefaultAsync(e => e.EnrollmentId == id);
 
-            if (enrollment == null) return NotFound();
-
-            if (enrollment.Status == "Dropped")
-                return RedirectToAction(nameof(Index));
+            if (enrollment == null)
+                return NotFound();
 
             enrollment.Status = "Dropped";
 
+            
             var session = await _context.CourseSessions.FindAsync(enrollment.SessionId);
             if (session != null)
                 session.AvailableSeats++;
 
             await _context.SaveChangesAsync();
 
-            await _notification.Create(
-                enrollment.UserId,
-                $"You dropped {enrollment.Session?.Course?.Title ?? "a course session"}"
-            );
+            TempData["Success"] = "Course dropped successfully";
 
+          
             return RedirectToAction(nameof(Index));
         }
     }
