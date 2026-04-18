@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Courses";
-
     var roleId = Context.Session.GetInt32("RoleId");
     var enrolledSessionIds = ViewBag.EnrolledSessionIds as List<int> ?? new List<int>();
     var passedCourseIds = ViewBag.PassedCourseIds as List<int> ?? new List<int>();
@@ -10,50 +9,22 @@
 
 <div class="container-fluid py-5 px-3 px-md-5">
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1" style="color: #0a1f5c;">Courses</h2>
-            <p class="text-muted mb-0">Browse and manage courses.</p>
-        </div>
-
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success">
-                @TempData["Success"]
-            </div>
-        }
-
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["Error"]
-            </div>
-        }
-
-        <!-- ONLY COORDINATOR -->
-        @if (roleId == 3)
-        {
-            <a asp-action="Create"
-               class="btn btn-primary"
-               style="border-radius:10px;">
-                + Create Course
-            </a>
-        }
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1" style="color: #0a1f5c;">Courses</h2>
+        <p class="text-muted mb-0">Browse available courses and manage them.</p>
     </div>
 
-    <!-- COURSES -->
     @foreach (var course in Model)
     {
         <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
             <div class="card-body p-4">
 
-                <!-- COURSE TITLE -->
+                <!-- Course Title -->
                 <h4 class="fw-bold mb-3" style="color: #0a1f5c;">
                     @course.Title
                 </h4>
 
-                <!-- INFO -->
+                <!-- Course Info -->
                 <div class="d-flex flex-wrap gap-2 mb-3">
                     <span class="badge bg-light text-dark px-3 py-2">
                         Category: @course.Category?.CategoryName
@@ -75,96 +46,86 @@
                     }
                 </div>
 
-                <!-- SESSIONS -->
+                <!-- Sessions -->
                 <h5 class="fw-semibold mb-3" style="color: #0a1f5c;">
                     Available Sessions
                 </h5>
 
                 @if (course.CourseSessions != null && course.CourseSessions.Any())
                 {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Seats</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach (var session in course.CourseSessions)
-                            {
-                                bool alreadyEnrolled = enrolledSessionIds.Contains(session.SessionId);
-                                bool sessionFull = session.AvailableSeats <= 0;
-                                bool prerequisiteMissing = course.PrerequisiteCourseId != null
-                                && !passedCourseIds.Contains(course.PrerequisiteCourseId.Value);
-
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead style="background-color: rgba(10, 31, 92, 0.06);">
                                 <tr>
-                                    <td>@session.SessionDate.ToShortDateString()</td>
-                                    <td>@session.StartTime - @session.EndTime</td>
-                                    <td>@session.AvailableSeats</td>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Seats</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
 
-                                    <td>
+                            <tbody>
+                                @foreach (var session in course.CourseSessions)
+                                {
+                                    bool alreadyEnrolled = enrolledSessionIds.Contains(session.SessionId);
+                                    bool sessionFull = session.AvailableSeats <= 0;
+                                    bool prerequisiteMissing = course.PrerequisiteCourseId != null
+                                    && !passedCourseIds.Contains(course.PrerequisiteCourseId.Value);
 
-                                        @if (roleId == 1)
-                                        {
-                                            if (alreadyEnrolled)
+                                    <tr>
+                                        <td>@session.SessionDate.ToShortDateString()</td>
+                                        <td>@session.StartTime - @session.EndTime</td>
+                                        <td>@session.AvailableSeats seats</td>
+
+                                        <td>
+                                            @if (alreadyEnrolled)
                                             {
-                                                <button class="btn btn-secondary btn-sm" disabled>
+                                                <button class="btn btn-sm btn-secondary" disabled>
                                                     Enrolled
                                                 </button>
                                             }
                                             else if (sessionFull)
                                             {
-                                                <button class="btn btn-danger btn-sm" disabled>
+                                                <button class="btn btn-sm btn-danger" disabled>
                                                     Full
                                                 </button>
                                             }
                                             else if (prerequisiteMissing)
                                             {
-                                                <button class="btn btn-warning btn-sm" disabled>
-                                                    Need Prerequisite
+                                                <button class="btn btn-sm btn-warning text-dark" disabled>
+                                                    Prerequisite Required
                                                 </button>
                                             }
                                             else
                                             {
-                                                <form asp-controller="Enrollments" asp-action="Enroll" method="post">
+                                                <form asp-controller="Enrollments"
+                                                      asp-action="Enroll"
+                                                      method="post">
+
                                                     @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="sessionId" value="@session.SessionId" />
-                                                    <button class="btn btn-success btn-sm">Enroll</button>
+
+                                                    <input type="hidden"
+                                                           name="sessionId"
+                                                           value="@session.SessionId" />
+
+                                                    <button class="btn btn-sm btn-success">
+                                                        Enroll
+                                                    </button>
                                                 </form>
                                             }
-                                        }
-                                        else if (roleId == 3)
-                                        {
-                                            <div class="d-flex gap-2">
-
-                                                <a asp-action="Edit"
-                                                   asp-route-id="@course.CourseId"
-                                                   class="btn btn-warning btn-sm">
-                                                    Edit
-                                                </a>
-
-                                                <a asp-action="Delete"
-                                                   asp-route-id="@course.CourseId"
-                                                   class="btn btn-danger btn-sm">
-                                                    Delete
-                                                </a>
-
-                                            </div>
-                                        }
-                                        
-
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
                 else
                 {
-                    <p class="text-muted">No sessions available</p>
+                    <!-- ✅ THIS IS THE FIX -->
+                    <div class="text-center py-3 text-muted">
+                        No sessions available
+                    </div>
                 }
 
             </div>

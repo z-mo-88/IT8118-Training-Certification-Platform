@@ -7,84 +7,103 @@
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="row justify-content-center">
         <div class="col-12 col-xl-9">
-
             <div class="card border-0 shadow-sm" style="border-radius: 18px;">
-                <div class="card-body p-4 p-lg-5">
 
-                    <h3 class="fw-bold mb-4" style="color: #0a1f5c;">
-                        Create Course
-                    </h3>
+                <div class="card-body p-4 p-lg-5">
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Create Course</h3>
+                        <p class="text-muted mb-0">Fill in the details to add a new course.</p>
+                    </div>
 
                     @if (!ViewData.ModelState.IsValid)
                     {
-                        <div asp-validation-summary="All" class="alert alert-danger mb-3"></div>
+                        <div asp-validation-summary="All" class="alert alert-danger rounded-3 mb-4"></div>
                     }
 
                     <form asp-action="Create" method="post">
 
-                        <!-- TITLE -->
                         <div class="mb-3">
-                            <label class="fw-semibold">Title</label>
-                            <input asp-for="Title" class="form-control" />
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">Title</label>
+                            <input asp-for="Title"
+                                   class="form-control"
+                                   placeholder="Enter course title"
+                                   style="height: 50px; border-radius: 10px;" />
                         </div>
 
-                        <!-- DESCRIPTION -->
                         <div class="mb-3">
-                            <label class="fw-semibold">Description</label>
-                            <textarea asp-for="Description" class="form-control"></textarea>
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">Description</label>
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      placeholder="Enter course description"
+                                      style="border-radius: 10px; min-height: 100px;"></textarea>
                         </div>
 
-                        <!-- CATEGORY  -->
                         <div class="mb-3">
-                            <label class="fw-semibold">Category</label>
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">Category</label>
 
                             <select asp-for="CategoryId"
                                     asp-items="ViewBag.Categories"
-                                    class="form-select">
+                                    class="form-select"
+                                    style="height: 50px; border-radius: 10px;">
+
+                                <option value="0">-- Select Category --</option>
+
                             </select>
 
                             <span asp-validation-for="CategoryId" class="text-danger"></span>
                         </div>
 
-                        <!-- NUMBERS -->
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label>Duration</label>
-                                <input asp-for="DurationHours" class="form-control" />
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Duration (Hours)</label>
+                                <input asp-for="DurationHours"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label>Capacity</label>
-                                <input asp-for="DefaultCapacity" class="form-control" />
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Default Capacity</label>
+                                <input asp-for="DefaultCapacity"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label>Fee</label>
-                                <input asp-for="EnrollmentFee" class="form-control" />
+                                <label class="form-label fw-semibold" style="color: #0a1f5c;">Enrollment Fee</label>
+                                <input asp-for="EnrollmentFee"
+                                       class="form-control"
+                                       style="height: 50px; border-radius: 10px;" />
                             </div>
                         </div>
 
-                        <!-- PREREQUISITE -->
-                        <div class="mb-3">
-                            <label>Prerequisite</label>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: #0a1f5c;">Prerequisite Course</label>
                             <select asp-for="PrerequisiteCourseId"
                                     asp-items="ViewBag.Courses"
-                                    class="form-select">
+                                    class="form-select"
+                                    style="height: 50px; border-radius: 10px;">
                                 <option value="">None</option>
                             </select>
                         </div>
 
-                        <!-- BUTTONS -->
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-light">Back</a>
-                            <button class="btn btn-primary">Create</button>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index"
+                               class="btn btn-light fw-semibold"
+                               style="border-radius: 10px;">
+                                Back
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4"
+                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                                Create Course
+                            </button>
                         </div>
 
                     </form>
 
                 </div>
             </div>
-
         </div>
     </div>
 </div>

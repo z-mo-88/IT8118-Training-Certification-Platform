@@ -47,19 +47,8 @@ namespace TrainingSystem.MVC.Controllers
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
-            ModelState.Remove("Course");
-            ModelState.Remove("Room");
-            ModelState.Remove("User");
-            ModelState.Remove("Status");
 
             ValidateSession(session);
-
-            var room = await _context.Rooms.FindAsync(session.RoomId);
-
-            if (room != null && session.SessionCapacity > room.Capacity)
-            {
-                ModelState.AddModelError("", "Session capacity exceeds room capacity");
-            }
 
             var selectedCourse = await _context.Courses
                 .Include(c => c.Category)
@@ -128,7 +117,7 @@ namespace TrainingSystem.MVC.Controllers
 
                 if (createdSession != null)
                 {
-                    await _notification.CreateNotification(
+                    await _notification.Create(
                         createdSession.UserId,
                         $"You have been assigned to teach {createdSession.Course?.Title}"
                     );

@@ -15,7 +15,6 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-        
         public async Task<IActionResult> Index()
         {
             var courses = await _context.Courses
@@ -24,10 +23,31 @@ namespace TrainingSystem.MVC.Controllers
                 .Include(c => c.CourseSessions)
                 .ToListAsync();
 
+            if (IsTrainee && UserId != null)
+            {
+                int userId = UserId.Value;
+
+                var enrolledSessionIds = await _context.Enrollments
+                    .Where(e => e.UserId == userId && e.Status != "Dropped")
+                    .Select(e => e.SessionId)
+                    .ToListAsync();
+
+                var passedCourseIds = await _context.AssessmentResults
+                    .Include(a => a.Enrollment)
+                        .ThenInclude(e => e.Session)
+                    .Where(a => a.Enrollment.UserId == userId && a.IsPassed)
+                    .Select(a => a.Enrollment.Session.CourseId)
+                    .Distinct()
+                    .ToListAsync();
+
+                ViewBag.EnrolledSessionIds = enrolledSessionIds;
+                ViewBag.PassedCourseIds = passedCourseIds;
+            }
+
             return View(courses);
         }
 
-        // ================= CREATE GET =================
+        [HttpGet]
         public IActionResult Create()
         {
             var auth = AuthorizeRole(3);
@@ -37,7 +57,6 @@ namespace TrainingSystem.MVC.Controllers
             return View();
         }
 
-        // ================= CREATE POST =================
         [HttpPost]
         public async Task<IActionResult> Create(Course course)
         {
@@ -47,22 +66,22 @@ namespace TrainingSystem.MVC.Controllers
             ValidateCourse(course);
 
             if (course.CategoryId == 0)
-                ModelState.AddModelError("CategoryId", "Please select a category");
-
-            if (!ModelState.IsValid)
             {
-                ModelState.Remove("CategoryId"); 
-                LoadDropdowns();
-                return View(course);
+                ModelState.AddModelError("CategoryId", "Please select a category");
             }
 
-            _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
+            if (ModelState.IsValid)
+            {
+                _context.Courses.Add(course);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
 
-            return RedirectToAction(nameof(Index));
+            LoadDropdowns();
+            return View(course);
         }
 
-        // ================= EDIT GET =================
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var auth = AuthorizeRole(3);
@@ -75,7 +94,6 @@ namespace TrainingSystem.MVC.Controllers
             return View(course);
         }
 
-        // ================= EDIT POST =================
         [HttpPost]
         public async Task<IActionResult> Edit(Course course)
         {
@@ -85,22 +103,50 @@ namespace TrainingSystem.MVC.Controllers
             ValidateCourse(course);
 
             if (course.CategoryId == 0)
-                ModelState.AddModelError("CategoryId", "Please select a category");
-
-            if (!ModelState.IsValid)
             {
-                ModelState.Remove("CategoryId"); 
-                LoadDropdowns();
-                return View(course);
+                ModelState.AddModelError("CategoryId", "Please select a category");
             }
 
-            _context.Courses.Update(course);
-            await _context.SaveChangesAsync();
+            if (ModelState.IsValid)
+            {
+                _context.Courses.Update(course);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            LoadDropdowns();
+            return View(course);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null) return NotFound();
+
+            return View(course);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            var course = await _context.Courses.FindAsync(id);
+
+            if (course != null)
+            {
+                _context.Courses.Remove(course);
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
-        // ================= VALIDATION =================
         private void ValidateCourse(Course course)
         {
             if (course.DurationHours <= 0)
@@ -113,20 +159,10 @@ namespace TrainingSystem.MVC.Controllers
                 ModelState.AddModelError("", "Fee cannot be negative");
         }
 
-        // ================= DROPDOWNS =================
         private void LoadDropdowns()
         {
-            ViewBag.Categories = new SelectList(
-                _context.SubjectCategories,
-                "CategoryId",
-                "CategoryName"
-            );
-
-            ViewBag.Courses = new SelectList(
-                _context.Courses,
-                "CourseId",
-                "Title"
-            );
+            ViewBag.Categories = new SelectList(_context.SubjectCategories, "CategoryId", "CategoryName");
+            ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "Title");
         }
     }
 }

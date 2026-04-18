@@ -4,27 +4,11 @@
     ViewData["Title"] = "My Enrollments";
 }
 
-
-
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="mb-4">
         <h2 class="fw-bold mb-1" style="color: #0a1f5c;">My Enrollments</h2>
         <p class="text-muted mb-0">Track your enrolled courses, progress, and payment status.</p>
     </div>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["Success"]
-        </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["Error"]
-        </div>
-    }
 
     <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
         <div class="card-body p-0">
@@ -42,7 +26,7 @@
                             <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Actions</th>
                         </tr>
                     </thead>
-                   
+
                     <tbody>
                         @if (Model != null && Model.Any())
                         {
@@ -135,7 +119,6 @@
                             </tr>
                         }
                     </tbody>
-
                 </table>
             </div>
 

@@ -20,42 +20,52 @@ namespace TrainingSystem.MVC.Controllers
             _notification = notification;
         }
 
-        // ================= INDEX =================
         public async Task<IActionResult> Index()
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            var users = await _context.Users
-                .Include(u => u.Role)
-                .ToListAsync();
-
+     var users = await _context.Users
+    .Include(u => u.Role)
+    .ToListAsync();
             return View(users);
         }
 
-        // ================= CREATE INSTRUCTOR (GET) =================
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            LoadRoles();
+            return View();
+        }
         [HttpGet]
         public IActionResult CreateInstructor()
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            return View();
+            var user = new User
+            {
+                RoleId = 2,
+                IsActive = true
+            };
+
+            return View(user);
         }
 
-        // ================= CREATE INSTRUCTOR (POST) =================
         [HttpPost]
-        public async Task<IActionResult> CreateInstructor(User user, string Bio, string Notes)
+        public async Task<IActionResult> CreateInstructor(User user)
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
             CleanModelState();
 
-            user.RoleId = 2; 
+            user.RoleId = 2;
             user.IsActive = true;
 
-            // Duplicate email check
             if (await _context.Users.AnyAsync(u => u.Email == user.Email))
             {
                 ModelState.AddModelError("", "Email already exists");
@@ -65,44 +75,15 @@ namespace TrainingSystem.MVC.Controllers
             {
                 user.PasswordHash = HashPassword(user.PasswordHash);
 
-                // Save user
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                //Create InstructorProfile
-                var profile = new InstructorProfile
-                {
-                    UserId = user.UserId,
-                    Bio = Bio,
-                    Notes = Notes
-                };
-
-                _context.InstructorProfiles.Add(profile);
-                await _context.SaveChangesAsync();
-
-                //Notification
-                await _notification.CreateNotification(
-                    user.UserId,
-                    "Your instructor account has been created"
-                );
-
-                TempData["Success"] = "Instructor created successfully";
+                await _notification.Create(user.UserId, "Your instructor account has been created");
 
                 return RedirectToAction(nameof(Index));
             }
 
             return View(user);
-        }
-
-        // ================= CREATE USER =================
-        [HttpGet]
-        public IActionResult Create()
-        {
-            var auth = AuthorizeRole(3);
-            if (auth != null) return auth;
-
-            LoadRoles();
-            return View();
         }
 
         [HttpPost]
@@ -126,10 +107,7 @@ namespace TrainingSystem.MVC.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                await _notification.CreateNotification(
-                    user.UserId,
-                    "Your account has been created"
-                );
+                await _notification.Create(user.UserId, "Your account has been created");
 
                 return RedirectToAction(nameof(Index));
             }
@@ -138,15 +116,16 @@ namespace TrainingSystem.MVC.Controllers
             return View(user);
         }
 
-        // ================= EDIT =================
         [HttpGet]
+
         public async Task<IActionResult> Edit(int id)
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
             var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
+            if (user == null)
+                return NotFound();
 
             LoadRoles();
             return View(user);
@@ -161,7 +140,8 @@ namespace TrainingSystem.MVC.Controllers
             CleanModelState();
 
             var existingUser = await _context.Users.FindAsync(user.UserId);
-            if (existingUser == null) return NotFound();
+            if (existingUser == null)
+                return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -177,7 +157,6 @@ namespace TrainingSystem.MVC.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
 
@@ -185,15 +164,16 @@ namespace TrainingSystem.MVC.Controllers
             return View(user);
         }
 
-        // ================= DELETE =================
         [HttpGet]
+
         public async Task<IActionResult> Delete(int id)
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
             var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
+            if (user == null)
+                return NotFound();
 
             return View(user);
         }
@@ -214,7 +194,6 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ================= HELPERS =================
         private void LoadRoles()
         {
             ViewBag.Roles = new SelectList(_context.Roles.ToList(), "RoleId", "RoleName");
