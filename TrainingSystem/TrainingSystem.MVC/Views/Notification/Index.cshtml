@@ -21,7 +21,7 @@
                             <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Message</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Date</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
-                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 220px;">Actions</th>
+                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 260px;">Actions</th>
                         </tr>
                     </thead>
 
@@ -62,20 +62,26 @@
 
                                             @if (!item.IsRead)
                                             {
-                                                <a asp-action="MarkAsRead"
-                                                   asp-route-id="@item.NotificationId"
-                                                   class="btn btn-sm fw-semibold text-white px-3"
-                                                   style="background-color: #0a1f5c; border-radius: 10px; border: none;">
-                                                    Mark as Read
-                                                </a>
+                                                <form asp-action="MarkAsRead" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@item.NotificationId" />
+                                                    <button type="submit"
+                                                            class="btn btn-sm fw-semibold text-white px-3"
+                                                            style="background-color: #0a1f5c; border-radius: 10px; border: none;">
+                                                        Mark as Read
+                                                    </button>
+                                                </form>
                                             }
 
-                                            <a asp-action="Delete"
-                                               asp-route-id="@item.NotificationId"
-                                               class="btn btn-sm fw-semibold px-3 text-white"
-                                               style="background-color: #dc3545; border-radius: 10px; border: none;">
-                                                Delete
-                                            </a>
+                                            <form asp-action="Delete" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.NotificationId" />
+                                                <button type="submit"
+                                                        class="btn btn-sm fw-semibold px-3 text-white"
+                                                        style="background-color: #dc3545; border-radius: 10px; border: none;">
+                                                    Delete
+                                                </button>
+                                            </form>
 
                                         </div>
                                     </td>

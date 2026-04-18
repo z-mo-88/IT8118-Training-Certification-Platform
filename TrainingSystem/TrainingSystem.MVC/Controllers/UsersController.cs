@@ -25,9 +25,11 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-     var users = await _context.Users
-    .Include(u => u.Role)
-    .ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.RoleId == 1) // ✅ Trainees only
+                .ToListAsync();
+
             return View(users);
         }
 

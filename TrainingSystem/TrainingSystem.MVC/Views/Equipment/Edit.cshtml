@@ -1,0 +1,61 @@
+﻿@model TrainingSystem.API.Models.Equipment
+
+@{
+    ViewData["Title"] = "Edit Equipment";
+}
+
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-8">
+            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+                <div class="card-body p-4 p-lg-5">
+
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Edit Equipment</h3>
+                        <p class="text-muted mb-0">Update equipment information.</p>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div asp-validation-summary="All" class="alert alert-danger rounded-3 mb-4"></div>
+                    }
+
+                    <form asp-action="Edit" method="post">
+                        <input asp-for="EquipmentId" type="hidden" />
+
+                        <div class="mb-3">
+                            <label asp-for="EquipmentName" class="form-label fw-semibold" style="color: #0a1f5c;">Equipment Name</label>
+                            <input asp-for="EquipmentName" class="form-control" style="height: 50px; border-radius: 10px;" />
+                            <span asp-validation-for="EquipmentName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-semibold" style="color: #0a1f5c;">Description</label>
+                            <input asp-for="Description" class="form-control" style="height: 50px; border-radius: 10px;" />
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-light fw-semibold" style="border-radius: 10px;">
+                                Back
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4"
+                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

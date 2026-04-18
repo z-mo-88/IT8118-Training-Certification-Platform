@@ -1,5 +1,8 @@
-﻿@{
+﻿@using System.Collections
+@{
     ViewData["Title"] = "Certificate Lookup";
+
+    var completedCourses = ViewBag.CompletedCourses as IEnumerable;
 }
 
 <div class="container-fluid py-5 px-4 px-lg-5">
@@ -16,15 +19,18 @@
                     </div>
 
                     <form method="post">
-
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold" style="color: #0a1f5c;">
                                     Trainee ID
                                 </label>
                                 <input name="userId"
+                                       type="number"
+                                       min="1"
+                                       required
                                        class="form-control"
                                        placeholder="Enter trainee ID"
+                                       value="@(ViewBag.SearchedUserId ?? "")"
                                        style="height: 50px; border-radius: 10px;" />
                             </div>
 
@@ -33,8 +39,10 @@
                                     Certificate Reference
                                 </label>
                                 <input name="reference"
+                                       required
                                        class="form-control"
                                        placeholder="Enter reference number"
+                                       value="@(ViewBag.SearchedReference ?? "")"
                                        style="height: 50px; border-radius: 10px;" />
                             </div>
                         </div>
@@ -46,17 +54,14 @@
                                 Search
                             </button>
                         </div>
-
                     </form>
 
                     @if (ViewBag.ResultMessage != null)
                     {
-
                         <div class="alert alert-danger mt-4 rounded-3">
                             @ViewBag.ResultMessage
                         </div>
                     }
-
                 </div>
             </div>
 
@@ -97,6 +102,61 @@
                             </div>
 
                         </div>
+
+                        <hr class="my-4" />
+
+                        <h5 class="fw-bold mb-3" style="color: #0a1f5c;">
+                            Completed Courses
+                        </h5>
+
+                        @if (completedCourses != null)
+                        {
+                            <div class="row">
+                                @{
+                                    bool hasCourses = false;
+                                }
+
+                                @foreach (var course in completedCourses)
+                                {
+                                    hasCourses = true;
+
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div class="border rounded-3 p-3 h-100" style="background-color: #f8f9fc;">
+                                            <div class="fw-semibold" style="color: #0a1f5c;">
+                                                @course.GetType().GetProperty("Title")?.GetValue(course, null)
+                                            </div>
+
+                                            @if (course.GetType().GetProperty("IsRequired") != null)
+                                            {
+                                                var isRequired = course.GetType().GetProperty("IsRequired")?.GetValue(course, null);
+
+                                                <div class="mt-2">
+                                                    <span class="badge rounded-pill px-3 py-2"
+                                                          style="background-color: rgba(10,31,92,0.08); color: #0a1f5c;">
+                                                        @(isRequired != null && (bool)isRequired ? "Required" : "Optional")
+                                                    </span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (!hasCourses)
+                                {
+                                    <div class="col-12">
+                                        <div class="text-muted">
+                                            No completed courses found.
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted">
+                                No completed courses found.
+                            </div>
+                        }
 
                     </div>
                 </div>

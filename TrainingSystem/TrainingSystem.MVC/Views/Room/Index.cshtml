@@ -21,6 +21,13 @@
         </div>
     </div>
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger rounded-3 mb-4">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
     <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
         <div class="card-body p-0">
 
@@ -31,7 +38,7 @@
                             <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Name</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Capacity</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Location</th>
-                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 160px;">Actions</th>
+                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 220px;">Actions</th>
                         </tr>
                     </thead>
 
@@ -57,12 +64,21 @@
                                     </td>
 
                                     <td class="text-center py-3">
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.RoomId"
-                                           class="btn btn-sm fw-semibold px-3 text-white"
-                                           style="background-color: #dc3545; border-radius: 10px; border: none;">
-                                            Delete
-                                        </a>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.RoomId"
+                                               class="btn btn-sm fw-semibold px-3 text-white"
+                                               style="background-color: #0d6efd; border-radius: 10px; border: none;">
+                                                Edit
+                                            </a>
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.RoomId"
+                                               class="btn btn-sm fw-semibold px-3 text-white"
+                                               style="background-color: #dc3545; border-radius: 10px; border: none;">
+                                                Delete
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             }

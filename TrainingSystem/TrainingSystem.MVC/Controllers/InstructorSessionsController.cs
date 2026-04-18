@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
+using TrainingSystem.API.Models;
 
 namespace TrainingSystem.MVC.Controllers
 {
@@ -13,10 +14,9 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-       
         public async Task<IActionResult> Index()
         {
-            var auth = AuthorizeRole(2); 
+            var auth = AuthorizeRole(2);
             if (auth != null) return auth;
 
             int instructorId = UserId.Value;
@@ -32,7 +32,6 @@ namespace TrainingSystem.MVC.Controllers
             return View(sessions);
         }
 
-       
         public async Task<IActionResult> Details(int id)
         {
             var auth = AuthorizeRole(2);
@@ -45,12 +44,88 @@ namespace TrainingSystem.MVC.Controllers
                 .Include(s => s.Room)
                 .FirstOrDefaultAsync(s =>
                     s.SessionId == id &&
-                    s.UserId == instructorId); 
+                    s.UserId == instructorId);
 
             if (session == null)
                 return NotFound();
 
             return View(session);
+        }
+
+        public async Task<IActionResult> Students(int id)
+        {
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
+
+            int instructorId = UserId.Value;
+
+            var session = await _context.CourseSessions
+                .Include(s => s.Course)
+                .Include(s => s.Enrollments)
+                    .ThenInclude(e => e.User)
+                .Include(s => s.Enrollments)
+                    .ThenInclude(e => e.AssessmentResults)
+                .FirstOrDefaultAsync(s =>
+                    s.SessionId == id &&
+                    s.UserId == instructorId);
+
+            if (session == null)
+                return NotFound();
+
+            return View(session);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecordResult(int enrollmentId, bool isPassed, string? remarks)
+        {
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
+
+            int instructorId = UserId.Value;
+
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Session)
+                .Include(e => e.User)
+                .Include(e => e.AssessmentResults)
+                .FirstOrDefaultAsync(e =>
+                    e.EnrollmentId == enrollmentId &&
+                    e.Session.UserId == instructorId);
+
+            if (enrollment == null)
+                return NotFound();
+
+            var existingResult = enrollment.AssessmentResults.FirstOrDefault();
+
+            if (existingResult == null)
+            {
+                var result = new AssessmentResult
+                {
+                    EnrollmentId = enrollment.EnrollmentId,
+                    IsPassed = isPassed,
+                    Remarks = string.IsNullOrWhiteSpace(remarks) ? null : remarks.Trim(),
+                    RecordDate = DateOnly.FromDateTime(DateTime.Now),
+                    RecordTime = TimeOnly.FromDateTime(DateTime.Now)
+                };
+
+                _context.AssessmentResults.Add(result);
+            }
+            else
+            {
+                existingResult.IsPassed = isPassed;
+                existingResult.Remarks = string.IsNullOrWhiteSpace(remarks) ? null : remarks.Trim();
+                existingResult.RecordDate = DateOnly.FromDateTime(DateTime.Now);
+                existingResult.RecordTime = TimeOnly.FromDateTime(DateTime.Now);
+            }
+
+            if (isPassed)
+            {
+                enrollment.Status = "Completed";
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Students), new { id = enrollment.SessionId });
         }
     }
 }

@@ -15,14 +15,15 @@
                         <p class="text-muted mb-0">Select an expertise area to add to your profile.</p>
                     </div>
 
-                    @if (!ViewData.ModelState.IsValid)
+                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
                     {
                         <div asp-validation-summary="All"
                              class="alert alert-danger rounded-3 mb-4"></div>
                     }
 
                     <form asp-action="Create" method="post">
-                        <input type="hidden" asp-for="UserId" value="@Context.Session.GetInt32("UserId")" />
+                        @Html.AntiForgeryToken()
+
                         <div class="mb-4">
                             <label asp-for="ExpertiseId"
                                    class="form-label fw-semibold"
@@ -34,6 +35,7 @@
                                     style="height: 50px; border-radius: 10px;">
                                 <option value="">Select Expertise</option>
                             </select>
+                            <span asp-validation-for="ExpertiseId" class="text-danger small"></span>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">

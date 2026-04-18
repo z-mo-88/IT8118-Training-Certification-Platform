@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TrainingSystem.API.Models.User>
+﻿@model IEnumerable<TrainingSystem.MVC.Models.InstructorDisplayViewModel>
 
 @{
     ViewData["Title"] = "Instructors";
@@ -8,7 +8,7 @@
 
     <div class="mb-4">
         <h2 class="fw-bold mb-1" style="color: #0a1f5c;">Instructors</h2>
-        <p class="text-muted mb-0">View and manage instructor information.</p>
+        <p class="text-muted mb-0">View and manage instructor information, expertise, and availability.</p>
     </div>
 
     <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
@@ -21,7 +21,9 @@
                             <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Name</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Email</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Phone Number</th>
-                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 140px;">Active</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Expertise</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Availability</th>
+                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 140px;">Status</th>
                         </tr>
                     </thead>
 
@@ -41,6 +43,41 @@
 
                                     <td class="py-3 text-muted">
                                         @item.PhoneNumber
+                                    </td>
+
+                                    <td class="py-3">
+                                        @if (item.ExpertiseNames.Any())
+                                        {
+                                            <div class="d-flex flex-wrap gap-2">
+                                                @foreach (var expertise in item.ExpertiseNames)
+                                                {
+                                                    <span class="badge rounded-pill px-3 py-2"
+                                                          style="background-color: rgba(10,31,92,0.08); color: #0a1f5c;">
+                                                        @expertise
+                                                    </span>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No expertise assigned</span>
+                                        }
+                                    </td>
+
+                                    <td class="py-3">
+                                        @if (item.AvailabilityText.Any())
+                                        {
+                                            <ul class="mb-0 ps-3 text-muted">
+                                                @foreach (var availability in item.AvailabilityText)
+                                                {
+                                                    <li>@availability</li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No availability added</span>
+                                        }
                                     </td>
 
                                     <td class="text-center py-3">
@@ -65,7 +102,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-5">
+                                <td colspan="6" class="text-center text-muted py-5">
                                     No instructors found.
                                 </td>
                             </tr>

@@ -28,6 +28,8 @@ namespace TrainingSystem.MVC.Controllers
             return View(notifications);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkAsRead(int id)
         {
             if (UserId == null)
@@ -47,6 +49,8 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             if (UserId == null)

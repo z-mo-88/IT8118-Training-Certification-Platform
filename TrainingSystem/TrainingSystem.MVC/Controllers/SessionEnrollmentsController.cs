@@ -45,42 +45,51 @@ namespace TrainingSystem.MVC.Controllers
                 return NotFound();
 
             enrollment.Status = "Attending";
-
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
         }
 
         [HttpPost]
-        public async Task<IActionResult> RecordResult(int enrollmentId, bool isPassed, string remarks)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecordResult(int enrollmentId, bool isPassed, string? remarks)
         {
             var auth = AuthorizeRole(2);
             if (auth != null) return auth;
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Session)
+                .Include(e => e.AssessmentResults)
                 .FirstOrDefaultAsync(e => e.EnrollmentId == enrollmentId);
 
             if (enrollment == null)
                 return NotFound();
 
-            if (await _context.AssessmentResults.AnyAsync(a => a.EnrollmentId == enrollmentId))
+            var existingResult = await _context.AssessmentResults
+                .FirstOrDefaultAsync(a => a.EnrollmentId == enrollmentId);
+
+            if (existingResult != null)
             {
-                return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
+                existingResult.IsPassed = isPassed;
+                existingResult.Remarks = string.IsNullOrWhiteSpace(remarks) ? null : remarks!.Trim();
+                existingResult.RecordDate = DateOnly.FromDateTime(DateTime.Now);
+                existingResult.RecordTime = TimeOnly.FromDateTime(DateTime.Now);
+            }
+            else
+            {
+                AssessmentResult newResult = new AssessmentResult
+                {
+                    EnrollmentId = enrollmentId,
+                    IsPassed = isPassed,
+                    Remarks = string.IsNullOrWhiteSpace(remarks) ? null : remarks!.Trim(),
+                    RecordDate = DateOnly.FromDateTime(DateTime.Now),
+                    RecordTime = TimeOnly.FromDateTime(DateTime.Now)
+                };
+
+                _context.AssessmentResults.Add(newResult);
             }
 
-            enrollment.Status = "Completed";
-
-            var result = new AssessmentResult
-            {
-                EnrollmentId = enrollmentId,
-                IsPassed = isPassed,
-                Remarks = remarks,
-                RecordDate = DateOnly.FromDateTime(DateTime.Now),
-                RecordTime = TimeOnly.FromDateTime(DateTime.Now)
-            };
-
-            _context.AssessmentResults.Add(result);
+            enrollment.Status = isPassed ? "Completed" : "Attending";
 
             string message = isPassed
                 ? "You passed the course"
@@ -134,8 +143,8 @@ namespace TrainingSystem.MVC.Controllers
                             Status = completed ? "Eligible" : "In Progress",
                             ProgressPercent = percent,
                             EligibleDate = completed
-    ? DateOnly.FromDateTime(DateTime.Now)
-    : DateOnly.MinValue
+                                ? DateOnly.FromDateTime(DateTime.Now)
+                                : DateOnly.MinValue
                         };
 
                         _context.TraineeCertificationProgresses.Add(progress);
