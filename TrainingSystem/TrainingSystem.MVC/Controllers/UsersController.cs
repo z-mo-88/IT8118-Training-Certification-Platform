@@ -204,16 +204,45 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            var user = await _context.Users
+                .Include(u => u.InstructorProfile)
+                .Include(u => u.InstructorExpertises)
+                .Include(u => u.InstructorAvailabilities)
+                .FirstOrDefaultAsync(u => u.UserId == id);
+
+            if (user == null)
+                return NotFound();
+
+           
+            var hasSessions = await _context.CourseSessions
+                .AnyAsync(s => s.UserId == id);
+
+            if (hasSessions)
             {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                TempData["Error"] = "Cannot delete instructor assigned to sessions";
+                return RedirectToAction(nameof(Index));
             }
+
+           
+
+            if (user.InstructorProfile != null)
+                _context.InstructorProfiles.Remove(user.InstructorProfile);
+
+            if (user.InstructorExpertises != null && user.InstructorExpertises.Any())
+                _context.InstructorExpertises.RemoveRange(user.InstructorExpertises);
+
+            if (user.InstructorAvailabilities != null && user.InstructorAvailabilities.Any())
+                _context.InstructorAvailabilities.RemoveRange(user.InstructorAvailabilities);
+
+           
+            _context.Users.Remove(user);
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Instructor deleted successfully";
 
             return RedirectToAction(nameof(Index));
         }
-
         // ================= HELPERS =================
         private void LoadRoles()
         {
