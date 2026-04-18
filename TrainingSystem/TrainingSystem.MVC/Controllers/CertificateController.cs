@@ -9,34 +9,42 @@ namespace TrainingSystem.MVC.Controllers
 
         public CertificateController(IHttpClientFactory factory)
         {
-            _httpClient = factory.CreateClient("ApiClient"); 
+            _httpClient = factory.CreateClient("ApiClient");
         }
 
-        //  GET 
         [HttpGet]
         public IActionResult Lookup()
         {
             return View();
         }
 
-        //  POST 
         [HttpPost]
         public async Task<IActionResult> Lookup(int userId, string reference)
         {
-            if (userId <= 0 || string.IsNullOrEmpty(reference))
+            ViewBag.SearchedUserId = userId;
+            ViewBag.SearchedReference = reference;
+
+            if (userId <= 0 || string.IsNullOrWhiteSpace(reference))
             {
-                ViewBag.ResultMessage = "Please enter valid data";
+                ViewBag.ResultMessage = "Please enter valid trainee ID and certificate reference.";
                 return View();
             }
 
             try
             {
+                reference = reference.Trim();
+
                 var response = await _httpClient.GetAsync(
-                    $"api/Certificate/lookup?userId={userId}&reference={reference}");
+                    $"api/Certificate/lookup?userId={userId}&reference={Uri.EscapeDataString(reference)}");
 
                 if (!response.IsSuccessStatusCode)
                 {
                     ViewBag.ResultMessage = "Certificate not found";
+
+                    // 🔥 Clear old data
+                    ViewBag.CertificateId = null;
+                    ViewBag.CompletedCourses = null;
+
                     return View();
                 }
 
@@ -51,11 +59,44 @@ namespace TrainingSystem.MVC.Controllers
                 ViewBag.IssuedDate = root.GetProperty("issuedDate").GetString();
                 ViewBag.TrackName = root.GetProperty("trackName").GetString();
 
+                if (root.TryGetProperty("completedCourses", out JsonElement completedCoursesElement) &&
+                    completedCoursesElement.ValueKind == JsonValueKind.Array)
+                {
+                    var completedCourses = new List<object>();
+
+                    foreach (var course in completedCoursesElement.EnumerateArray())
+                    {
+                        completedCourses.Add(new
+                        {
+                            CourseId = course.TryGetProperty("courseId", out var courseIdElement)
+                                ? courseIdElement.GetInt32()
+                                : 0,
+
+                            Title = course.TryGetProperty("title", out var titleElement)
+                                ? titleElement.GetString()
+                                : string.Empty,
+
+                            IsRequired = course.TryGetProperty("isRequired", out var isRequiredElement) &&
+                                         isRequiredElement.GetBoolean()
+                        });
+                    }
+
+                    ViewBag.CompletedCourses = completedCourses;
+                }
+                else
+                {
+                    ViewBag.CompletedCourses = new List<object>();
+                }
+
                 ViewBag.ResultMessage = null;
             }
             catch
             {
                 ViewBag.ResultMessage = "Error connecting to server";
+
+                // 🔥 Clear old data
+                ViewBag.CertificateId = null;
+                ViewBag.CompletedCourses = null;
             }
 
             return View();

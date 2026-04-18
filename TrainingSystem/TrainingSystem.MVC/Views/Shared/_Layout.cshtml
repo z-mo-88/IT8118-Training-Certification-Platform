@@ -1,4 +1,19 @@
 ﻿@using Microsoft.AspNetCore.Http
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string ActiveClass(string controller, string? action = null)
+    {
+        if (string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+            (action == null || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase)))
+        {
+            return "active-nav";
+        }
+
+        return "";
+    }
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -79,6 +94,15 @@
                 .custom-navbar .nav-link::after,
                 .custom-navbar .nav-link::before {
                     display: none !important;
+                }
+
+                .custom-navbar .nav-link.active-nav {
+                    color: #0a1f5c !important;
+                    background-color: rgba(10, 31, 92, 0.08) !important;
+                    text-decoration: none !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                    outline: none !important;
                 }
 
             .custom-navbar .nav-text {
@@ -180,40 +204,39 @@
                     <ul class="navbar-nav ms-auto d-flex gap-lg-2">
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
+                            <a class="nav-link @ActiveClass("Home", "Index")" href="/">Home</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/Certificate/Lookup">Certificate Lookup</a>
+                            <a class="nav-link @ActiveClass("Certificate", "Lookup")" href="/Certificate/Lookup">Certificate Lookup</a>
                         </li>
 
                         @if (Context.Session.GetInt32("RoleId") == 3)
                         {
-                            <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/CourseSession">Sessions</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Users">Users</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Room">Rooms</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Equipment">Equipment</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/RoomEquipment">Room Equipment</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Instructor">Instructors</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Payment">Payments</a></li>
-                            
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Courses")" href="/Courses">Courses</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("CourseSession")" href="/CourseSession">Sessions</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Users")" href="/Users">Users</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Room")" href="/Room">Rooms</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Equipment")" href="/Equipment">Equipment</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("RoomEquipment")" href="/RoomEquipment">Room Equipment</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Instructor")" href="/Instructor">Instructors</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Payment")" href="/Payment">Payments</a></li>
                         }
 
                         @if (Context.Session.GetInt32("RoleId") == 1)
                         {
-                            <li class="nav-item"><a class="nav-link" href="/Courses">Courses</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Enrollments">My Enrollments</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/MyCertificates">My Certificates</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Courses")" href="/Courses">Courses</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Enrollments")" href="/Enrollments">My Enrollments</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("MyCertificates")" href="/MyCertificates">My Certificates</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Notification")" href="/Notification">Notifications</a></li>
                         }
 
                         @if (Context.Session.GetInt32("RoleId") == 2)
                         {
-                            <li class="nav-item"><a class="nav-link" href="/InstructorSessions">My Sessions</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/InstructorAvailability">My Availability</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/InstructorExpertise">My Expertise</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Notification">Notifications</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("InstructorSessions")" href="/InstructorSessions">My Sessions</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("InstructorAvailability")" href="/InstructorAvailability">My Availability</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("InstructorExpertise")" href="/InstructorExpertise">My Expertise</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Notification")" href="/Notification">Notifications</a></li>
                         }
 
                     </ul>

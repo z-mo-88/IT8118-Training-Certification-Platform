@@ -39,6 +39,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoomEquipment model)
         {
             var auth = AuthorizeRole(3);
@@ -50,6 +51,15 @@ namespace TrainingSystem.MVC.Controllers
             if (model.Quantity <= 0)
             {
                 ModelState.AddModelError("", "Quantity must be greater than 0");
+            }
+
+            bool duplicateExists = await _context.RoomEquipments.AnyAsync(r =>
+                r.RoomId == model.RoomId &&
+                r.EquipmentId == model.EquipmentId);
+
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "This equipment is already assigned to this room.");
             }
 
             if (ModelState.IsValid)
@@ -81,6 +91,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(RoomEquipment model)
         {
             var auth = AuthorizeRole(3);
@@ -92,6 +103,16 @@ namespace TrainingSystem.MVC.Controllers
             if (model.Quantity <= 0)
             {
                 ModelState.AddModelError("", "Quantity must be greater than 0");
+            }
+
+            bool duplicateExists = await _context.RoomEquipments.AnyAsync(r =>
+                r.RoomEquipmentId != model.RoomEquipmentId &&
+                r.RoomId == model.RoomId &&
+                r.EquipmentId == model.EquipmentId);
+
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "This equipment is already assigned to this room.");
             }
 
             if (ModelState.IsValid)
@@ -111,7 +132,26 @@ namespace TrainingSystem.MVC.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            var item = await _context.RoomEquipments
+                .Include(r => r.Room)
+                .Include(r => r.Equipment)
+                .FirstOrDefaultAsync(r => r.RoomEquipmentId == id);
+
+            if (item == null)
+                return NotFound();
+
+            return View(item);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;

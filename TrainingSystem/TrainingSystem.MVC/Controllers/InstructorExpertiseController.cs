@@ -30,38 +30,44 @@ namespace TrainingSystem.MVC.Controllers
             return View(data);
         }
 
-        // GET
         [HttpGet]
         public IActionResult Create()
         {
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
+
             LoadDropdown();
             return View();
         }
 
-        // POST
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InstructorExpertise model)
         {
             var auth = AuthorizeRole(2);
             if (auth != null) return auth;
 
+            ModelState.Remove("UserId");
+            ModelState.Remove("User");
+            ModelState.Remove("Expertise");
+
             model.UserId = UserId.Value;
 
-            
+            if (model.ExpertiseId == 0)
+            {
+                ModelState.AddModelError("ExpertiseId", "Please select expertise");
+            }
+
             bool exists = await _context.InstructorExpertises
                 .AnyAsync(e => e.UserId == model.UserId && e.ExpertiseId == model.ExpertiseId);
 
             if (exists)
             {
-                ModelState.AddModelError("", "This expertise already added");
-                LoadDropdown();
-                return View(model);
+                ModelState.AddModelError("", "This expertise is already added");
             }
 
-          
-            if (model.ExpertiseId == 0)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Please select expertise");
                 LoadDropdown();
                 return View(model);
             }
@@ -72,16 +78,41 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // DELETE
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var item = await _context.InstructorExpertises.FindAsync(id);
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
 
-            if (item != null)
-            {
-                _context.InstructorExpertises.Remove(item);
-                await _context.SaveChangesAsync();
-            }
+            int userId = UserId.Value;
+
+            var item = await _context.InstructorExpertises
+                .Include(i => i.Expertise)
+                .FirstOrDefaultAsync(i => i.InstructorExpertiseId == id && i.UserId == userId);
+
+            if (item == null)
+                return NotFound();
+
+            return View(item);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
+
+            int userId = UserId.Value;
+
+            var item = await _context.InstructorExpertises
+                .FirstOrDefaultAsync(i => i.InstructorExpertiseId == id && i.UserId == userId);
+
+            if (item == null)
+                return NotFound();
+
+            _context.InstructorExpertises.Remove(item);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
