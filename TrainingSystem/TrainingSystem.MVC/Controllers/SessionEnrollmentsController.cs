@@ -25,9 +25,10 @@ namespace TrainingSystem.MVC.Controllers
 
             var enrollments = await _context.Enrollments
                 .Include(e => e.User)
+                .Include(e => e.AssessmentResults)
                 .Include(e => e.Session)
                     .ThenInclude(s => s.Course)
-                .Where(e => e.SessionId == id)
+                .Where(e => e.SessionId == id && e.Status != "Dropped")
                 .ToListAsync();
 
             ViewBag.SessionId = id;
@@ -60,33 +61,52 @@ namespace TrainingSystem.MVC.Controllers
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Session)
-                    .ThenInclude(s => s.Course)
                 .FirstOrDefaultAsync(e => e.EnrollmentId == enrollmentId);
 
             if (enrollment == null)
                 return NotFound();
 
-            // Update status
+
+            if (string.IsNullOrWhiteSpace(remarks))
+            {
+                TempData["Error"] = "Remarks is required.";
+                return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
+            }
+
+            // UPDATE or INSERT
+            var result = await _context.AssessmentResults
+                .FirstOrDefaultAsync(r => r.EnrollmentId == enrollmentId);
+
+            if (result == null)
+            {
+                result = new AssessmentResult
+                {
+                    EnrollmentId = enrollmentId
+                };
+                _context.AssessmentResults.Add(result);
+            }
+
+            result.IsPassed = isPassed;
+            result.Remarks = remarks;
+            result.RecordDate = DateOnly.FromDateTime(DateTime.Now);
+            result.RecordTime = TimeOnly.FromDateTime(DateTime.Now);
+
             enrollment.Status = "Completed";
 
-            // 2Save result
-            var result = new AssessmentResult
-            {
-                EnrollmentId = enrollmentId,
-                IsPassed = isPassed,
-                Remarks = remarks,
-                RecordDate = DateOnly.FromDateTime(DateTime.Now),
-                RecordTime = TimeOnly.FromDateTime(DateTime.Now)
-            };
-
-            _context.AssessmentResults.Add(result);
+            await _context.SaveChangesAsync();
 
             // Notify trainee
             string message = isPassed
-                ? "You passed the course"
-                : "You did not pass the course";
+                    ? "You passed the course"
+                    : "You did not pass the course";
 
             await _notification.CreateNotification(enrollment.UserId, message);
+
+            return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
+        
+        
+
+        
 
             // ================= CERTIFICATION LOGIC =================
             if (isPassed)

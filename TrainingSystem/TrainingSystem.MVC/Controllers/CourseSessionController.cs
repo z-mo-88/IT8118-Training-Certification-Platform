@@ -122,6 +122,11 @@ namespace TrainingSystem.MVC.Controllers
                 _context.CourseSessions.Add(session);
                 await _context.SaveChangesAsync();
 
+                await _notification.CreateNotification(
+    session.UserId,
+    "You have been assigned to a new session"
+);
+
                 var createdSession = await _context.CourseSessions
                     .Include(s => s.Course)
                     .FirstOrDefaultAsync(s => s.SessionId == session.SessionId);

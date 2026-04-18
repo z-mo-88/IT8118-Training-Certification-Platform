@@ -4,6 +4,13 @@
     ViewData["Title"] = "Session Students";
 }
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
 <div class="container-fluid py-5 px-3 px-md-5">
 
     <div class="mb-4">
@@ -73,35 +80,45 @@
 
                                     <td class="text-center">
 
-                                        <form asp-action="RecordResult"
-                                              method="post"
-                                              class="d-flex gap-2 justify-content-center">
+                                        @if (result != null)
+                                        {
+                                            <span class="text-success fw-semibold">
+                                                Result Recorded
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="RecordResult"
+                                                  method="post"
+                                                  class="d-flex gap-2 justify-content-center">
 
-                                            @Html.AntiForgeryToken()
+                                                @Html.AntiForgeryToken()
 
-                                            <input type="hidden" name="enrollmentId" value="@e.EnrollmentId" />
+                                                <input type="hidden" name="enrollmentId" value="@e.EnrollmentId" />
 
-                                            <input type="text"
-                                                   name="remarks"
-                                                   placeholder="Remarks"
-                                                   class="form-control form-control-sm"
-                                                   style="width:120px;" />
+                                                <input type="text"
+                                                       name="remarks"
+                                                       placeholder="Remarks"
+                                                       class="form-control form-control-sm"
+                                                       style="width:120px;"
+                                                       required />
 
-                                            <button type="submit"
-                                                    name="isPassed"
-                                                    value="true"
-                                                    class="btn btn-sm btn-success">
-                                                Pass
-                                            </button>
+                                                <button type="submit"
+                                                        name="isPassed"
+                                                        value="true"
+                                                        class="btn btn-sm btn-success">
+                                                    Pass
+                                                </button>
 
-                                            <button type="submit"
-                                                    name="isPassed"
-                                                    value="false"
-                                                    class="btn btn-sm btn-danger">
-                                                Fail
-                                            </button>
+                                                <button type="submit"
+                                                        name="isPassed"
+                                                        value="false"
+                                                        class="btn btn-sm btn-danger">
+                                                    Fail
+                                                </button>
 
-                                        </form>
+                                            </form>
+                                        }
 
                                     </td>
                                 </tr>

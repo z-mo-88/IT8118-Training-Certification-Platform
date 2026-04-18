@@ -31,7 +31,7 @@
             </div>
         }
 
-        <!-- ONLY COORDINATOR -->
+        <!-- COORDINATOR -->
         @if (roleId == 3)
         {
             <a asp-action="Create"
@@ -88,6 +88,7 @@
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Seats</th>
+                                <th>Instructor</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -104,15 +105,20 @@
                                     <td>@session.SessionDate.ToShortDateString()</td>
                                     <td>@session.StartTime - @session.EndTime</td>
                                     <td>@session.AvailableSeats</td>
+                                    <td>
+                                    @session.User?.Name <br />
+                                        <small class="text-muted">
+                                            @session.User?.InstructorProfile?.Bio
+                                    </small>
+                                    </td>
 
                                     <td>
-
-                                        @if (roleId == 1)
+                                        @if (roleId == 1) 
                                         {
                                             if (alreadyEnrolled)
                                             {
-                                                <button class="btn btn-secondary btn-sm" disabled>
-                                                    Enrolled
+                                                <button class="btn btn-outline-secondary btn-sm" disabled>
+                                                     Enrolled
                                                 </button>
                                             }
                                             else if (sessionFull)
@@ -132,14 +138,15 @@
                                                 <form asp-controller="Enrollments" asp-action="Enroll" method="post">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="sessionId" value="@session.SessionId" />
-                                                    <button class="btn btn-success btn-sm">Enroll</button>
+                                                    <button class="btn btn-success btn-sm">
+                                                        Enroll
+                                                    </button>
                                                 </form>
                                             }
                                         }
                                         else if (roleId == 3)
                                         {
                                             <div class="d-flex gap-2">
-
                                                 <a asp-action="Edit"
                                                    asp-route-id="@course.CourseId"
                                                    class="btn btn-warning btn-sm">
@@ -151,11 +158,8 @@
                                                    class="btn btn-danger btn-sm">
                                                     Delete
                                                 </a>
-
                                             </div>
                                         }
-                                        
-
                                     </td>
                                 </tr>
                             }

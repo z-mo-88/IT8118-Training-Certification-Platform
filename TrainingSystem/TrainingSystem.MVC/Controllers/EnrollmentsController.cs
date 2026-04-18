@@ -158,6 +158,10 @@ namespace TrainingSystem.MVC.Controllers
                 session.AvailableSeats++;
 
             await _context.SaveChangesAsync();
+            await _notification.CreateNotification(
+    session.UserId,
+    "A trainee enrolled in your session"
+);
 
             TempData["Success"] = "Course dropped successfully";
 

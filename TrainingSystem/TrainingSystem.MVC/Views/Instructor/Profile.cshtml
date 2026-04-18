@@ -1,0 +1,154 @@
+﻿@model TrainingSystem.API.Models.InstructorProfile
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+
+            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+                <div class="card-body p-4 p-lg-5">
+
+                  
+                    <div class="mb-4 text-center">
+                        <h3 class="fw-bold mb-2" style="color:#0a1f5c;">
+                            Edit Profile
+                        </h3>
+                        <p class="text-muted mb-0">
+                            Update your bio and notes.
+                        </p>
+                    </div>
+
+                    <!-- SUCCESS MESSAGE -->
+                    @if (TempData["Success"] != null)
+                    {
+                        <div id="successAlert" class="alert alert-success rounded-3 mb-4">
+                            @TempData["Success"]
+                        </div>
+                    }
+
+                    <form asp-action="Profile" method="post" id="profileForm">
+
+                        <input type="hidden" asp-for="UserId" />
+
+                        <!-- BIO -->
+                        <div class="mb-3">
+                            <label class="fw-semibold">Bio</label>
+
+                            <!-- VIEW MODE -->
+                            <p id="bioText">@Model.Bio</p>
+
+                            <!-- EDIT MODE -->
+                            <textarea id="bioInput"
+                                      asp-for="Bio"
+                                      class="form-control d-none"></textarea>
+                        </div>
+
+                        <!-- NOTES -->
+                        <div class="mb-3">
+                            <label class="fw-semibold">Notes</label>
+
+                            <!-- VIEW MODE -->
+                            <p id="notesText">@Model.Notes</p>
+
+                            <!-- EDIT MODE -->
+                            <textarea id="notesInput"
+                                      asp-for="Notes"
+                                      class="form-control d-none"></textarea>
+                        </div>
+
+                        <!-- BUTTON -->
+                        <button type="button"
+                                id="editBtn"
+                                class="btn btn-secondary">
+                            Edit
+                        </button>
+
+                        <button type="submit"
+                                id="saveBtn"
+                                class="btn btn-primary d-none">
+                            Save Changes
+                        </button>
+
+                        <button type="button"
+                                id="cancelBtn"
+                                class="btn btn-light d-none">
+                            Cancel
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const editBtn = document.getElementById("editBtn");
+            const saveBtn = document.getElementById("saveBtn");
+            const cancelBtn = document.getElementById("cancelBtn");
+
+            const bioText = document.getElementById("bioText");
+            const notesText = document.getElementById("notesText");
+
+            const bioInput = document.getElementById("bioInput");
+            const notesInput = document.getElementById("notesInput");
+
+            let originalBio = bioInput.value;
+            let originalNotes = notesInput.value;
+
+            editBtn.addEventListener("click", function () {
+
+                bioText.classList.add("d-none");
+                notesText.classList.add("d-none");
+
+                bioInput.classList.remove("d-none");
+                notesInput.classList.remove("d-none");
+
+                editBtn.classList.add("d-none");
+                saveBtn.classList.remove("d-none");
+                cancelBtn.classList.remove("d-none");
+            });
+
+            cancelBtn.addEventListener("click", function () {
+
+                bioInput.value = originalBio;
+                notesInput.value = originalNotes;
+
+                bioText.classList.remove("d-none");
+                notesText.classList.remove("d-none");
+
+                bioInput.classList.add("d-none");
+                notesInput.classList.add("d-none");
+
+                editBtn.classList.remove("d-none");
+                saveBtn.classList.add("d-none");
+                cancelBtn.classList.add("d-none");
+            });
+
+            
+            const alert = document.getElementById("successAlert");
+
+            if (alert) {
+                setTimeout(function () {
+
+                    alert.style.transition = "opacity 0.5s";
+                    alert.style.opacity = "0";
+
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 500);
+
+                }, 1000);
+            }
+
+        });
+    </script>
+}

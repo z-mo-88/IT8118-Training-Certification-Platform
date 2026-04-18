@@ -113,6 +113,10 @@ namespace TrainingSystem.MVC.Controllers
 
             CleanModelState();
 
+            
+            user.RoleId = 1;
+            user.IsActive = true;
+
             if (await _context.Users.AnyAsync(u => u.Email == user.Email))
             {
                 ModelState.AddModelError("", "Email already exists");
@@ -121,7 +125,6 @@ namespace TrainingSystem.MVC.Controllers
             if (ModelState.IsValid)
             {
                 user.PasswordHash = HashPassword(user.PasswordHash);
-                user.IsActive = true;
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
@@ -131,10 +134,11 @@ namespace TrainingSystem.MVC.Controllers
                     "Your account has been created"
                 );
 
+                TempData["Success"] = "Trainee created successfully";
+
                 return RedirectToAction(nameof(Index));
             }
 
-            LoadRoles();
             return View(user);
         }
 
@@ -205,6 +209,10 @@ namespace TrainingSystem.MVC.Controllers
             if (auth != null) return auth;
 
             var user = await _context.Users
+                .Include(u => u.Notifications)
+                .Include(u => u.Enrollments)
+                .Include(u => u.TraineeCertificationProgresses)
+                .Include(u => u.Certificates)
                 .Include(u => u.InstructorProfile)
                 .Include(u => u.InstructorExpertises)
                 .Include(u => u.InstructorAvailabilities)
@@ -213,7 +221,7 @@ namespace TrainingSystem.MVC.Controllers
             if (user == null)
                 return NotFound();
 
-           
+            // block if instructor used in sessions
             var hasSessions = await _context.CourseSessions
                 .AnyAsync(s => s.UserId == id);
 
@@ -223,23 +231,40 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // block if trainee has enrollments
+            var hasEnrollments = await _context.Enrollments
+                .AnyAsync(e => e.UserId == id);
+
+            if (hasEnrollments)
+            {
+                TempData["Error"] = "Cannot delete trainee with enrollments";
+                return RedirectToAction(nameof(Index));
+            }
+
            
+            if (user.Notifications.Any())
+                _context.Notifications.RemoveRange(user.Notifications);
+
+            if (user.TraineeCertificationProgresses.Any())
+                _context.TraineeCertificationProgresses.RemoveRange(user.TraineeCertificationProgresses);
+
+            if (user.Certificates.Any())
+                _context.Certificates.RemoveRange(user.Certificates);
 
             if (user.InstructorProfile != null)
                 _context.InstructorProfiles.Remove(user.InstructorProfile);
 
-            if (user.InstructorExpertises != null && user.InstructorExpertises.Any())
+            if (user.InstructorExpertises.Any())
                 _context.InstructorExpertises.RemoveRange(user.InstructorExpertises);
 
-            if (user.InstructorAvailabilities != null && user.InstructorAvailabilities.Any())
+            if (user.InstructorAvailabilities.Any())
                 _context.InstructorAvailabilities.RemoveRange(user.InstructorAvailabilities);
 
-           
             _context.Users.Remove(user);
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Instructor deleted successfully";
+            TempData["Success"] = "User deleted successfully";
 
             return RedirectToAction(nameof(Index));
         }
