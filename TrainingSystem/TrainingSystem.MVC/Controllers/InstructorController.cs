@@ -36,7 +36,7 @@ namespace TrainingSystem.MVC.Controllers
                 PhoneNumber = i.PhoneNumber ?? "",
                 IsActive = i.IsActive,
 
-                // ✅ FIXED
+                
                 Bio = i.InstructorProfile != null ? i.InstructorProfile.Bio : "",
                 Notes = i.InstructorProfile != null ? i.InstructorProfile.Notes : "",
 
