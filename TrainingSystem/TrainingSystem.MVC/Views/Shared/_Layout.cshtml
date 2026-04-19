@@ -219,8 +219,10 @@
                             <li class="nav-item"><a class="nav-link @ActiveClass("Room")" href="/Room">Rooms</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("Equipment")" href="/Equipment">Equipment</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("RoomEquipment")" href="/RoomEquipment">Room Equipment</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("CourseEquipmentRequirement")" href="/CourseEquipmentRequirement">Course Requirements</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("Instructor")" href="/Instructor">Instructors</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("Payment")" href="/Payment">Payments</a></li>
+                            <li class="nav-item"><a class="nav-link @ActiveClass("EnrollmentManagement")" href="/EnrollmentManagement">Enrollments</a></li>
                         }
 
                         @if (Context.Session.GetInt32("RoleId") == 1)

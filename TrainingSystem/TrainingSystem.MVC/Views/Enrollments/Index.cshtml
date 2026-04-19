@@ -4,8 +4,6 @@
     ViewData["Title"] = "My Enrollments";
 }
 
-
-
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="mb-4">
         <h2 class="fw-bold mb-1" style="color: #0a1f5c;">My Enrollments</h2>
@@ -42,15 +40,23 @@
                             <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Actions</th>
                         </tr>
                     </thead>
-                   
+
                     <tbody>
                         @if (Model != null && Model.Any())
                         {
                             @foreach (var item in Model)
                             {
                                 var remainingBalance = item.OutstandingBalance;
-                                var paymentStatus = remainingBalance <= 0 ? "Paid" : "Partial";
-                                var isOverdue = remainingBalance > 0;
+
+                                var paymentStatus = item.Status == "Dropped"
+                                ? "Cancelled"
+                                : remainingBalance <= 0
+                                ? "Paid"
+                                : "Partial";
+
+                                var isOverdue = item.Status == "Dropped"
+                                ? false
+                                : remainingBalance > 0;
 
                                 <tr>
                                     <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
@@ -62,15 +68,25 @@
                                     </td>
 
                                     <td class="py-3">
-                                        <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c; font-weight: 600;">
+                                        @{
+                                            string statusStyle = item.Status switch
+                                            {
+                                                "Completed" => "background-color: #198754; color: white; font-weight: 600;",
+                                                "Dropped" => "background-color: #dc3545; color: white; font-weight: 600;",
+                                                "Confirmed" => "background-color: #0d6efd; color: white; font-weight: 600;",
+                                                "Attending" => "background-color: #20c997; color: white; font-weight: 600;",
+                                                _ => "background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c; font-weight: 600;"
+                                            };
+                                        }
+
+                                        <span class="badge rounded-pill px-3 py-2" style="@statusStyle">
                                             @item.Status
                                         </span>
                                     </td>
 
                                     <td class="py-3 fw-semibold"
-                                        style="color:@(remainingBalance > 0 ? "#dc3545" : "#198754")">
-                                        @remainingBalance
+                                        style="color:@(item.Status == "Dropped" ? "#6c757d" : remainingBalance > 0 ? "#dc3545" : "#198754")">
+                                        @(item.Status == "Dropped" ? "-" : remainingBalance)
                                     </td>
 
                                     <td class="py-3">
@@ -79,6 +95,13 @@
                                             <span class="badge rounded-pill px-3 py-2"
                                                   style="background-color: #198754; color: white;">
                                                 Paid
+                                            </span>
+                                        }
+                                        else if (paymentStatus == "Cancelled")
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background-color: #6c757d; color: white;">
+                                                Cancelled
                                             </span>
                                         }
                                         else
@@ -91,7 +114,14 @@
                                     </td>
 
                                     <td class="py-3">
-                                        @if (isOverdue)
+                                        @if (item.Status == "Dropped")
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background-color: #6c757d; color: white;">
+                                                N/A
+                                            </span>
+                                        }
+                                        else if (isOverdue)
                                         {
                                             <span class="badge rounded-pill px-3 py-2"
                                                   style="background-color: #dc3545; color: white;">

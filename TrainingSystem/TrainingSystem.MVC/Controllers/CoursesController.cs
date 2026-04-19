@@ -77,7 +77,6 @@ namespace TrainingSystem.MVC.Controllers
 
             if (!ModelState.IsValid)
             {
-                ModelState.Remove("CategoryId"); 
                 LoadDropdowns();
                 return View(course);
             }

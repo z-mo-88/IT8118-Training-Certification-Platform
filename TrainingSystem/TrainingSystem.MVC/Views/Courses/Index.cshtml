@@ -31,7 +31,6 @@
             </div>
         }
 
-        <!-- COORDINATOR -->
         @if (roleId == 3)
         {
             <a asp-action="Create"
@@ -48,7 +47,6 @@
         <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
             <div class="card-body p-4">
 
-                <!-- COURSE TITLE -->
                 <h4 class="fw-bold mb-3" style="color: #0a1f5c;">
                     @course.Title
                 </h4>
@@ -104,21 +102,24 @@
                                 <tr>
                                     <td>@session.SessionDate.ToShortDateString()</td>
                                     <td>@session.StartTime - @session.EndTime</td>
-                                    <td>@session.AvailableSeats</td>
+
+                                    <!-- ✅ FIXED: Unique ID for real-time update -->
+                                    <td id="seats-@session.SessionId">@session.AvailableSeats</td>
+
                                     <td>
-                                    @session.User?.Name <br />
+                                        @session.User?.Name <br />
                                         <small class="text-muted">
                                             @session.User?.InstructorProfile?.Bio
-                                    </small>
+                                        </small>
                                     </td>
 
                                     <td>
-                                        @if (roleId == 1) 
+                                        @if (roleId == 1)
                                         {
                                             if (alreadyEnrolled)
                                             {
                                                 <button class="btn btn-outline-secondary btn-sm" disabled>
-                                                     Enrolled
+                                                    Enrolled
                                                 </button>
                                             }
                                             else if (sessionFull)
@@ -176,3 +177,25 @@
     }
 
 </div>
+
+<!-- ✅ SIGNALR SCRIPT -->
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7258/enrollmentHub") // API URL
+            .build();
+
+        connection.on("EnrollmentUpdated", function (sessionId, availableSeats) {
+            const seatCell = document.getElementById("seats-" + sessionId);
+            if (seatCell) {
+                seatCell.textContent = availableSeats;
+            }
+        });
+
+        connection.start()
+            .then(() => console.log("Connected to SignalR"))
+            .catch(err => console.error(err.toString()));
+    </script>
+}

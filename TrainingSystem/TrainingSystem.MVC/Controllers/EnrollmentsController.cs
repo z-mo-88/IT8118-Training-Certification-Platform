@@ -28,7 +28,7 @@ namespace TrainingSystem.MVC.Controllers
             var enrollments = await _context.Enrollments
                 .Include(e => e.Session)
                     .ThenInclude(s => s.Course)
-                .Where(e => e.UserId == userId && e.Status != "Dropped")
+                .Where(e => e.UserId == userId)
                 .OrderByDescending(e => e.EnrollmentDate)
                 .ToListAsync();
 

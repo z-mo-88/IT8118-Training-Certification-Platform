@@ -16,7 +16,6 @@ namespace TrainingSystem.API.Controllers
             _context = context;
         }
 
-        // PUBLIC endpoint (no login required)
         [HttpGet("lookup")]
         [AllowAnonymous]
         public async Task<IActionResult> LookupCertificate(int userId, string reference)
@@ -30,6 +29,7 @@ namespace TrainingSystem.API.Controllers
 
             var certificate = await _context.Certificates
                 .AsNoTracking()
+                .Include(c => c.User)
                 .Include(c => c.CertificationTrack)
                     .ThenInclude(ct => ct.CertificationTrackCourses)
                         .ThenInclude(tc => tc.Course)
@@ -61,6 +61,7 @@ namespace TrainingSystem.API.Controllers
                 certificate.IssuedDate,
                 TrackName = certificate.CertificationTrack.TrackName,
                 certificate.UserId,
+                TraineeName = certificate.User.Name,
                 CompletedCourses = completedCourses
             });
         }

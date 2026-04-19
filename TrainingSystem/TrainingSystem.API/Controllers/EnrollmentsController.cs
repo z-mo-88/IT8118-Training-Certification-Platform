@@ -119,6 +119,12 @@ namespace TrainingSystem.API.Controllers
             if (enrollment == null)
                 return NotFound("Enrollment not found.");
 
+            if (enrollment.OutstandingBalance > 0)
+                return BadRequest("Cannot complete the course until payment is completed.");
+
+            if (enrollment.Status != "Confirmed" && enrollment.Status != "Attending")
+                return BadRequest("Only confirmed or attending enrollments can be completed.");
+
             bool resultAlreadyExists = await _context.AssessmentResults
                 .AnyAsync(a => a.EnrollmentId == request.EnrollmentId);
 
@@ -223,7 +229,7 @@ namespace TrainingSystem.API.Controllers
                                 CertificationTrackId = trackId,
                                 IssuedDate = DateOnly.FromDateTime(DateTime.Now),
                                 CertificateReferenceNumber = GenerateCertificateReference(),
-                                CertificateStatus = "Issued"
+                                CertificateStatus = "Certified"
                             };
 
                             _context.Certificates.Add(certificate);

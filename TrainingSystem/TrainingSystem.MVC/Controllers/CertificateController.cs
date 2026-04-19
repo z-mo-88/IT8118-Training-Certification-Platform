@@ -26,7 +26,10 @@ namespace TrainingSystem.MVC.Controllers
 
             if (userId <= 0 || string.IsNullOrWhiteSpace(reference))
             {
-                ViewBag.ResultMessage = "Please enter valid trainee ID and certificate reference.";
+                ViewBag.ResultMessage = "Please enter both trainee ID and certificate reference.";
+                ViewBag.CertificateId = null;
+                ViewBag.CompletedCourses = null;
+                ViewBag.TraineeName = null;
                 return View();
             }
 
@@ -39,12 +42,10 @@ namespace TrainingSystem.MVC.Controllers
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    ViewBag.ResultMessage = "Certificate not found";
-
-                    // 🔥 Clear old data
+                    ViewBag.ResultMessage = "No certificate was found for this trainee ID and certificate reference.";
                     ViewBag.CertificateId = null;
                     ViewBag.CompletedCourses = null;
-
+                    ViewBag.TraineeName = null;
                     return View();
                 }
 
@@ -55,9 +56,24 @@ namespace TrainingSystem.MVC.Controllers
 
                 ViewBag.CertificateId = root.GetProperty("certificateId").GetInt32();
                 ViewBag.CertificateReferenceNumber = root.GetProperty("certificateReferenceNumber").GetString();
-                ViewBag.CertificateStatus = root.GetProperty("certificateStatus").GetString();
+                var status = root.GetProperty("certificateStatus").GetString();
+
+                ViewBag.CertificateStatus = status switch
+                {
+                    "Pending" => "In Progress",
+                    "pending" => "In Progress",
+                    "Certified" => "Certified",
+                    "certified" => "Certified",
+                    "Eligible" => "Eligible",
+                    "eligible" => "Eligible",
+                    _ => status
+                };
                 ViewBag.IssuedDate = root.GetProperty("issuedDate").GetString();
                 ViewBag.TrackName = root.GetProperty("trackName").GetString();
+
+                ViewBag.TraineeName = root.TryGetProperty("traineeName", out var traineeNameElement)
+                    ? traineeNameElement.GetString()
+                    : "N/A";
 
                 if (root.TryGetProperty("completedCourses", out JsonElement completedCoursesElement) &&
                     completedCoursesElement.ValueKind == JsonValueKind.Array)
@@ -92,11 +108,10 @@ namespace TrainingSystem.MVC.Controllers
             }
             catch
             {
-                ViewBag.ResultMessage = "Error connecting to server";
-
-                // 🔥 Clear old data
+                ViewBag.ResultMessage = "Unable to connect to the server right now. Please try again.";
                 ViewBag.CertificateId = null;
                 ViewBag.CompletedCourses = null;
+                ViewBag.TraineeName = null;
             }
 
             return View();

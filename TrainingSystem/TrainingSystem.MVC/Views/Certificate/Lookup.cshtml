@@ -9,7 +9,6 @@
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10">
 
-            <!-- Search Card -->
             <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
                 <div class="card-body p-4 p-lg-5">
 
@@ -77,26 +76,41 @@
                         <div class="row">
 
                             <div class="col-md-3 mb-3">
+                                <div class="fw-semibold" style="color: #0a1f5c;">Trainee Name</div>
+                                <div class="text-muted">@ViewBag.TraineeName</div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
                                 <div class="fw-semibold" style="color: #0a1f5c;">Reference</div>
                                 <div class="text-muted">@ViewBag.CertificateReferenceNumber</div>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <div class="fw-semibold" style="color: #0a1f5c;">Status</div>
                                 <div>
-                                    <span class="badge rounded-pill px-3 py-2"
-                                          style="background-color: rgba(10,31,92,0.08); color: #0a1f5c;">
-                                        @ViewBag.CertificateStatus
+                                    @{
+                                        var status = ViewBag.CertificateStatus as string;
+                                        string badgeColor = status switch
+                                        {
+                                            "Certified" => "background-color: #d4edda; color: #155724;",
+                                            "Eligible" => "background-color: #fff3cd; color: #856404;",
+                                            "In Progress" => "background-color: #cce5ff; color: #004085;",
+                                            _ => "background-color: rgba(10,31,92,0.08); color: #0a1f5c;"
+                                        };
+                                    }
+
+                                    <span class="badge rounded-pill px-3 py-2" style="@badgeColor">
+                                        @status
                                     </span>
                                 </div>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <div class="fw-semibold" style="color: #0a1f5c;">Issued Date</div>
                                 <div class="text-muted">@ViewBag.IssuedDate</div>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <div class="fw-semibold" style="color: #0a1f5c;">Track</div>
                                 <div class="text-muted">@ViewBag.TrackName</div>
                             </div>

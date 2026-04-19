@@ -48,11 +48,14 @@
                     }
 
                     <!-- Certificate -->
-                    @if (item.Status == "Eligible" && cert != null)
+                    @if ((item.Status == "Eligible" || item.Status == "Certified") && cert != null)
                     {
                         <div class="alert alert-success mt-3">
                             🎓 <strong>Certificate Issued!</strong><br />
-                            Reference: <b>@cert.CertificateReferenceNumber</b>
+
+                            <div>Reference: <b>@cert.CertificateReferenceNumber</b></div>
+                            <div>Issued Date: <b>@cert.IssuedDate</b></div>
+                            <div>Status: <b>@cert.CertificateStatus</b></div>
                         </div>
                     }
                     else if (item.Status == "Eligible")

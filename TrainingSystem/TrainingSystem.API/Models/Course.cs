@@ -33,8 +33,7 @@ public partial class Course
 
     public int? PrerequisiteCourseId { get; set; }
 
-    public virtual SubjectCategory Category { get; set; } = null!;
-
+    public virtual SubjectCategory? Category { get; set; }
     public virtual ICollection<CertificationTrackCourse> CertificationTrackCourses { get; set; } = new List<CertificationTrackCourse>();
 
     public virtual ICollection<CourseEquipmentRequirement> CourseEquipmentRequirements { get; set; } = new List<CourseEquipmentRequirement>();

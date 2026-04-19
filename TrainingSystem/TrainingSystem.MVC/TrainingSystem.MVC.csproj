@@ -24,4 +24,9 @@
     <ProjectReference Include="..\TrainingSystem.API\TrainingSystem.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\NewFolder2\" />
+    <Folder Include="Views\NewFolder\" />
+  </ItemGroup>
+
 </Project>

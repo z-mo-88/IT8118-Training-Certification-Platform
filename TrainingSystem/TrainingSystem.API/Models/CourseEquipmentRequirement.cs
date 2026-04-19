@@ -18,7 +18,6 @@ public partial class CourseEquipmentRequirement
     [Required]
     public int EquipmentId { get; set; }
 
-    public virtual Course Course { get; set; } = null!;
-
-    public virtual Equipment Equipment { get; set; } = null!;
+    public virtual Course? Course { get; set; }
+    public virtual Equipment? Equipment { get; set; }
 }

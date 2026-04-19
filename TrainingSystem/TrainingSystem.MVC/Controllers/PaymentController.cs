@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 
@@ -26,6 +26,7 @@ namespace TrainingSystem.MVC.Controllers
                 .Include(p => p.Enrollment)
                     .ThenInclude(e => e.Session)
                         .ThenInclude(s => s.Course)
+                .OrderByDescending(p => p.PaidDate)
                 .ToListAsync();
 
             return View(payments);
@@ -42,6 +43,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Payment payment)
         {
             var auth = AuthorizeRole(3);
@@ -52,10 +54,10 @@ namespace TrainingSystem.MVC.Controllers
             ModelState.Remove("PaidDate");
 
             if (payment.EnrollmentId == 0)
-                ModelState.AddModelError("EnrollmentId", "Enrollment is required");
+                ModelState.AddModelError("EnrollmentId", "Please select an enrollment.");
 
             if (payment.AmountPaid <= 0)
-                ModelState.AddModelError("AmountPaid", "Amount must be greater than 0");
+                ModelState.AddModelError("AmountPaid", "Amount must be greater than 0.");
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.User)
@@ -64,20 +66,24 @@ namespace TrainingSystem.MVC.Controllers
                 .FirstOrDefaultAsync(e => e.EnrollmentId == payment.EnrollmentId);
 
             if (enrollment == null)
-                ModelState.AddModelError("EnrollmentId", "Invalid enrollment");
+                ModelState.AddModelError("EnrollmentId", "Invalid enrollment.");
 
             if (enrollment != null)
             {
+                if (enrollment.Status == "Dropped")
+                    ModelState.AddModelError("EnrollmentId", "Dropped enrollments cannot receive payments.");
+
                 if (enrollment.OutstandingBalance <= 0)
                     ModelState.AddModelError("EnrollmentId", "This enrollment is already fully paid.");
 
                 if (payment.AmountPaid > enrollment.OutstandingBalance)
-                    ModelState.AddModelError("AmountPaid", $"Amount cannot be more than the remaining balance ({enrollment.OutstandingBalance}).");
+                    ModelState.AddModelError("AmountPaid",
+                        $"Amount cannot be more than the remaining balance ({enrollment.OutstandingBalance}).");
             }
 
             if (!ModelState.IsValid)
             {
-                LoadEnrollments();
+                LoadEnrollments(payment.EnrollmentId);
                 return View(payment);
             }
 
@@ -93,31 +99,38 @@ namespace TrainingSystem.MVC.Controllers
             }
             else
             {
+                enrollment.IsOverdue = true;
                 payment.PaymentStatus = "Partial";
             }
 
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Payment recorded successfully.";
             return RedirectToAction(nameof(Index));
         }
 
-        private void LoadEnrollments()
+        private void LoadEnrollments(int? selectedEnrollmentId = null)
         {
+            var unpaidEnrollments = _context.Enrollments
+                .Include(e => e.User)
+                .Include(e => e.Session)
+                    .ThenInclude(s => s.Course)
+                .Where(e =>
+                    e.OutstandingBalance > 0 &&
+                    e.Status != "Dropped")
+                .Select(e => new
+                {
+                    e.EnrollmentId,
+                    Display = e.User.Name + " - " + e.Session.Course.Title + " (Remaining: " + e.OutstandingBalance + ")"
+                })
+                .ToList();
+
             ViewBag.Enrollments = new SelectList(
-                _context.Enrollments
-                    .Include(e => e.User)
-                    .Include(e => e.Session)
-                        .ThenInclude(s => s.Course)
-                    .Where(e => e.OutstandingBalance > 0)
-                    .Select(e => new
-                    {
-                        e.EnrollmentId,
-                        Display = e.User.Name + " - " + e.Session.Course.Title + " (Remaining: " + e.OutstandingBalance + ")"
-                    })
-                    .ToList(),
+                unpaidEnrollments,
                 "EnrollmentId",
-                "Display"
+                "Display",
+                selectedEnrollmentId
             );
         }
     }
