@@ -13,6 +13,13 @@
         </p>
     </div>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
     <div class="card border-0 shadow-sm" style="border-radius: 18px;">
         <div class="card-body p-0">
 
@@ -29,6 +36,7 @@
                             <th>Bio</th>
                             <th>Notes</th>
                             <th class="text-center">Status</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
 
@@ -38,23 +46,18 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-
-                                    <!-- NAME -->
                                     <td class="px-4 py-3 fw-semibold" style="color:#0a1f5c;">
                                         @item.Name
                                     </td>
 
-                                    <!-- EMAIL -->
                                     <td class="text-muted">
                                         @item.Email
                                     </td>
 
-                                    <!-- PHONE -->
                                     <td class="text-muted">
                                         @item.PhoneNumber
                                     </td>
 
-                                    <!-- EXPERTISE -->
                                     <td>
                                         @if (item.ExpertiseNames.Any())
                                         {
@@ -73,7 +76,6 @@
                                         }
                                     </td>
 
-                                    <!-- AVAILABILITY -->
                                     <td>
                                         @if (item.AvailabilityText.Any())
                                         {
@@ -90,17 +92,14 @@
                                         }
                                     </td>
 
-                                    <!-- BIO -->
                                     <td class="text-muted">
                                         @item.Bio
                                     </td>
 
-                                    <!-- NOTES -->
                                     <td class="text-muted">
                                         @item.Notes
                                     </td>
 
-                                    <!-- STATUS -->
                                     <td class="text-center">
                                         @if (item.IsActive)
                                         {
@@ -116,13 +115,40 @@
                                         }
                                     </td>
 
+                                    <td class="text-center">
+                                        <div class="d-flex flex-column gap-2 align-items-center">
+
+                                            <a href="/InstructorExpertise?userId=@item.UserId"
+                                               class="btn btn-sm fw-semibold text-white px-3"
+                                               style="background-color: #0a1f5c; border-radius: 10px; border: none; min-width: 140px;">
+                                                Edit Expertise
+                                            </a>
+
+                                            <a href="/InstructorAvailability?userId=@item.UserId"
+                                               class="btn btn-sm fw-semibold text-white px-3"
+                                               style="background-color: #20c997; border-radius: 10px; border: none; min-width: 140px;">
+                                                Edit Availability
+                                            </a>
+
+                                            <form asp-action="ToggleStatus" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.UserId" />
+                                                <button type="submit"
+                                                        class="btn btn-sm fw-semibold text-white px-3"
+                                                        style="background-color:@(item.IsActive ? "#dc3545" : "#198754"); border-radius: 10px; border: none; min-width: 140px;">
+                                                    @(item.IsActive ? "Deactivate" : "Activate")
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-5">
+                                <td colspan="9" class="text-center text-muted py-5">
                                     No instructors found.
                                 </td>
                             </tr>

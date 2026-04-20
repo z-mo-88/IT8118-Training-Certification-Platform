@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Delete Expertise";
+    var targetUserId = ViewBag.TargetUserId;
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
@@ -25,9 +26,11 @@
                     <form asp-action="Delete" method="post">
                         @Html.AntiForgeryToken()
                         <input asp-for="InstructorExpertiseId" type="hidden" />
+                        <input type="hidden" name="userId" value="@targetUserId" />
 
                         <div class="d-flex justify-content-between align-items-center">
                             <a asp-action="Index"
+                               asp-route-userId="@targetUserId"
                                class="btn btn-light fw-semibold"
                                style="border-radius: 10px;">
                                 Cancel

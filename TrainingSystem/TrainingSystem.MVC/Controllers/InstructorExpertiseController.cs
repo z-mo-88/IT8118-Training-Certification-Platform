@@ -15,98 +15,211 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            int userId = UserId.Value;
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                if (userId == null)
+                    return NotFound();
+
+                targetUserId = userId.Value;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            bool isInstructor = await _context.Users.AnyAsync(u => u.UserId == targetUserId && u.RoleId == 2);
+            if (!isInstructor)
+                return NotFound();
 
             var data = await _context.InstructorExpertises
                 .Include(e => e.Expertise)
-                .Where(e => e.UserId == userId)
+                .Where(e => e.UserId == targetUserId)
                 .ToListAsync();
+
+            ViewBag.TargetUserId = targetUserId;
 
             return View(data);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
+
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                if (userId == null)
+                    return NotFound();
+
+                targetUserId = userId.Value;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            bool isInstructor = await _context.Users.AnyAsync(u => u.UserId == targetUserId && u.RoleId == 2);
+            if (!isInstructor)
+                return NotFound();
 
             LoadDropdown();
-            return View();
+            ViewBag.TargetUserId = targetUserId;
+
+            var model = new InstructorExpertise
+            {
+                UserId = targetUserId
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InstructorExpertise model)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            ModelState.Remove("UserId");
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                targetUserId = model.UserId;
+                if (targetUserId <= 0)
+                    return NotFound();
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
             ModelState.Remove("User");
             ModelState.Remove("Expertise");
 
-            model.UserId = UserId.Value;
+            model.UserId = targetUserId;
 
             if (model.ExpertiseId == 0)
-            {
                 ModelState.AddModelError("ExpertiseId", "Please select expertise");
-            }
+
+            bool isInstructor = await _context.Users.AnyAsync(u => u.UserId == targetUserId && u.RoleId == 2);
+            if (!isInstructor)
+                ModelState.AddModelError("", "Invalid instructor.");
 
             bool exists = await _context.InstructorExpertises
                 .AnyAsync(e => e.UserId == model.UserId && e.ExpertiseId == model.ExpertiseId);
 
             if (exists)
-            {
                 ModelState.AddModelError("", "This expertise is already added");
-            }
 
             if (!ModelState.IsValid)
             {
                 LoadDropdown();
+                ViewBag.TargetUserId = targetUserId;
                 return View(model);
             }
 
             _context.InstructorExpertises.Add(model);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int? userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            int userId = UserId.Value;
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                if (userId == null)
+                    return NotFound();
+
+                targetUserId = userId.Value;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
 
             var item = await _context.InstructorExpertises
                 .Include(i => i.Expertise)
-                .FirstOrDefaultAsync(i => i.InstructorExpertiseId == id && i.UserId == userId);
+                .FirstOrDefaultAsync(i => i.InstructorExpertiseId == id && i.UserId == targetUserId);
 
             if (item == null)
                 return NotFound();
 
+            ViewBag.TargetUserId = targetUserId;
             return View(item);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, int userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            int userId = UserId.Value;
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                targetUserId = userId;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
 
             var item = await _context.InstructorExpertises
-                .FirstOrDefaultAsync(i => i.InstructorExpertiseId == id && i.UserId == userId);
+                .FirstOrDefaultAsync(i => i.InstructorExpertiseId == id && i.UserId == targetUserId);
 
             if (item == null)
                 return NotFound();
@@ -114,7 +227,7 @@ namespace TrainingSystem.MVC.Controllers
             _context.InstructorExpertises.Remove(item);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }
 
         private void LoadDropdown()

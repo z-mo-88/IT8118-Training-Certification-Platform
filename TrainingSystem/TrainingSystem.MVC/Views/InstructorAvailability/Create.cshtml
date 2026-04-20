@@ -1,93 +1,73 @@
 ﻿@model TrainingSystem.API.Models.InstructorAvailability
+@using Microsoft.AspNetCore.Http
 
 @{
-    ViewData["Title"] = "Add Availability";
+    var roleId = Context.Session.GetInt32("RoleId");
+
+    ViewData["Title"] = roleId == 3 ? "Add Availability" : "Add Availability";
+
+    var pageTitle = roleId == 3 ? "Add Availability" : "Add Availability";
+    var pageSubtitle = roleId == 3
+        ? "Add a new availability schedule for the instructor."
+        : "Add your availability schedule.";
 }
 
-<div class="container-fluid py-5 px-3 px-md-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5">
-            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+<div class="container py-5">
+    <div class="card border-0 shadow-sm" style="max-width: 700px; border-radius: 18px;">
+        <div class="card-body p-4 p-md-5">
 
-                <div class="card-body p-4 p-lg-5">
-                    <div class="mb-4 text-center">
-                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Add Availability</h3>
-                        <p class="text-muted mb-0">Set your available day and time.</p>
-                    </div>
+            <h2 class="fw-bold mb-2" style="color: #0a1f5c;">@pageTitle</h2>
+            <p class="text-muted mb-4">@pageSubtitle</p>
 
-                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
-                    {
-                        <div asp-validation-summary="All"
-                             class="alert alert-danger rounded-3 mb-4"></div>
-                    }
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="UserId" />
 
-                    <form asp-action="Create" method="post">
-                        @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="DayOfWeek" class="form-label fw-semibold" style="color: #0a1f5c;">
-                                Day of Week
-                            </label>
-
-                            <select asp-for="DayOfWeek"
-                                    class="form-select"
-                                    style="height: 50px; border-radius: 10px;">
-                                <option value="">Select Day</option>
-                                <option>Sunday</option>
-                                <option>Monday</option>
-                                <option>Tuesday</option>
-                                <option>Wednesday</option>
-                                <option>Thursday</option>
-                                <option>Friday</option>
-                                <option>Saturday</option>
-                            </select>
-                            <span asp-validation-for="DayOfWeek" class="text-danger small"></span>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="StartTime" class="form-label fw-semibold" style="color: #0a1f5c;">
-                                    Start Time
-                                </label>
-
-                                <input asp-for="StartTime"
-                                       type="time"
-                                       class="form-control"
-                                       style="height: 50px; border-radius: 10px;" />
-                                <span asp-validation-for="StartTime" class="text-danger small"></span>
-                            </div>
-
-                            <div class="col-md-6 mb-4">
-                                <label asp-for="EndTime" class="form-label fw-semibold" style="color: #0a1f5c;">
-                                    End Time
-                                </label>
-
-                                <input asp-for="EndTime"
-                                       type="time"
-                                       class="form-control"
-                                       style="height: 50px; border-radius: 10px;" />
-                                <span asp-validation-for="EndTime" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a asp-action="Index"
-                               class="btn btn-light fw-semibold"
-                               style="border-radius: 10px;">
-                                Back
-                            </a>
-
-                            <button type="submit"
-                                    class="btn text-white fw-semibold px-4"
-                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
-                                Save
-                            </button>
-                        </div>
-
-                    </form>
+                <div class="mb-3">
+                    <label asp-for="DayOfWeek" class="form-label fw-semibold" style="color: #0a1f5c;">Day</label>
+                    <select asp-for="DayOfWeek" class="form-select" style="height: 50px; border-radius: 10px;">
+                        <option value="">-- Select Day --</option>
+                        <option>Sunday</option>
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                    </select>
+                    <span asp-validation-for="DayOfWeek" class="text-danger"></span>
                 </div>
 
-            </div>
+                <div class="mb-3">
+                    <label asp-for="StartTime" class="form-label fw-semibold" style="color: #0a1f5c;">Start Time</label>
+                    <input asp-for="StartTime" type="time" class="form-control" style="height: 50px; border-radius: 10px;" />
+                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="EndTime" class="form-label fw-semibold" style="color: #0a1f5c;">End Time</label>
+                    <input asp-for="EndTime" type="time" class="form-control" style="height: 50px; border-radius: 10px;" />
+                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index"
+                       asp-route-userId="@Model.UserId"
+                       class="btn px-4"
+                       style="background-color: #f1f3f5; border-radius: 10px;">
+                        Back
+                    </a>
+
+                    <button type="submit"
+                            class="btn text-white fw-semibold px-4"
+                            style="background-color: #0a1f5c; border-radius: 10px; border: none;">
+                        Save
+                    </button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>

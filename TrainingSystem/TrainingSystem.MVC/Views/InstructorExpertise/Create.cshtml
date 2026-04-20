@@ -1,60 +1,57 @@
 ﻿@model TrainingSystem.API.Models.InstructorExpertise
+@using Microsoft.AspNetCore.Http
 
 @{
-    ViewData["Title"] = "Add Expertise";
+    var roleId = Context.Session.GetInt32("RoleId");
+
+    ViewData["Title"] = roleId == 3 ? "Add Expertise" : "Add Expertise";
+
+    var pageTitle = roleId == 3 ? "Add Expertise" : "Add Expertise";
+    var pageSubtitle = roleId == 3
+        ? "Add a new expertise area for the instructor."
+        : "Add a new expertise area.";
 }
 
-<div class="container-fluid py-5 px-3 px-md-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5">
-            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+<div class="container py-5">
+    <div class="card border-0 shadow-sm" style="max-width: 700px; border-radius: 18px;">
+        <div class="card-body p-4 p-md-5">
 
-                <div class="card-body p-4 p-lg-5">
-                    <div class="mb-4 text-center">
-                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Add Expertise</h3>
-                        <p class="text-muted mb-0">Select an expertise area to add to your profile.</p>
-                    </div>
+            <h2 class="fw-bold mb-2" style="color: #0a1f5c;">@pageTitle</h2>
+            <p class="text-muted mb-4">@pageSubtitle</p>
 
-                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
-                    {
-                        <div asp-validation-summary="All"
-                             class="alert alert-danger rounded-3 mb-4"></div>
-                    }
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="UserId" />
 
-                    <form asp-action="Create" method="post">
-                        @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <div class="mb-4">
-                            <label asp-for="ExpertiseId"
-                                   class="form-label fw-semibold"
-                                   style="color: #0a1f5c;">Expertise Area</label>
-
-                            <select asp-for="ExpertiseId"
-                                    asp-items="ViewBag.Expertise"
-                                    class="form-select"
-                                    style="height: 50px; border-radius: 10px;">
-                                <option value="">Select Expertise</option>
-                            </select>
-                            <span asp-validation-for="ExpertiseId" class="text-danger small"></span>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a asp-action="Index"
-                               class="btn btn-light fw-semibold"
-                               style="border-radius: 10px;">
-                                Back
-                            </a>
-
-                            <button type="submit"
-                                    class="btn text-white fw-semibold px-4"
-                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
-                                Save
-                            </button>
-                        </div>
-                    </form>
+                <div class="mb-4">
+                    <label asp-for="ExpertiseId" class="form-label fw-semibold" style="color: #0a1f5c;">Expertise</label>
+                    <select asp-for="ExpertiseId"
+                            asp-items="ViewBag.Expertise"
+                            class="form-select"
+                            style="height: 50px; border-radius: 10px;">
+                        <option value="">-- Select Expertise --</option>
+                    </select>
+                    <span asp-validation-for="ExpertiseId" class="text-danger"></span>
                 </div>
 
-            </div>
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index"
+                       asp-route-userId="@Model.UserId"
+                       class="btn px-4"
+                       style="background-color: #f1f3f5; border-radius: 10px;">
+                        Back
+                    </a>
+
+                    <button type="submit"
+                            class="btn text-white fw-semibold px-4"
+                            style="background-color: #0a1f5c; border-radius: 10px; border: none;">
+                        Save
+                    </button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>

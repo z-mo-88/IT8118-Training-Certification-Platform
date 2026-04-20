@@ -21,12 +21,12 @@ namespace TrainingSystem.MVC.Controllers
             if (auth != null) return auth;
 
             var instructors = await _context.Users
-               .Where(u => u.RoleId == 2)
-               .Include(u => u.InstructorProfile)
-               .Include(u => u.InstructorExpertises)
-                   .ThenInclude(ie => ie.Expertise)
-               .Include(u => u.InstructorAvailabilities)
-               .ToListAsync();
+                .Where(u => u.RoleId == 2)
+                .Include(u => u.InstructorProfile)
+                .Include(u => u.InstructorExpertises)
+                    .ThenInclude(ie => ie.Expertise)
+                .Include(u => u.InstructorAvailabilities)
+                .ToListAsync();
 
             var model = instructors.Select(i => new InstructorDisplayViewModel
             {
@@ -36,7 +36,6 @@ namespace TrainingSystem.MVC.Controllers
                 PhoneNumber = i.PhoneNumber ?? "",
                 IsActive = i.IsActive,
 
-                
                 Bio = i.InstructorProfile != null ? i.InstructorProfile.Bio : "",
                 Notes = i.InstructorProfile != null ? i.InstructorProfile.Notes : "",
 
@@ -54,6 +53,29 @@ namespace TrainingSystem.MVC.Controllers
             }).ToList();
 
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            var instructor = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserId == id && u.RoleId == 2);
+
+            if (instructor == null)
+                return NotFound();
+
+            instructor.IsActive = !instructor.IsActive;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = instructor.IsActive
+                ? "Instructor activated successfully."
+                : "Instructor deactivated successfully.";
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

@@ -14,40 +14,115 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            int userId = UserId.Value;
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                if (userId == null)
+                    return NotFound();
+
+                targetUserId = userId.Value;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            bool isInstructor = await _context.Users.AnyAsync(u => u.UserId == targetUserId && u.RoleId == 2);
+            if (!isInstructor)
+                return NotFound();
 
             var data = await _context.InstructorAvailabilities
-                .Where(a => a.UserId == userId)
+                .Where(a => a.UserId == targetUserId)
                 .OrderBy(a => a.DayOfWeek)
                 .ThenBy(a => a.StartTime)
                 .ToListAsync();
+
+            ViewBag.TargetUserId = targetUserId;
 
             return View(data);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            return View();
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                if (userId == null)
+                    return NotFound();
+
+                targetUserId = userId.Value;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            bool isInstructor = await _context.Users.AnyAsync(u => u.UserId == targetUserId && u.RoleId == 2);
+            if (!isInstructor)
+                return NotFound();
+
+            ViewBag.TargetUserId = targetUserId;
+
+            var model = new InstructorAvailability
+            {
+                UserId = targetUserId
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InstructorAvailability model)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            // Remove fields that are set in controller or are navigation properties
-            ModelState.Remove("UserId");
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                targetUserId = model.UserId;
+                if (targetUserId <= 0)
+                    return NotFound();
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
             ModelState.Remove("User");
 
             if (string.IsNullOrWhiteSpace(model.DayOfWeek))
@@ -56,11 +131,13 @@ namespace TrainingSystem.MVC.Controllers
             if (model.StartTime >= model.EndTime)
                 ModelState.AddModelError("", "Start time must be before end time");
 
-            int userId = UserId.Value;
+            bool isInstructor = await _context.Users.AnyAsync(u => u.UserId == targetUserId && u.RoleId == 2);
+            if (!isInstructor)
+                ModelState.AddModelError("", "Invalid instructor.");
 
             bool overlapExists = await _context.InstructorAvailabilities
                 .AnyAsync(a =>
-                    a.UserId == userId &&
+                    a.UserId == targetUserId &&
                     a.DayOfWeek == model.DayOfWeek &&
                     a.StartTime < model.EndTime &&
                     model.StartTime < a.EndTime);
@@ -68,48 +145,85 @@ namespace TrainingSystem.MVC.Controllers
             if (overlapExists)
                 ModelState.AddModelError("", "This availability overlaps with an existing time on the same day");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                model.UserId = userId;
-                model.IsAvailable = true;
-
-                _context.InstructorAvailabilities.Add(model);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                ViewBag.TargetUserId = targetUserId;
+                return View(model);
             }
 
-            return View(model);
+            model.UserId = targetUserId;
+            model.IsAvailable = true;
+
+            _context.InstructorAvailabilities.Add(model);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int? userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            int userId = UserId.Value;
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                if (userId == null)
+                    return NotFound();
+
+                targetUserId = userId.Value;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
 
             var item = await _context.InstructorAvailabilities
-                .FirstOrDefaultAsync(a => a.AvailabilityId == id && a.UserId == userId);
+                .FirstOrDefaultAsync(a => a.AvailabilityId == id && a.UserId == targetUserId);
 
             if (item == null)
                 return NotFound();
 
+            ViewBag.TargetUserId = targetUserId;
             return View(item);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, int userId)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
 
-            int userId = UserId.Value;
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                targetUserId = userId;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
 
             var item = await _context.InstructorAvailabilities
-                .FirstOrDefaultAsync(a => a.AvailabilityId == id && a.UserId == userId);
+                .FirstOrDefaultAsync(a => a.AvailabilityId == id && a.UserId == targetUserId);
 
             if (item == null)
                 return NotFound();
@@ -117,7 +231,7 @@ namespace TrainingSystem.MVC.Controllers
             _context.InstructorAvailabilities.Remove(item);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }
     }
 }
