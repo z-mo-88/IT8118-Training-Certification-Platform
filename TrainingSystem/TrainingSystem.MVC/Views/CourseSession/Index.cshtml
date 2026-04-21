@@ -34,7 +34,7 @@
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Capacity</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Available Seats</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
-                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 160px;">Actions</th>
+                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c; width: 220px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,11 +46,17 @@
                                     <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
                                         @item.Course?.Title
                                     </td>
+
                                     <td class="py-3">@item.User?.Name</td>
+
                                     <td class="py-3">@item.Room?.RoomName</td>
+
                                     <td class="py-3">@item.SessionDate.ToShortDateString()</td>
+
                                     <td class="py-3">@item.StartTime - @item.EndTime</td>
+
                                     <td class="py-3">@item.SessionCapacity</td>
+
                                     <td class="py-3">
                                         <span id="seats-@item.SessionId"
                                               class="fw-semibold"
@@ -58,19 +64,35 @@
                                             @item.AvailableSeats
                                         </span>
                                     </td>
+
                                     <td class="py-3">
                                         <span class="badge rounded-pill px-3 py-2"
                                               style="background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c; font-weight: 600;">
                                             @item.Status
                                         </span>
                                     </td>
+
+                                    <!-- ACTIONS -->
                                     <td class="text-center py-3">
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.SessionId"
-                                           class="btn btn-sm fw-semibold px-3 text-white"
-                                           style="background-color: #dc3545; border-radius: 10px; border: none;">
-                                            Delete
-                                        </a>
+                                        <div class="d-flex justify-content-center gap-2">
+
+                                            <!-- EDIT BUTTON -->
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.SessionId"
+                                               class="btn btn-sm fw-semibold px-3"
+                                               style="background-color: #ffc107; border-radius: 10px; border: none; color:#000;">
+                                                Edit
+                                            </a>
+
+                                            <!-- DELETE BUTTON -->
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.SessionId"
+                                               class="btn btn-sm fw-semibold px-3 text-white"
+                                               style="background-color: #dc3545; border-radius: 10px; border: none;">
+                                                Delete
+                                            </a>
+
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -90,8 +112,7 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-
+<!-- SIGNALR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
 <script>

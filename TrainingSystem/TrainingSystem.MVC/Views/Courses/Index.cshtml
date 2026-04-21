@@ -1,11 +1,10 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Course>
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Courses";
 
-    var roleId = Context.Session.GetInt32("RoleId");
-    var enrolledSessionIds = ViewBag.EnrolledSessionIds as List<int> ?? new List<int>();
-    var passedCourseIds = ViewBag.PassedCourseIds as List<int> ?? new List<int>();
+    var roleId = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "0");
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
@@ -17,20 +16,6 @@
             <p class="text-muted mb-0">Browse and manage courses.</p>
         </div>
 
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success">
-                @TempData["Success"]
-            </div>
-        }
-
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["Error"]
-            </div>
-        }
-
         @if (roleId == 3)
         {
             <a asp-action="Create"
@@ -41,18 +26,50 @@
         }
     </div>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
     <!-- COURSES -->
     @foreach (var course in Model)
     {
         <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
             <div class="card-body p-4">
 
-                <h4 class="fw-bold mb-3" style="color: #0a1f5c;">
-                    @course.Title
-                </h4>
+                <!-- COURSE HEADER -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
 
-                <!-- INFO -->
+                    <h4 class="fw-bold mb-0" style="color: #0a1f5c;">
+                        @course.Title
+                    </h4>
+
+                    @if (roleId == 3)
+                    {
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit"
+                               asp-route-id="@course.CourseId"
+                               class="btn btn-warning btn-sm">
+                                Edit Course
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@course.CourseId"
+                               class="btn btn-danger btn-sm">
+                                Delete Course
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                <!-- COURSE INFO -->
                 <div class="d-flex flex-wrap gap-2 mb-3">
+
                     <span class="badge bg-light text-dark px-3 py-2">
                         Category: @course.Category?.CategoryName
                     </span>
@@ -73,9 +90,11 @@
                     }
                 </div>
 
+                <hr />
+
                 <!-- SESSIONS -->
                 <h5 class="fw-semibold mb-3" style="color: #0a1f5c;">
-                    Available Sessions
+                    Sessions
                 </h5>
 
                 @if (course.CourseSessions != null && course.CourseSessions.Any())
@@ -87,80 +106,28 @@
                                 <th>Time</th>
                                 <th>Seats</th>
                                 <th>Instructor</th>
-                                <th></th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach (var session in course.CourseSessions)
                             {
-                                bool alreadyEnrolled = enrolledSessionIds.Contains(session.SessionId);
-                                bool sessionFull = session.AvailableSeats <= 0;
-                                bool prerequisiteMissing = course.PrerequisiteCourseId != null
-                                && !passedCourseIds.Contains(course.PrerequisiteCourseId.Value);
-
                                 <tr>
                                     <td>@session.SessionDate.ToShortDateString()</td>
-                                    <td>@session.StartTime - @session.EndTime</td>
 
-                                    <!-- ✅ FIXED: Unique ID for real-time update -->
-                                    <td id="seats-@session.SessionId">@session.AvailableSeats</td>
+                                    <td>
+                                        @session.StartTime - @session.EndTime
+                                    </td>
+
+                                    <td>
+                                        @session.AvailableSeats
+                                    </td>
 
                                     <td>
                                         @session.User?.Name <br />
                                         <small class="text-muted">
                                             @session.User?.InstructorProfile?.Bio
                                         </small>
-                                    </td>
-
-                                    <td>
-                                        @if (roleId == 1)
-                                        {
-                                            if (alreadyEnrolled)
-                                            {
-                                                <button class="btn btn-outline-secondary btn-sm" disabled>
-                                                    Enrolled
-                                                </button>
-                                            }
-                                            else if (sessionFull)
-                                            {
-                                                <button class="btn btn-danger btn-sm" disabled>
-                                                    Full
-                                                </button>
-                                            }
-                                            else if (prerequisiteMissing)
-                                            {
-                                                <button class="btn btn-warning btn-sm" disabled>
-                                                    Need Prerequisite
-                                                </button>
-                                            }
-                                            else
-                                            {
-                                                <form asp-controller="Enrollments" asp-action="Enroll" method="post">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="sessionId" value="@session.SessionId" />
-                                                    <button class="btn btn-success btn-sm">
-                                                        Enroll
-                                                    </button>
-                                                </form>
-                                            }
-                                        }
-                                        else if (roleId == 3)
-                                        {
-                                            <div class="d-flex gap-2">
-                                                <a asp-action="Edit"
-                                                   asp-route-id="@course.CourseId"
-                                                   class="btn btn-warning btn-sm">
-                                                    Edit
-                                                </a>
-
-                                                <a asp-action="Delete"
-                                                   asp-route-id="@course.CourseId"
-                                                   class="btn btn-danger btn-sm">
-                                                    Delete
-                                                </a>
-                                            </div>
-                                        }
                                     </td>
                                 </tr>
                             }
@@ -178,7 +145,7 @@
 
 </div>
 
-<!-- ✅ SIGNALR SCRIPT -->
+<!-- SIGNALR SCRIPT -->
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
 

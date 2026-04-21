@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Security.Claims;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class BaseController : Controller
     {
-        protected int? UserId =>
-            int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
-
-        protected int? RoleId =>
-            int.TryParse(User.FindFirstValue(ClaimTypes.Role), out var role) ? role : null;
+        protected int? UserId => HttpContext.Session.GetInt32("UserId");
+        protected int? RoleId => HttpContext.Session.GetInt32("RoleId");
 
         protected bool IsTrainee => RoleId == 1;
         protected bool IsInstructor => RoleId == 2;
@@ -18,19 +14,19 @@ namespace TrainingSystem.MVC.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var controller = context.RouteData.Values["controller"]?.ToString();
+            var path = context.HttpContext.Request.Path.Value;
 
-            
-            if (controller == "Account")
+            if (path.StartsWith("/Account/Login"))
             {
                 base.OnActionExecuting(context);
                 return;
             }
 
-            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
             {
                 context.Result = RedirectToAction("Login", "Account");
-                return;
             }
 
             base.OnActionExecuting(context);
@@ -40,7 +36,7 @@ namespace TrainingSystem.MVC.Controllers
         {
             if (RoleId == null || !roles.Contains(RoleId.Value))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("AccessDenied", "Account");
             }
 
             return null;

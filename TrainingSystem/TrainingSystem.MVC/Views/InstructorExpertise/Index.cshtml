@@ -1,113 +1,63 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.InstructorExpertise>
-@using Microsoft.AspNetCore.Http
+@using System.Security.Claims
 
 @{
+    var roleId = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "0");
     var targetUserId = ViewBag.TargetUserId;
-    var roleId = Context.Session.GetInt32("RoleId");
-
-    ViewData["Title"] = roleId == 3 ? "Edit Expertise" : "My Expertise";
-
-    var pageTitle = roleId == 3 ? "Edit Expertise" : "My Expertise";
-    var pageSubtitle = roleId == 3
-        ? "Manage the available expertise for the instructor."
-        : "Manage your areas of expertise.";
 }
 
-<div class="container-fluid py-5 px-3 px-md-5">
+<div class="container py-5">
 
-    <div class="mb-4 d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between mb-4">
+        <h2>Expertise</h2>
 
-        @if (roleId == 3)
-        {
-            <a href="javascript:history.back()"
-               class="btn btn-light fw-semibold"
-               style="border-radius: 10px;">
-                Back
-            </a>
-        }
-
-        <div>
-            <h2 class="fw-bold mb-1" style="color: #0a1f5c;">@pageTitle</h2>
-            <p class="text-muted mb-0">@pageSubtitle</p>
-        </div>
-
+        <!-- ADD -->
         <a asp-action="Create"
            asp-route-userId="@targetUserId"
-           class="btn text-white fw-semibold px-4"
-           style="background-color: #0a1f5c; border-radius: 10px; border: none;">
+           class="btn btn-primary">
             Add Expertise
         </a>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["Success"]
-        </div>
-    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Expertise</th>
+                @if (roleId == 3)
+                {
+                    <th class="text-center">Actions</th>
+                }
+            </tr>
+        </thead>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["Error"]
-        </div>
-    }
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Expertise?.ExpertiseName</td>
 
-    <div class="card border-0 shadow-sm" style="border-radius: 18px;">
-        <div class="card-body p-0">
+                    <td class="text-center">
 
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
-                        <tr>
-                            <th class="px-4 py-3">Expertise</th>
-                            @if (roleId == 3)
-                            {
-                                <th class="text-center">Actions</th>
-                            }
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model != null && Model.Any())
+                        @if (roleId == 3)
                         {
-                            foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td class="px-4 py-3">
-                                        <span class="badge bg-light text-dark px-3 py-2">
-                                            @item.Expertise?.ExpertiseName
-                                        </span>
-                                    </td>
+                            <a asp-action="Edit"
+                               asp-route-id="@item.InstructorExpertiseId"
+                               asp-route-userId="@targetUserId"
+                               class="btn btn-warning btn-sm">
+                                Edit
+                            </a>
 
-                                    <td class="text-center">
-                                        @if (roleId == 3)
-                                        {
-                                            <a asp-action="Delete"
-                                            asp-route-id="@item.InstructorExpertiseId"
-                                            asp-route-userId="@targetUserId"
-                                            class="btn btn-sm fw-semibold text-white px-3"
-                                            style="background-color: #dc3545; border-radius: 10px; border: none;">
-                                                Delete
-                                            </a>
-                                        }
-                                    </td>
-                                </tr>
-                            }
+                            <a asp-action="Delete"
+                               asp-route-id="@item.InstructorExpertiseId"
+                               asp-route-userId="@targetUserId"
+                               class="btn btn-danger btn-sm">
+                                Delete
+                            </a>
                         }
-                        else
-                        {
-                            <tr>
-                                <td colspan="2" class="text-center text-muted py-5">
-                                    No expertise records found.
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
 
-        </div>
-    </div>
-
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

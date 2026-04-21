@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 using TrainingSystem.MVC.Services;
@@ -168,6 +169,77 @@ namespace TrainingSystem.MVC.Controllers
 );
 
             return RedirectToAction(nameof(Index), new { userId = targetUserId });
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id, int userId)
+        {
+            var availability = await _context.InstructorAvailabilities
+                .FirstOrDefaultAsync(a => a.AvailabilityId == id);
+
+            if (availability == null)
+                return NotFound();
+
+            ViewBag.TargetUserId = userId;
+
+            return View(availability);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(InstructorAvailability model)
+        {
+
+
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
+
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3) 
+            {
+                targetUserId = model.UserId;
+            }
+            else if (roleId == 2) 
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            ModelState.Remove("User");
+
+            if (string.IsNullOrWhiteSpace(model.DayOfWeek))
+                ModelState.AddModelError("DayOfWeek", "Please select a day");
+
+            if (model.StartTime >= model.EndTime)
+                ModelState.AddModelError("", "Start time must be before end time");
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var availability = await _context.InstructorAvailabilities
+                .FirstOrDefaultAsync(a => a.AvailabilityId == model.AvailabilityId && a.UserId == targetUserId);
+
+            if (availability == null)
+                return NotFound();
+
+            availability.DayOfWeek = model.DayOfWeek;
+            availability.StartTime = model.StartTime;
+            availability.EndTime = model.EndTime;
+            availability.IsAvailable = true;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { userId = targetUserId });
         }
 
         [HttpGet]
