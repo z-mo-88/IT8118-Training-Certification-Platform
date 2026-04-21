@@ -14,6 +14,7 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
+        // ================= MY SESSIONS =================
         public async Task<IActionResult> Index()
         {
             var auth = AuthorizeRole(2);
@@ -32,6 +33,7 @@ namespace TrainingSystem.MVC.Controllers
             return View(sessions);
         }
 
+        // ================= DETAILS =================
         public async Task<IActionResult> Details(int id)
         {
             var auth = AuthorizeRole(2);
@@ -52,6 +54,7 @@ namespace TrainingSystem.MVC.Controllers
             return View(session);
         }
 
+        // ================= STUDENTS =================
         public async Task<IActionResult> Students(int id)
         {
             var auth = AuthorizeRole(2);
@@ -75,6 +78,33 @@ namespace TrainingSystem.MVC.Controllers
             return View(session);
         }
 
+        // ================= MARK ATTENDING =================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAttending(int enrollmentId)
+        {
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
+
+            int instructorId = UserId.Value;
+
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Session)
+                .FirstOrDefaultAsync(e =>
+                    e.EnrollmentId == enrollmentId &&
+                    e.Session.UserId == instructorId);
+
+            if (enrollment == null)
+                return NotFound();
+
+            enrollment.Status = "Attending";
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Students), new { id = enrollment.SessionId });
+        }
+
+        // ================= RECORD RESULT =================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RecordResult(int enrollmentId, bool isPassed, string? remarks)
@@ -86,7 +116,6 @@ namespace TrainingSystem.MVC.Controllers
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Session)
-                .Include(e => e.User)
                 .Include(e => e.AssessmentResults)
                 .FirstOrDefaultAsync(e =>
                     e.EnrollmentId == enrollmentId &&
@@ -118,6 +147,7 @@ namespace TrainingSystem.MVC.Controllers
                 existingResult.RecordTime = TimeOnly.FromDateTime(DateTime.Now);
             }
 
+            // ✅ FINAL STEP: COMPLETE
             if (isPassed)
             {
                 enrollment.Status = "Completed";

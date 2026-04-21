@@ -62,8 +62,6 @@
                                     </td>
 
                                     <td class="text-center py-3">
-
-                                        <!-- Details -->
                                         <a asp-action="Details"
                                            asp-route-id="@item.SessionId"
                                            class="btn btn-sm fw-semibold px-3 text-white"
@@ -71,15 +69,12 @@
                                             Details
                                         </a>
 
-                                        <!-- Students -->
-                                        <a asp-controller="SessionEnrollments"
-                                           asp-action="Index"
+                                        <a asp-action="Students"
                                            asp-route-id="@item.SessionId"
                                            class="btn btn-sm fw-semibold px-3 text-white"
                                            style="background-color: #198754; border-radius: 10px; border: none;">
                                             Students
                                         </a>
-
                                     </td>
                                 </tr>
                             }

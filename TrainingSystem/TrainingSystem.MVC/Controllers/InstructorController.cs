@@ -86,11 +86,20 @@ namespace TrainingSystem.MVC.Controllers
 
             int userId = UserId.Value;
 
+            // ✅ GET USER (for Name + Email)
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+
+            // ✅ GET PROFILE (for Bio + Notes)
             var profile = await _context.InstructorProfiles
                 .FirstOrDefaultAsync(p => p.UserId == userId);
 
             if (profile == null)
                 return NotFound();
+
+            // ✅ SEND DATA TO VIEW
+            ViewBag.Name = user?.Name;
+            ViewBag.Email = user?.Email;
 
             return View(profile);
         }

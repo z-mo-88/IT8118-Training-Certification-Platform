@@ -15,8 +15,8 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if (UserId == null)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
 
             int userId = UserId.Value;
 
@@ -32,8 +32,8 @@ namespace TrainingSystem.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkAsRead(int id)
         {
-            if (UserId == null)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
 
             int userId = UserId.Value;
 
@@ -46,6 +46,8 @@ namespace TrainingSystem.MVC.Controllers
             notification.IsRead = true;
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Notification marked as read.";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -53,8 +55,8 @@ namespace TrainingSystem.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            if (UserId == null)
-                return RedirectToAction("Login", "Account");
+            var auth = AuthorizeRole(2);
+            if (auth != null) return auth;
 
             int userId = UserId.Value;
 
@@ -66,6 +68,8 @@ namespace TrainingSystem.MVC.Controllers
 
             _context.Notifications.Remove(notification);
             await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Notification deleted.";
 
             return RedirectToAction(nameof(Index));
         }

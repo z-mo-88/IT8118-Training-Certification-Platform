@@ -42,6 +42,7 @@
                                         @enrollment.User?.Name
                                     </td>
 
+                                    <!-- STATUS -->
                                     <td>
                                         <span class="badge rounded-pill px-3 py-2"
                                               style="background-color: rgba(10,31,92,0.08); color:#0a1f5c;">
@@ -49,20 +50,17 @@
                                         </span>
                                     </td>
 
+                                    <!-- RESULT -->
                                     <td>
                                         @if (result != null)
                                         {
                                             if (result.IsPassed)
                                             {
-                                                <span class="badge rounded-pill px-3 py-2 bg-success text-white">
-                                                    Pass
-                                                </span>
+                                                <span class="badge bg-success">Pass</span>
                                             }
                                             else
                                             {
-                                                <span class="badge rounded-pill px-3 py-2 bg-danger text-white">
-                                                    Fail
-                                                </span>
+                                                <span class="badge bg-danger">Fail</span>
                                             }
                                         }
                                         else
@@ -71,38 +69,60 @@
                                         }
                                     </td>
 
+                                    <!-- REMARKS -->
                                     <td class="text-muted">
                                         @(string.IsNullOrWhiteSpace(result?.Remarks) ? "-" : result!.Remarks)
                                     </td>
 
+                                    <!-- ACTIONS -->
                                     <td class="text-center">
-                                        <form asp-action="RecordResult"
-                                              method="post"
-                                              class="d-flex gap-2 justify-content-center align-items-center flex-wrap">
-                                            @Html.AntiForgeryToken()
 
-                                            <input type="hidden" name="enrollmentId" value="@enrollment.EnrollmentId" />
+                                        <!-- MARK ATTENDING -->
+                                        @if (enrollment.Status == "Confirmed")
+                                        {
+                                            <form asp-action="MarkAttending" method="post" class="mb-2">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="enrollmentId" value="@enrollment.EnrollmentId" />
 
-                                            <input type="text"
-                                                   name="remarks"
-                                                   class="form-control form-control-sm"
-                                                   placeholder="Remarks"
-                                                   style="width: 150px;" />
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-primary">
+                                                    Mark Attending
+                                                </button>
+                                            </form>
+                                        }
 
-                                            <button type="submit"
-                                                    name="isPassed"
-                                                    value="true"
-                                                    class="btn btn-sm btn-success">
-                                                Pass
-                                            </button>
+                                        <!-- RESULT -->
+                                        @if (enrollment.Status == "Attending")
+                                        {
+                                            <form asp-action="RecordResult"
+                                                  method="post"
+                                                  class="d-flex gap-2 justify-content-center flex-wrap">
+                                                @Html.AntiForgeryToken()
 
-                                            <button type="submit"
-                                                    name="isPassed"
-                                                    value="false"
-                                                    class="btn btn-sm btn-danger">
-                                                Fail
-                                            </button>
-                                        </form>
+                                                <input type="hidden" name="enrollmentId" value="@enrollment.EnrollmentId" />
+
+                                                <input type="text"
+                                                       name="remarks"
+                                                       class="form-control form-control-sm"
+                                                       placeholder="Remarks"
+                                                       style="width: 140px;" />
+
+                                                <button type="submit"
+                                                        name="isPassed"
+                                                        value="true"
+                                                        class="btn btn-sm btn-success">
+                                                    Pass
+                                                </button>
+
+                                                <button type="submit"
+                                                        name="isPassed"
+                                                        value="false"
+                                                        class="btn btn-sm btn-danger">
+                                                    Fail
+                                                </button>
+                                            </form>
+                                        }
+
                                     </td>
                                 </tr>
                             }

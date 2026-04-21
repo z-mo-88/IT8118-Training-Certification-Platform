@@ -11,13 +11,13 @@
             <div class="card border-0 shadow-sm" style="border-radius: 18px;">
                 <div class="card-body p-4 p-lg-5">
 
-                  
+                    <!-- TITLE -->
                     <div class="mb-4 text-center">
                         <h3 class="fw-bold mb-2" style="color:#0a1f5c;">
-                            Edit Profile
+                            My Profile
                         </h3>
                         <p class="text-muted mb-0">
-                            Update your bio and notes.
+                            View and update your profile information.
                         </p>
                     </div>
 
@@ -33,14 +33,23 @@
 
                         <input type="hidden" asp-for="UserId" />
 
+                        <!-- BASIC INFO (NEW) -->
+                        <div class="mb-3">
+                            <label class="fw-semibold">Instructor Name</label>
+                            <p class="text-muted">@ViewBag.Name</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-semibold">Email</label>
+                            <p class="text-muted">@ViewBag.Email</p>
+                        </div>
+
                         <!-- BIO -->
                         <div class="mb-3">
                             <label class="fw-semibold">Bio</label>
 
-                            <!-- VIEW MODE -->
                             <p id="bioText">@Model.Bio</p>
 
-                            <!-- EDIT MODE -->
                             <textarea id="bioInput"
                                       asp-for="Bio"
                                       class="form-control d-none"></textarea>
@@ -50,16 +59,14 @@
                         <div class="mb-3">
                             <label class="fw-semibold">Notes</label>
 
-                            <!-- VIEW MODE -->
                             <p id="notesText">@Model.Notes</p>
 
-                            <!-- EDIT MODE -->
                             <textarea id="notesInput"
                                       asp-for="Notes"
                                       class="form-control d-none"></textarea>
                         </div>
 
-                        <!-- BUTTON -->
+                        <!-- BUTTONS -->
                         <button type="button"
                                 id="editBtn"
                                 class="btn btn-secondary">
@@ -133,12 +140,10 @@
                 cancelBtn.classList.add("d-none");
             });
 
-            
             const alert = document.getElementById("successAlert");
 
             if (alert) {
                 setTimeout(function () {
-
                     alert.style.transition = "opacity 0.5s";
                     alert.style.opacity = "0";
 
