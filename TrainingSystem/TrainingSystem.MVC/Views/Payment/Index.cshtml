@@ -94,6 +94,13 @@
                                             @remainingBalance
                                         </td>
 
+                                        <td>
+                                            @if (item.Enrollment?.IsOverdue == true)
+                                            {
+                                                <span class="badge bg-danger">Overdue</span>
+                                            }
+                                        </td>
+
                                         <td class="py-3">
                                             @if (displayStatus == "Paid")
                                             {

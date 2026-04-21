@@ -15,6 +15,7 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
+        
         public async Task<IActionResult> Index()
         {
             var auth = AuthorizeRole(3);
@@ -32,6 +33,7 @@ namespace TrainingSystem.MVC.Controllers
             return View(payments);
         }
 
+        //CREATE GET
         [HttpGet]
         public IActionResult Create()
         {
@@ -42,6 +44,7 @@ namespace TrainingSystem.MVC.Controllers
             return View();
         }
 
+        //  CREATE POST 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Payment payment)
@@ -68,17 +71,18 @@ namespace TrainingSystem.MVC.Controllers
             if (enrollment == null)
                 ModelState.AddModelError("EnrollmentId", "Invalid enrollment.");
 
+            
+            if (enrollment != null && enrollment.Status == "Dropped")
+                ModelState.AddModelError("EnrollmentId", "Dropped enrollments cannot receive payments.");
+
             if (enrollment != null)
             {
-                if (enrollment.Status == "Dropped")
-                    ModelState.AddModelError("EnrollmentId", "Dropped enrollments cannot receive payments.");
-
                 if (enrollment.OutstandingBalance <= 0)
                     ModelState.AddModelError("EnrollmentId", "This enrollment is already fully paid.");
 
                 if (payment.AmountPaid > enrollment.OutstandingBalance)
                     ModelState.AddModelError("AmountPaid",
-                        $"Amount cannot be more than the remaining balance ({enrollment.OutstandingBalance}).");
+                        $"Amount cannot exceed remaining balance ({enrollment.OutstandingBalance}).");
             }
 
             if (!ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace TrainingSystem.MVC.Controllers
                 return View(payment);
             }
 
+            // SAVE PAYMENT
             payment.PaidDate = DateOnly.FromDateTime(DateTime.Now);
 
             enrollment!.OutstandingBalance -= payment.AmountPaid;
@@ -99,8 +104,13 @@ namespace TrainingSystem.MVC.Controllers
             }
             else
             {
-                enrollment.IsOverdue = true;
                 payment.PaymentStatus = "Partial";
+
+                
+                if (enrollment.Session.SessionDate < DateOnly.FromDateTime(DateTime.Now))
+                {
+                    enrollment.IsOverdue = true;
+                }
             }
 
             _context.Payments.Add(payment);
@@ -110,6 +120,7 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // DROPDOWN 
         private void LoadEnrollments(int? selectedEnrollmentId = null)
         {
             var unpaidEnrollments = _context.Enrollments
@@ -118,11 +129,13 @@ namespace TrainingSystem.MVC.Controllers
                     .ThenInclude(s => s.Course)
                 .Where(e =>
                     e.OutstandingBalance > 0 &&
-                    e.Status != "Dropped")
+                    e.Status != "Dropped") 
                 .Select(e => new
                 {
                     e.EnrollmentId,
-                    Display = e.User.Name + " - " + e.Session.Course.Title + " (Remaining: " + e.OutstandingBalance + ")"
+                    Display = e.User.Name + " - " +
+                              e.Session.Course.Title +
+                              " (Remaining: " + e.OutstandingBalance + ")"
                 })
                 .ToList();
 

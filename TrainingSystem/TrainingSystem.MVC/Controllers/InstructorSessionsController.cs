@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
@@ -9,9 +10,13 @@ namespace TrainingSystem.MVC.Controllers
     {
         private readonly AppDbContext _context;
 
-        public InstructorSessionsController(AppDbContext context)
+        private readonly NotificationService _notification;
+
+
+        public InstructorSessionsController(AppDbContext context, NotificationService notification)
         {
             _context = context;
+            _notification = notification;
         }
 
         // ================= MY SESSIONS =================
@@ -116,6 +121,7 @@ namespace TrainingSystem.MVC.Controllers
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Session)
+                 .ThenInclude(s => s.Course)
                 .Include(e => e.AssessmentResults)
                 .FirstOrDefaultAsync(e =>
                     e.EnrollmentId == enrollmentId &&
@@ -147,13 +153,30 @@ namespace TrainingSystem.MVC.Controllers
                 existingResult.RecordTime = TimeOnly.FromDateTime(DateTime.Now);
             }
 
-            // ✅ FINAL STEP: COMPLETE
+            // COMPLETE
             if (isPassed)
             {
                 enrollment.Status = "Completed";
             }
 
             await _context.SaveChangesAsync();
+
+            var courseName = enrollment.Session.Course.Title;
+
+            if (isPassed)
+            {
+                await _notification.CreateNotification(
+                    enrollment.UserId,
+                    $"You passed {courseName}"
+                );
+            }
+            else
+            {
+                await _notification.CreateNotification(
+                    enrollment.UserId,
+                    $"You did not pass {courseName}"
+                );
+            }
 
             return RedirectToAction(nameof(Students), new { id = enrollment.SessionId });
         }

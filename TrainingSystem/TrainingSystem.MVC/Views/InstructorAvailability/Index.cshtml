@@ -15,6 +15,15 @@
 
 <div class="container-fluid py-5 px-3 px-md-5">
 
+    @if (roleId == 3)
+    {
+        <a href="javascript:history.back()"
+           class="btn btn-light fw-semibold"
+           style="border-radius: 10px;">
+            Back
+        </a>
+    }
+
     <div class="mb-4 d-flex justify-content-between align-items-center">
         <div>
             <h2 class="fw-bold mb-1" style="color: #0a1f5c;">@pageTitle</h2>
@@ -54,7 +63,10 @@
                             <th>Start</th>
                             <th>End</th>
                             <th>Available</th>
-                            <th class="text-center">Actions</th>
+                            @if (roleId == 3)
+                            {
+                                <th class="text-center">Actions</th>
+                            }
                         </tr>
                     </thead>
 
@@ -88,13 +100,16 @@
                                     </td>
 
                                     <td class="text-center">
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.AvailabilityId"
-                                           asp-route-userId="@targetUserId"
-                                           class="btn btn-sm fw-semibold text-white px-3"
-                                           style="background-color: #dc3545; border-radius: 10px; border: none;">
-                                            Delete
-                                        </a>
+                                        @if (roleId == 3)
+                                        {
+                                            <a asp-action="Delete"
+                                            asp-route-id="@item.AvailabilityId"
+                                            asp-route-userId="@targetUserId"
+                                            class="btn btn-sm fw-semibold text-white px-3"
+                                            style="background-color: #dc3545; border-radius: 10px; border: none;">
+                                                Delete
+                                            </a>
+                                        }
                                     </td>
                                 </tr>
                             }

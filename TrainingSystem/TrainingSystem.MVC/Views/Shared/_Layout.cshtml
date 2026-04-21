@@ -14,6 +14,12 @@
         return "";
     }
 }
+@using System.Security.Claims
+
+@{
+    var isAuth = User.Identity != null && User.Identity.IsAuthenticated;
+    var role = User.FindFirst(ClaimTypes.Role)?.Value;
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -211,8 +217,10 @@
                             <a class="nav-link @ActiveClass("Certificate", "Lookup")" href="/Certificate/Lookup">Certificate Lookup</a>
                         </li>
 
-                        @if (Context.Session.GetInt32("RoleId") == 3)
+
+                        @if (isAuth && role == "3")
                         {
+                            <li class="nav-item"><a class="nav-link @ActiveClass("Courses")" href="/SubjectCategory">Categories</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("Courses")" href="/Courses">Courses</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("CourseSession")" href="/CourseSession">Sessions</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("Users")" href="/Users">Users</a></li>
@@ -225,7 +233,7 @@
                             <li class="nav-item"><a class="nav-link @ActiveClass("EnrollmentManagement")" href="/EnrollmentManagement">Enrollments</a></li>
                         }
 
-                        @if (Context.Session.GetInt32("RoleId") == 1)
+                        @if (isAuth && role == "1")
                         {
                             <li class="nav-item"><a class="nav-link @ActiveClass("Courses")" href="/Courses">Courses</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("Enrollments")" href="/Enrollments">My Enrollments</a></li>
@@ -233,7 +241,7 @@
                             <li class="nav-item"><a class="nav-link @ActiveClass("Notification")" href="/Notification">Notifications</a></li>
                         }
 
-                        @if (Context.Session.GetInt32("RoleId") == 2)
+                        @if (isAuth && role == "2")
                         {
                             <li class="nav-item"><a class="nav-link @ActiveClass("InstructorSessions")" href="/InstructorSessions">My Sessions</a></li>
                             <li class="nav-item"><a class="nav-link @ActiveClass("InstructorAvailability")" href="/InstructorAvailability">My Availability</a></li>
@@ -245,11 +253,11 @@
                     </ul>
 
                     <ul class="navbar-nav align-items-lg-center gap-2 ms-lg-3">
-                        @if (Context.Session.GetInt32("UserId") != null)
+                        @if (isAuth)
                         {
                             <li class="nav-item">
                                 <span class="nav-text">
-                                    Hello, @Context.Session.GetString("UserName")
+                                    Hello, @User.Identity.Name
                                 </span>
                             </li>
 

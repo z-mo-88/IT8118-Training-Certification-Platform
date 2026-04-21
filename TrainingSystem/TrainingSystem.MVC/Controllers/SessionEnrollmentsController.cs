@@ -17,7 +17,7 @@ namespace TrainingSystem.MVC.Controllers
             _notification = new NotificationService(_context);
         }
 
-        // ================= VIEW STUDENTS =================
+        //  VIEW STUDENTS 
         public async Task<IActionResult> Index(int id)
         {
             var auth = AuthorizeRole(2);
@@ -52,7 +52,7 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
         }
 
-        // ================= RECORD RESULT =================
+       
         [HttpPost]
         public async Task<IActionResult> RecordResult(int enrollmentId, bool isPassed, string remarks)
         {
@@ -66,14 +66,13 @@ namespace TrainingSystem.MVC.Controllers
             if (enrollment == null)
                 return NotFound();
 
-
             if (string.IsNullOrWhiteSpace(remarks))
             {
                 TempData["Error"] = "Remarks is required.";
                 return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
             }
 
-            // UPDATE or INSERT
+            //  RESULT 
             var result = await _context.AssessmentResults
                 .FirstOrDefaultAsync(r => r.EnrollmentId == enrollmentId);
 
@@ -95,20 +94,14 @@ namespace TrainingSystem.MVC.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Notify trainee
+            //  NOTIFICATION 
             string message = isPassed
-                    ? "You passed the course"
-                    : "You did not pass the course";
+                ? $"You passed the course: {enrollment.Session.CourseId}"
+                : $"You did not pass the course: {enrollment.Session.CourseId}";
 
             await _notification.CreateNotification(enrollment.UserId, message);
 
-            return RedirectToAction(nameof(Index), new { id = enrollment.SessionId });
-        
-        
-
-        
-
-            // ================= CERTIFICATION LOGIC =================
+            //  CERTIFICATION LOGIC 
             if (isPassed)
             {
                 int userId = enrollment.UserId;
@@ -122,13 +115,11 @@ namespace TrainingSystem.MVC.Controllers
                 {
                     int trackId = track.CertificationTrackId;
 
-                    // Required courses for this track
                     var requiredCourses = await _context.CertificationTrackCourses
                         .Where(t => t.CertificationTrackId == trackId && t.IsRequired)
                         .Select(t => t.CourseId)
                         .ToListAsync();
 
-                    // All passed courses by trainee
                     var passedCourses = await _context.AssessmentResults
                         .Include(a => a.Enrollment)
                             .ThenInclude(e => e.Session)
@@ -137,7 +128,6 @@ namespace TrainingSystem.MVC.Controllers
                         .Distinct()
                         .ToListAsync();
 
-                    // Only count required courses
                     var matchedPassed = passedCourses
                         .Where(pc => requiredCourses.Contains(pc))
                         .Distinct()
@@ -149,7 +139,6 @@ namespace TrainingSystem.MVC.Controllers
                         ? 0
                         : (matchedPassed.Count * 100) / requiredCourses.Count;
 
-                    // Get or create progress
                     var progress = await _context.TraineeCertificationProgresses
                         .FirstOrDefaultAsync(p =>
                             p.UserId == userId &&
@@ -179,7 +168,7 @@ namespace TrainingSystem.MVC.Controllers
                             progress.EligibleDate = DateOnly.FromDateTime(DateTime.Now);
                     }
 
-                    // ================= CREATE CERTIFICATE =================
+                    // CREATE CERTIFICATE 
                     if (completed)
                     {
                         bool exists = await _context.Certificates
@@ -198,9 +187,15 @@ namespace TrainingSystem.MVC.Controllers
                                 IssuedDate = DateOnly.FromDateTime(DateTime.Now)
                             };
 
-                            _context.Certificates.Add(certificate);
+                            var trackName = await _context.CertificationTracks
+                                .Where(t => t.CertificationTrackId == trackId)
+                                .Select(t => t.TrackName)
+                                .FirstOrDefaultAsync();
 
-                            await _notification.CreateNotification(userId, "Your certificate is ready");
+                            await _notification.CreateNotification(
+                                    userId,
+                                        $" Your certificate for {trackName} is ready!"
+                                        );
                         }
                     }
                 }

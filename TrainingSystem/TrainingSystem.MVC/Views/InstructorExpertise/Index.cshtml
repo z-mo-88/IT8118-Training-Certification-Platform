@@ -16,6 +16,16 @@
 <div class="container-fluid py-5 px-3 px-md-5">
 
     <div class="mb-4 d-flex justify-content-between align-items-center">
+
+        @if (roleId == 3)
+        {
+            <a href="javascript:history.back()"
+               class="btn btn-light fw-semibold"
+               style="border-radius: 10px;">
+                Back
+            </a>
+        }
+
         <div>
             <h2 class="fw-bold mb-1" style="color: #0a1f5c;">@pageTitle</h2>
             <p class="text-muted mb-0">@pageSubtitle</p>
@@ -51,7 +61,10 @@
                     <thead style="background-color: rgba(10, 31, 92, 0.06);">
                         <tr>
                             <th class="px-4 py-3">Expertise</th>
-                            <th class="text-center">Actions</th>
+                            @if (roleId == 3)
+                            {
+                                <th class="text-center">Actions</th>
+                            }
                         </tr>
                     </thead>
 
@@ -68,13 +81,16 @@
                                     </td>
 
                                     <td class="text-center">
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.InstructorExpertiseId"
-                                           asp-route-userId="@targetUserId"
-                                           class="btn btn-sm fw-semibold text-white px-3"
-                                           style="background-color: #dc3545; border-radius: 10px; border: none;">
-                                            Delete
-                                        </a>
+                                        @if (roleId == 3)
+                                        {
+                                            <a asp-action="Delete"
+                                            asp-route-id="@item.InstructorExpertiseId"
+                                            asp-route-userId="@targetUserId"
+                                            class="btn btn-sm fw-semibold text-white px-3"
+                                            style="background-color: #dc3545; border-radius: 10px; border: none;">
+                                                Delete
+                                            </a>
+                                        }
                                     </td>
                                 </tr>
                             }

@@ -2,16 +2,21 @@
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class InstructorAvailabilityController : BaseController
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public InstructorAvailabilityController(AppDbContext context)
+       
+
+        public InstructorAvailabilityController(AppDbContext context, NotificationService notification)
         {
             _context = context;
+            _notification = notification;
         }
 
         public async Task<IActionResult> Index(int? userId)
@@ -157,6 +162,11 @@ namespace TrainingSystem.MVC.Controllers
             _context.InstructorAvailabilities.Add(model);
             await _context.SaveChangesAsync();
 
+            await _notification.CreateNotification(
+    model.UserId,
+    $"New availability added: {model.DayOfWeek} {model.StartTime} - {model.EndTime}"
+);
+
             return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }
 
@@ -228,8 +238,21 @@ namespace TrainingSystem.MVC.Controllers
             if (item == null)
                 return NotFound();
 
+           
+
+           
+            var day = item.DayOfWeek;
+            var start = item.StartTime;
+            var end = item.EndTime;
+
             _context.InstructorAvailabilities.Remove(item);
             await _context.SaveChangesAsync();
+
+            
+            await _notification.CreateNotification(
+                targetUserId,
+                $"Availability removed: {day} {start} - {end}"
+            );
 
             return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }

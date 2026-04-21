@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
-using TrainingSystem.MVC.Helpers;
 
 namespace TrainingSystem.MVC.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly AppDbContext _context;
@@ -17,11 +20,11 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-        // LOGIN
+        //  LOGIN 
         [HttpGet]
         public IActionResult Login()
         {
-            if (HttpContext.Session.GetInt32("UserId") != null)
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 return RedirectUserByRole();
             }
@@ -30,9 +33,9 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(string email, string password, bool rememberMe)
         {
-            if (HttpContext.Session.GetInt32("UserId") != null)
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 return RedirectUserByRole();
             }
@@ -54,20 +57,38 @@ namespace TrainingSystem.MVC.Controllers
                 return View();
             }
 
+            // SESSION 
             HttpContext.Session.SetInt32("UserId", user.UserId);
             HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetInt32("RoleId", user.RoleId);
 
-await _context.SaveChangesAsync();
+            //  COOKIE AUTH 
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Role, user.RoleId.ToString())
+            };
+
+            var identity = new ClaimsIdentity(claims, "MyCookieAuth");
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync("MyCookieAuth", principal, new AuthenticationProperties
+            {
+                IsPersistent = rememberMe,
+                ExpiresUtc = rememberMe
+                    ? DateTime.UtcNow.AddDays(7)
+                    : DateTime.UtcNow.AddMinutes(30)
+            });
 
             return RedirectUserByRole();
         }
 
-        // REGISTER
+        //  REGISTER 
         [HttpGet]
         public IActionResult Register()
         {
-            if (HttpContext.Session.GetInt32("UserId") != null)
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 return RedirectUserByRole();
             }
@@ -78,7 +99,7 @@ await _context.SaveChangesAsync();
         [HttpPost]
         public async Task<IActionResult> Register(string name, string email, string password, int roleId)
         {
-            if (HttpContext.Session.GetInt32("UserId") != null)
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 return RedirectUserByRole();
             }
@@ -111,35 +132,37 @@ await _context.SaveChangesAsync();
             return RedirectToAction("Login");
         }
 
-        // LOGOUT
-        public IActionResult Logout()
+        //  LOGOUT 
+        public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync("MyCookieAuth");
             HttpContext.Session.Clear();
+
             return RedirectToAction("Login");
         }
 
-        // ROLE-BASED REDIRECT
+        // ROLE REDIRECT 
         private IActionResult RedirectUserByRole()
         {
-            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            var roleClaim = User.FindFirstValue(ClaimTypes.Role);
 
-            switch (roleId)
+            if (string.IsNullOrEmpty(roleClaim))
             {
-                case 1: // Trainee
-                    return RedirectToAction("Index", "Enrollments");
-
-                case 2: // Instructor
-                    return RedirectToAction("Index", "InstructorSessions");
-
-                case 3: // Coordinator
-                    return RedirectToAction("Index", "Users");
-
-                default:
-                    return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login");
             }
+
+            int roleId = int.Parse(roleClaim);
+
+            return roleId switch
+            {
+                1 => RedirectToAction("Index", "Enrollments"),
+                2 => RedirectToAction("Index", "InstructorSessions"),
+                3 => RedirectToAction("Index", "Users"),
+                _ => RedirectToAction("Index", "Home")
+            };
         }
 
-        // HASH FUNCTION
+        // HASH 
         private string HashPassword(string password)
         {
             using (SHA256 sha = SHA256.Create())

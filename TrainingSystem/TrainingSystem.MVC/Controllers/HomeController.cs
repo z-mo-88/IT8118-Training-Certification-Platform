@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using TrainingSystem.MVC.Models;
@@ -12,6 +13,8 @@ namespace TrainingSystem.MVC.Controllers
         {
             _logger = logger;
         }
+
+        [AllowAnonymous]
 
         public IActionResult Index()
         {

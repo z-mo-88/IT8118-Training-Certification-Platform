@@ -1,0 +1,23 @@
+﻿@model TrainingSystem.API.Models.SubjectCategory
+
+<div class="container py-5">
+    <div class="card shadow-sm" style="border-radius:18px; max-width:600px;">
+        <div class="card-body p-4 text-center">
+
+            <h4 class="text-danger fw-bold">Delete Category</h4>
+
+            <p>Are you sure you want to delete <strong>@Model.CategoryName</strong>?</p>
+
+            <form asp-action="DeleteConfirmed" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-light">Cancel</a>
+                    <button class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

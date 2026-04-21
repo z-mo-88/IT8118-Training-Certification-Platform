@@ -101,13 +101,19 @@ namespace TrainingSystem.MVC.Controllers
                 Status = "Enrolled",
                 EnrollmentDate = DateOnly.FromDateTime(DateTime.Now),
                 OutstandingBalance = session.Course.EnrollmentFee,
-                IsOverdue = session.Course.EnrollmentFee > 0
+                IsOverdue = false
             };
 
             session.AvailableSeats--;
 
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
+            var user = await _context.Users.FindAsync(userId);
+
+            await _notification.CreateNotification(
+    session.UserId,
+     $"{user.Name} enrolled in your session"
+);
 
             TempData["Success"] = "Enrollment successful!";
 
@@ -141,6 +147,7 @@ namespace TrainingSystem.MVC.Controllers
         {
             var auth = AuthorizeRole(1);
             if (auth != null) return auth;
+            int userId = UserId.Value;
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Session)
@@ -158,9 +165,11 @@ namespace TrainingSystem.MVC.Controllers
                 session.AvailableSeats++;
 
             await _context.SaveChangesAsync();
+
+            var user = await _context.Users.FindAsync(userId);
             await _notification.CreateNotification(
     session.UserId,
-    "A trainee enrolled in your session"
+   $"{user.Name} has dropped your session"
 );
 
             TempData["Success"] = "Course dropped successfully";

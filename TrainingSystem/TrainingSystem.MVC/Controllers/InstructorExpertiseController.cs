@@ -3,16 +3,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class InstructorExpertiseController : BaseController
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public InstructorExpertiseController(AppDbContext context)
+
+        public InstructorExpertiseController(AppDbContext context, NotificationService notification)
         {
             _context = context;
+            _notification = notification;
         }
 
         public async Task<IActionResult> Index(int? userId)
@@ -152,6 +156,16 @@ namespace TrainingSystem.MVC.Controllers
             _context.InstructorExpertises.Add(model);
             await _context.SaveChangesAsync();
 
+           
+            var expertise = await _context.ExpertiseAreas
+                .FirstOrDefaultAsync(e => e.ExpertiseId == model.ExpertiseId);
+
+           
+            await _notification.CreateNotification(
+                model.UserId,
+                $"New expertise added: {expertise?.ExpertiseName}"
+            );
+
             return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }
 
@@ -224,8 +238,23 @@ namespace TrainingSystem.MVC.Controllers
             if (item == null)
                 return NotFound();
 
+           
+
+          
+            var expertiseName = item.ExpertiseId;
+
             _context.InstructorExpertises.Remove(item);
             await _context.SaveChangesAsync();
+
+            
+            var expertise = await _context.ExpertiseAreas
+                .FirstOrDefaultAsync(e => e.ExpertiseId == expertiseName);
+
+           
+            await _notification.CreateNotification(
+                targetUserId,
+                $"Expertise removed: {expertise?.ExpertiseName}"
+            );
 
             return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }

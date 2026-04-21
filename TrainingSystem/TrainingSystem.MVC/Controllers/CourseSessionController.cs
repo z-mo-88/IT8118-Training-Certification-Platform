@@ -65,6 +65,24 @@ namespace TrainingSystem.MVC.Controllers
                 .Include(c => c.Category)
                 .FirstOrDefaultAsync(c => c.CourseId == session.CourseId);
 
+            var requiredEquipments = await _context.CourseEquipmentRequirements
+                .Where(c => c.CourseId == session.CourseId)
+                .Select(c => c.EquipmentId)
+                .ToListAsync();
+
+            var roomEquipments = await _context.RoomEquipments
+                .Where(r => r.RoomId == session.RoomId)
+                .Select(r => r.EquipmentId)
+                .ToListAsync();
+
+            bool hasAllRequired = requiredEquipments.All(req => roomEquipments.Contains(req));
+
+            if (!hasAllRequired)
+            {
+                ModelState.AddModelError("RoomId", "Selected room does not meet course equipment requirements");
+            }
+
+
             if (selectedCourse == null)
             {
                 ModelState.AddModelError("", "Selected course is invalid");
@@ -171,6 +189,23 @@ namespace TrainingSystem.MVC.Controllers
                 .Include(c => c.Category)
                 .FirstOrDefaultAsync(c => c.CourseId == session.CourseId);
 
+            var requiredEquipments = await _context.CourseEquipmentRequirements
+                .Where(c => c.CourseId == session.CourseId)
+                .Select(c => c.EquipmentId)
+                .ToListAsync();
+
+            var roomEquipments = await _context.RoomEquipments
+                .Where(r => r.RoomId == session.RoomId)
+                .Select(r => r.EquipmentId)
+                .ToListAsync();
+
+            bool hasAllRequired = requiredEquipments.All(req => roomEquipments.Contains(req));
+
+            if (!hasAllRequired)
+            {
+                ModelState.AddModelError("RoomId", "Selected room does not meet course equipment requirements");
+            }
+
             if (selectedCourse == null)
             {
                 ModelState.AddModelError("", "Selected course is invalid");
@@ -246,7 +281,25 @@ namespace TrainingSystem.MVC.Controllers
 
             if (session == null) return NotFound();
 
+            bool hasEnrollments = await _context.Enrollments
+        .AnyAsync(e => e.SessionId == id);
+
+            if (hasEnrollments)
+            {
+                TempData["Error"] = "Cannot delete session because students are enrolled.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.CourseSessions.Remove(session);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Session deleted successfully";
+            return RedirectToAction(nameof(Index));
+
+
             return View(session);
+
+
         }
 
         [HttpPost, ActionName("Delete")]

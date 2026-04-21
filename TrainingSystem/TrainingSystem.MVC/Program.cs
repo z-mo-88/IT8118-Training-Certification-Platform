@@ -1,14 +1,20 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using TrainingSystem.API.Data;
 using TrainingSystem.MVC.Helpers;
 using TrainingSystem.MVC.Services;
+using QuestPDF.Infrastructure;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<NotificationService>();
+QuestPDF.Settings.License = LicenseType.Community;
 
 // DbContext 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -20,11 +26,10 @@ builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri("https://localhost:7258/");
 });
 
-// REQUIRED for session
 builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddHttpContextAccessor();
 
-// Add Session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -32,9 +37,21 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddAuthentication("MyCookieAuth")
+    .AddCookie("MyCookieAuth", options =>
+    {
+        options.LoginPath = "/Account/Login";
+
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+
+        options.AccessDeniedPath = "/Account/Login";
+    });
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -46,9 +63,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Use Session 
-app.UseSession();
-
+app.UseAuthentication();   
+app.UseSession();          
 app.UseAuthorization();
 
 

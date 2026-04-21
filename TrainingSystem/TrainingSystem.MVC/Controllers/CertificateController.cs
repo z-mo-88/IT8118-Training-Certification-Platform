@@ -1,15 +1,50 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using TrainingSystem.API.Data;
+using TrainingSystem.MVC.Services;
 
 namespace TrainingSystem.MVC.Controllers
 {
     public class CertificateController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly AppDbContext _context;
+        private readonly CertificatePdfService _pdf;
 
-        public CertificateController(IHttpClientFactory factory)
+
+
+        public CertificateController(IHttpClientFactory factory, AppDbContext context)
         {
             _httpClient = factory.CreateClient("ApiClient");
+            _pdf = new CertificatePdfService();
+            _context = context;
+        }
+
+        public async Task<IActionResult> Download(int id)
+        {
+            var certificate = await _context.Certificates
+                .Include(c => c.User)
+                .Include(c => c.CertificationTrack)
+                .FirstOrDefaultAsync(c => c.CertificateId == id);
+
+            if (certificate == null)
+                return NotFound();
+
+           
+            var instructorName = "Ahmed Khalid";
+            var duration = "20 Hours";
+
+            var pdf = _pdf.Generate(
+                certificate.User.Name,
+                certificate.CertificationTrack.TrackName,
+                certificate.CertificateReferenceNumber,
+                certificate.IssuedDate.ToString(),
+                instructorName,
+                duration
+            );
+
+            return File(pdf, "application/pdf", "Certificate.pdf");
         }
 
         [HttpGet]

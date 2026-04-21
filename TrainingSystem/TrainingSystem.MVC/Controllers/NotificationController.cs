@@ -13,10 +13,16 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
+       
         public async Task<IActionResult> Index()
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            var role = HttpContext.Session.GetInt32("RoleId");
+
+          
+            if (role != 1 && role != 2)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             int userId = UserId.Value;
 
@@ -28,12 +34,17 @@ namespace TrainingSystem.MVC.Controllers
             return View(notifications);
         }
 
+        //  MARK AS READ 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkAsRead(int id)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            var role = HttpContext.Session.GetInt32("RoleId");
+
+            if (role != 1 && role != 2)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             int userId = UserId.Value;
 
@@ -51,12 +62,17 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // DELETE 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var auth = AuthorizeRole(2);
-            if (auth != null) return auth;
+            var role = HttpContext.Session.GetInt32("RoleId");
+
+            if (role != 1 && role != 2)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             int userId = UserId.Value;
 

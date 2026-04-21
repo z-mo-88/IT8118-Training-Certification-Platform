@@ -56,7 +56,9 @@
 
                                 var isOverdue = item.Status == "Dropped"
                                 ? false
-                                : remainingBalance > 0;
+                                : remainingBalance > 0 &&
+                                item.Session != null &&
+                                item.Session.SessionDate < DateOnly.FromDateTime(DateTime.Now);
 
                                 <tr>
                                     <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">

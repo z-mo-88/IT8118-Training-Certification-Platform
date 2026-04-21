@@ -25,6 +25,7 @@
                         @item.CertificationTrack?.TrackName
                     </h5>
 
+                    
                     <!-- Progress -->
                     <p><strong>Progress:</strong> @item.ProgressPercent %</p>
 
@@ -56,6 +57,15 @@
                             <div>Reference: <b>@cert.CertificateReferenceNumber</b></div>
                             <div>Issued Date: <b>@cert.IssuedDate</b></div>
                             <div>Status: <b>@cert.CertificateStatus</b></div>
+
+                            <a asp-controller="Certificate"
+                               asp-action="Download"
+                               asp-route-id="@cert.CertificateId"
+                               class="btn mt-3 fw-semibold text-white px-4"
+                               style="background-color:#0a1f5c; border-radius:12px;">
+                                ⬇ Download Certificate
+                            </a>
+
                         </div>
                     }
                     else if (item.Status == "Eligible")
