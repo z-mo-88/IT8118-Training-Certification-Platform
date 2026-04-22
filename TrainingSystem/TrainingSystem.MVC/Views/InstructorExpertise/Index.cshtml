@@ -2,7 +2,7 @@
 @using System.Security.Claims
 
 @{
-    var roleId = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "0");
+    var roleId = Context.Session.GetInt32("RoleId");
     var targetUserId = ViewBag.TargetUserId;
 }
 
@@ -11,6 +11,12 @@
     <div class="d-flex justify-content-between mb-4">
         <h2>Expertise</h2>
 
+        @if (roleId == 3)
+        {
+            <a href="/Instructor" class="btn btn-outline-secondary mb-3">
+                Back to Instructors
+            </a>
+        }
         <!-- ADD -->
         <a asp-action="Create"
            asp-route-userId="@targetUserId"

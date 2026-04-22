@@ -1,76 +1,77 @@
 ﻿@model TrainingSystem.API.Models.InstructorExpertise
-@using System.Security.Claims
 
 @{
-    var roleId = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "0");
+    var roleId = Context.Session.GetInt32("RoleId");
     var targetUserId = ViewBag.TargetUserId;
 }
 
 @if (roleId != 3)
 {
-    <script>
-        window.location.href = '/InstructorExpertise';
-    </script>
-}
-
-<div class="container py-5">
-    <div class="card border-0 shadow-sm" style="max-width: 700px; border-radius: 18px;">
-        <div class="card-body p-4 p-md-5">
-
-            <h2 class="fw-bold mb-2" style="color: #0a1f5c;">
-                Edit Expertise
-            </h2>
-            <p class="text-muted mb-4">
-                Update the instructor's expertise area.
-            </p>
-
-            <form asp-action="Edit" method="post">
-                @Html.AntiForgeryToken()
-
-                <!-- 🔥 IMPORTANT -->
-                <input type="hidden" asp-for="InstructorExpertiseId" />
-                <input type="hidden" asp-for="UserId" />
-
-                <div asp-validation-summary="All" class="text-danger mb-3"></div>
-
-                <div class="mb-4">
-                    <label asp-for="ExpertiseId"
-                           class="form-label fw-semibold"
-                           style="color: #0a1f5c;">
-                        Expertise
-                    </label>
-
-                    <select asp-for="ExpertiseId"
-                            asp-items="ViewBag.Expertise"
-                            class="form-select"
-                            style="height: 50px; border-radius: 10px;">
-                        <option value="">-- Select Expertise --</option>
-                    </select>
-
-                    <span asp-validation-for="ExpertiseId" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <a asp-action="Index"
-                       asp-route-userId="@targetUserId"
-                       class="btn px-4"
-                       style="background-color: #f1f3f5; border-radius: 10px;">
-                        Back
-                    </a>
-
-                    <button type="submit"
-                            class="btn text-white fw-semibold px-4"
-                            style="background-color: #0a1f5c; border-radius: 10px; border: none;">
-                        Save Changes
-                    </button>
-                </div>
-
-            </form>
-
+    <div class="container py-5">
+        <div class="alert alert-danger text-center">
+            Access Denied
         </div>
-    </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+        <a href="/Instructor" class="btn btn-secondary mt-3">
+            Back to Instructors
+        </a>
+    </div>
+}
+else
+{
+    <div class="container py-5">
+
+      
+        <a href="/Instructor" class="btn btn-outline-secondary mb-3">
+             Back to Instructors
+        </a>
+
+        <div class="card border-0 shadow-sm mx-auto" style="max-width: 700px; border-radius: 18px;">
+            <div class="card-body p-4 p-md-5">
+
+                <h2 class="fw-bold mb-4 text-center" style="color:#0a1f5c;">
+                    Edit Expertise
+                </h2>
+
+                <form asp-action="Edit" method="post">
+
+                 
+                    <input type="hidden" asp-for="InstructorExpertiseId" />
+                    <input type="hidden" name="userId" value="@targetUserId" />
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" style="color:#0a1f5c;">
+                            Expertise
+                        </label>
+
+                        <select asp-for="ExpertiseId"
+                                asp-items="ViewBag.ExpertiseList"
+                                class="form-select"
+                                style="height:50px; border-radius:10px;">
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+
+                        <a asp-action="Index"
+                           asp-route-userId="@targetUserId"
+                           class="btn btn-outline-secondary px-4"
+                           style="border-radius:10px;">
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="btn text-white px-4"
+                                style="background:#0a1f5c; border-radius:10px;">
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
 }

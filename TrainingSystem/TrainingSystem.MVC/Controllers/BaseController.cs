@@ -22,11 +22,27 @@ namespace TrainingSystem.MVC.Controllers
                 return;
             }
 
-            var userId = HttpContext.Session.GetInt32("UserId");
+            //  RESTORE SESSION FROM COOKIE
+            if (HttpContext.Session.GetInt32("UserId") == null)
+            {
+                var userIdCookie = Request.Cookies["UserId"];
+                var roleIdCookie = Request.Cookies["RoleId"];
+                var userNameCookie = Request.Cookies["UserName"];
 
-            if (userId == null)
+                if (userIdCookie != null && roleIdCookie != null)
+                {
+                    HttpContext.Session.SetInt32("UserId", int.Parse(userIdCookie));
+                    HttpContext.Session.SetInt32("RoleId", int.Parse(roleIdCookie));
+
+                    if (userNameCookie != null)
+                        HttpContext.Session.SetString("UserName", userNameCookie);
+                }
+            }
+
+            if (HttpContext.Session.GetInt32("UserId") == null)
             {
                 context.Result = RedirectToAction("Login", "Account");
+                return;
             }
 
             base.OnActionExecuting(context);

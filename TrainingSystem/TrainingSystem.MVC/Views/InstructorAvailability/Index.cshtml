@@ -4,7 +4,7 @@
 @using System.Security.Claims
 
 @{
-    var roleId = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "0");
+    var roleId = Context.Session.GetInt32("RoleId");
     var targetUserId = ViewBag.TargetUserId;
 }
 
@@ -16,6 +16,12 @@
             <h2 class="fw-bold" style="color:#0a1f5c;">Availability</h2>
             <p class="text-muted">Manage availability schedule</p>
         </div>
+
+        @if (roleId == 3) {
+        <a href="/Instructor" class="btn btn-outline-secondary mb-3">
+            Back to Instructors
+        </a>
+        }
 
         <!-- ADD  -->
         <a asp-action="Create"

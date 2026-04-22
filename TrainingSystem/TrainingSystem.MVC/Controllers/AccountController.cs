@@ -49,9 +49,22 @@ namespace TrainingSystem.MVC.Controllers
                 return View();
             }
 
+            // SESSION
             HttpContext.Session.SetInt32("UserId", user.UserId);
-            HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetInt32("RoleId", user.RoleId);
+            HttpContext.Session.SetString("UserName", user.Name);
+
+            // COOKIE 
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddMinutes(60), 
+                HttpOnly = true,
+                IsEssential = true
+            };
+
+            Response.Cookies.Append("UserId", user.UserId.ToString(), cookieOptions);
+            Response.Cookies.Append("RoleId", user.RoleId.ToString(), cookieOptions);
+            Response.Cookies.Append("UserName", user.Name, cookieOptions);
 
             return RedirectByRole();
         }
@@ -60,10 +73,15 @@ namespace TrainingSystem.MVC.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
+
+            // DELETE COOKIES
+            Response.Cookies.Delete("UserId");
+            Response.Cookies.Delete("RoleId");
+            Response.Cookies.Delete("UserName");
+
             return RedirectToAction("Login");
         }
 
-        // REDIRECT BY ROLE
         private IActionResult RedirectByRole()
         {
             var roleId = HttpContext.Session.GetInt32("RoleId");
@@ -77,7 +95,6 @@ namespace TrainingSystem.MVC.Controllers
             };
         }
 
-        // HASH
         private string HashPassword(string password)
         {
             using var sha = SHA256.Create();

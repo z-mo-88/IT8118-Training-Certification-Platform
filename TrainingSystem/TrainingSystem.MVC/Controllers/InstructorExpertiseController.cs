@@ -169,6 +169,90 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index), new { userId = targetUserId });
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id, int? userId)
+        {
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
+
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                if (userId == null)
+                    return NotFound();
+
+                targetUserId = userId.Value;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            var item = await _context.InstructorExpertises
+                .FirstOrDefaultAsync(i => i.InstructorExpertiseId == id && i.UserId == targetUserId);
+
+            if (item == null)
+                return NotFound();
+
+            LoadDropdown();
+            ViewBag.TargetUserId = targetUserId;
+
+            return View(item);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, int userId, InstructorExpertise model)
+        {
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+            int? currentUserId = UserId;
+
+            if (roleId == null || currentUserId == null)
+                return RedirectToAction("Login", "Account");
+
+            int targetUserId;
+
+            if (roleId == 3)
+            {
+                targetUserId = userId;
+            }
+            else if (roleId == 2)
+            {
+                targetUserId = currentUserId.Value;
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            if (id != model.InstructorExpertiseId)
+                return NotFound();
+
+            ModelState.Remove("User");
+            ModelState.Remove("Expertise");
+
+            if (!ModelState.IsValid)
+            {
+                LoadDropdown();
+                ViewBag.TargetUserId = targetUserId;
+                return View(model);
+            }
+
+            _context.Update(model);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), new { userId = targetUserId });
+        }
+
         [HttpGet]
         public async Task<IActionResult> Delete(int id, int? userId)
         {
@@ -261,7 +345,7 @@ namespace TrainingSystem.MVC.Controllers
 
         private void LoadDropdown()
         {
-            ViewBag.Expertise = new SelectList(
+            ViewBag.ExpertiseList = new SelectList(
                 _context.ExpertiseAreas,
                 "ExpertiseId",
                 "ExpertiseName"
