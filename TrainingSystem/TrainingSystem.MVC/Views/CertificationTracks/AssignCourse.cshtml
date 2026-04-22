@@ -1,0 +1,42 @@
+﻿<h3>Assign Course to Track</h3>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form asp-action="AssignCourse" method="post">
+
+    <div class="mb-3">
+        <label>Track</label>
+        <select name="trackId" class="form-control">
+            @foreach (var t in ViewBag.Tracks)
+            {
+                <option value="@t.CertificationTrackId">@t.TrackName</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Course</label>
+        <select name="courseId" class="form-control">
+            @foreach (var c in ViewBag.Courses)
+            {
+                <option value="@c.CourseId">@c.Title</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" name="isRequired" class="form-check-input" />
+        <label class="form-check-label">Required Course</label>
+    </div>
+
+    <button class="btn btn-primary">Assign</button>
+
+</form>

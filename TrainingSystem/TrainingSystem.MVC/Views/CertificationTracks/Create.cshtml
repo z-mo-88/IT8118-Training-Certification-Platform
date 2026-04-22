@@ -1,0 +1,24 @@
+﻿@model TrainingSystem.API.Models.CertificationTrack
+
+<h3>Create Certification Track</h3>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="Create" method="post">
+
+    <div class="mb-3">
+        <label>Track Name</label>
+        <input asp-for="TrackName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <button class="btn btn-primary">Create</button>
+
+</form>

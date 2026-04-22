@@ -36,6 +36,18 @@
                         </div>
                     </div>
 
+                    @{
+                        var missingDict = ViewBag.MissingCourses as Dictionary<int, int>;
+                        var missing = missingDict[item.CertificationTrackId];
+                    }
+
+                    @if (missing > 0)
+                    {
+                        <div class="text-warning mt-2">
+                            You need @missing more course(s) to complete this track
+                        </div>
+                    }
+
                     <!-- Status -->
                     <p>
                         <strong>Status:</strong>
