@@ -69,6 +69,52 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectByRole();
         }
 
+        
+        //Register
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> Register(string name, string email, string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                ViewBag.Error = "Password required";
+                return View();
+            }
+
+            var exists = await _context.Users.AnyAsync(u => u.Email == email);
+
+            if (exists)
+            {
+                ViewBag.Error = "Email already exists";
+                return View();
+            }
+
+            var user = new User
+            {
+                Name = name,
+                Email = email,
+                PasswordHash = HashPassword(password),
+                RoleId = 1,
+                IsActive = true
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Account created successfully!";
+
+            return RedirectToAction("Login");
+        }
+
         // LOGOUT
         public IActionResult Logout()
         {

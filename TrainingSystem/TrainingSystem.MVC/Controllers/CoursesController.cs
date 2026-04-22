@@ -16,42 +16,44 @@ namespace TrainingSystem.MVC.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
-        {
-            var courses = await _context.Courses
-                .Include(c => c.Category)
-                .Include(c => c.PrerequisiteCourse)
-                .Include(c => c.CourseSessions)
-                    .ThenInclude(s => s.User)
-                        .ThenInclude(u => u.InstructorProfile)
-                .ToListAsync();
+   public async Task<IActionResult> Index()
+{
+    int? userId = HttpContext.Session.GetInt32("UserId");
 
-            int? userId = HttpContext.Session.GetInt32("UserId");
+    var courses = await _context.Courses
+        .Include(c => c.Category)
+        .Include(c => c.PrerequisiteCourse)
+        .Include(c => c.CourseSessions)
+            .ThenInclude(s => s.User)
+                .ThenInclude(u => u.InstructorProfile)
+        .Include(c => c.CourseSessions)
+            .ThenInclude(s => s.Enrollments) 
+        .ToListAsync();
 
-            if (userId != null)
-            {
-               
-                var enrolledSessionIds = await _context.Enrollments
-                    .Where(e => e.UserId == userId && e.Status == "Enrolled")
-                    .Select(e => e.SessionId)
-                    .ToListAsync();
+    if (userId != null)
+    {
+        // enrolled sessions
+        var enrolledSessionIds = await _context.Enrollments
+            .Where(e => e.UserId == userId && e.Status == "Enrolled")
+            .Select(e => e.SessionId)
+            .ToListAsync();
 
-                ViewBag.EnrolledSessionIds = enrolledSessionIds;
+        ViewBag.EnrolledSessionIds = enrolledSessionIds;
 
-               
-                var passedCourseIds = await _context.AssessmentResults
-                    .Include(a => a.Enrollment)
-                        .ThenInclude(e => e.Session)
-                    .Where(a => a.Enrollment.UserId == userId && a.IsPassed)
-                    .Select(a => a.Enrollment.Session.CourseId)
-                    .Distinct()
-                    .ToListAsync();
+       
+        var passedCourseIds = await _context.AssessmentResults
+            .Include(a => a.Enrollment)
+                .ThenInclude(e => e.Session)
+            .Where(a => a.Enrollment.UserId == userId && a.IsPassed)
+            .Select(a => a.Enrollment.Session.CourseId)
+            .Distinct()
+            .ToListAsync();
 
-                ViewBag.PassedCourseIds = passedCourseIds;
-            }
+        ViewBag.PassedCourseIds = passedCourseIds;
+    }
 
-            return View(courses);
-        }
+    return View(courses);
+}
 
         // ================= CREATE GET =================
         public IActionResult Create()

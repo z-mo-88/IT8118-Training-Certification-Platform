@@ -51,11 +51,20 @@
                                            style="height: 50px; border-radius: 10px;" />
                                     <span asp-validation-for="Email" class="text-danger small"></span>
                                 </div>
+                                <div class="mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label fw-semibold" style="color: #0a1f5c;">Phone</label>
+
+                                    <input asp-for="PhoneNumber"
+                                           class="form-control"
+                                           placeholder="Enter your phone number"
+                                           style="height: 50px; border-radius: 10px;" />
+
+                                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                </div>
 
                                 <div class="mb-4">
                                     <label asp-for="PasswordHash" class="form-label fw-semibold" style="color: #0a1f5c;">Password</label>
-                                    <input asp-for="PasswordHash"
-                                           type="password"
+                                    <input name="password" type="password"
                                            class="form-control"
                                            placeholder="Enter your password"
                                            style="height: 50px; border-radius: 10px;" />

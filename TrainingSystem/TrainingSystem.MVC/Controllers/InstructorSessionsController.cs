@@ -130,6 +130,14 @@ namespace TrainingSystem.MVC.Controllers
             if (enrollment == null)
                 return NotFound();
 
+            if (string.IsNullOrWhiteSpace(remarks))
+            {
+                TempData["ErrorEnrollmentId"] = enrollmentId;
+                TempData["ErrorMessage"] = "Please enter your remark";
+
+                return RedirectToAction(nameof(Students), new { id = enrollment.SessionId });
+            }
+
             var existingResult = enrollment.AssessmentResults.FirstOrDefault();
 
             if (existingResult == null)
@@ -156,7 +164,7 @@ namespace TrainingSystem.MVC.Controllers
             // COMPLETE
             if (isPassed)
             {
-                enrollment.Status = "Completed";
+                enrollment.Status = "Completed";        
             }
 
             await _context.SaveChangesAsync();

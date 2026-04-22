@@ -1,10 +1,13 @@
 ﻿@model IEnumerable<TrainingSystem.API.Models.Course>
-@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Courses";
 
-    var roleId = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "0");
+    var roleId = Context.Session.GetInt32("RoleId");
+    var userId = Context.Session.GetInt32("UserId");
+
+    var enrolledIds = ViewBag.EnrolledSessionIds as List<int>;
+    var passedCourses = ViewBag.PassedCourseIds as List<int>;
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
@@ -106,12 +109,20 @@
                                 <th>Time</th>
                                 <th>Seats</th>
                                 <th>Instructor</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach (var session in course.CourseSessions)
                             {
+                                var alreadyEnrolled = enrolledIds != null && enrolledIds.Contains(session.SessionId);
+
+                                var sessionFull = session.AvailableSeats <= 0;
+
+                                var prerequisiteMissing = course.PrerequisiteCourseId != null &&
+                                (passedCourses == null || !passedCourses.Contains(course.PrerequisiteCourseId.Value));
+
                                 <tr>
                                     <td>@session.SessionDate.ToShortDateString()</td>
 
@@ -119,7 +130,7 @@
                                         @session.StartTime - @session.EndTime
                                     </td>
 
-                                    <td>
+                                    <td id="seats-@session.SessionId">
                                         @session.AvailableSeats
                                     </td>
 
@@ -128,6 +139,40 @@
                                         <small class="text-muted">
                                             @session.User?.InstructorProfile?.Bio
                                         </small>
+                                    </td>
+
+                                    <td>
+                                        @if (roleId == 1)
+                                        {
+                                            if (alreadyEnrolled)
+                                            {
+                                                <button class="btn btn-outline-secondary btn-sm" disabled>
+                                                    Enrolled
+                                                </button>
+                                            }
+                                            else if (sessionFull)
+                                            {
+                                                <button class="btn btn-danger btn-sm" disabled>
+                                                    Full
+                                                </button>
+                                            }
+                                            else if (prerequisiteMissing)
+                                            {
+                                                <button class="btn btn-warning btn-sm" disabled>
+                                                    Need Prerequisite
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <form asp-controller="Enrollments" asp-action="Enroll" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="sessionId" value="@session.SessionId" />
+                                                    <button class="btn btn-success btn-sm">
+                                                        Enroll
+                                                    </button>
+                                                </form>
+                                            }
+                                        }
                                     </td>
                                 </tr>
                             }
