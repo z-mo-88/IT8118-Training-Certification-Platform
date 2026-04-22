@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "My Certification Progress";
     var certs = ViewBag.Certificates as List<TrainingSystem.API.Models.Certificate>;
+    var missingDict = ViewBag.MissingCourses as Dictionary<int, int>;
 }
 
 <div class="container py-5">
@@ -18,15 +19,19 @@
             var cert = certs?.FirstOrDefault(c =>
             c.CertificationTrackId == item.CertificationTrackId);
 
+            var missing = (missingDict != null && missingDict.ContainsKey(item.CertificationTrackId))
+            ? missingDict[item.CertificationTrackId]
+            : 0;
+
             <div class="card mb-4 shadow-sm" style="border-radius:15px;">
                 <div class="card-body">
 
+                    <!-- TRACK NAME -->
                     <h5 class="fw-bold mb-3" style="color:#0a1f5c;">
                         @item.CertificationTrack?.TrackName
                     </h5>
 
-                    
-                    <!-- Progress -->
+                    <!-- PROGRESS -->
                     <p><strong>Progress:</strong> @item.ProgressPercent %</p>
 
                     <div class="progress mb-3" style="height: 20px;">
@@ -36,55 +41,64 @@
                         </div>
                     </div>
 
-                    @{
-                        var missingDict = ViewBag.MissingCourses as Dictionary<int, int>;
-                        var missing = missingDict[item.CertificationTrackId];
-                    }
-
+                    <!-- MISSING COURSES -->
                     @if (missing > 0)
                     {
                         <div class="text-warning mt-2">
-                            You need @missing more course(s) to complete this track
+                            You need @missing @(missing == 1 ? "more course" : "more courses") to complete this track
                         </div>
                     }
 
-                    <!-- Status -->
+                    <!-- STATUS -->
                     <p>
                         <strong>Status:</strong>
-                        <span class="badge bg-info">@item.Status</span>
+                        @if (item.Status == "Not Started")
+                        {
+                            <span class="badge bg-secondary">Not Started</span>
+                        }
+                        else if (item.Status == "In Progress")
+                        {
+                            <span class="badge bg-info">In Progress</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Eligible</span>
+                        }
                     </p>
 
-                    <!-- Eligible date -->
-                    @if (item.Status == "Eligible")
+                    <!-- ELIGIBLE DATE -->
+                    @if (item.ProgressPercent == 100)
                     {
                         <p><strong>Eligible Date:</strong> @item.EligibleDate</p>
                     }
 
-                    <!-- Certificate -->
-                    @if ((item.Status == "Eligible" || item.Status == "Certified") && cert != null)
+                    <!-- CERTIFICATE SECTION -->
+                    @if (item.ProgressPercent == 100)
                     {
-                        <div class="alert alert-success mt-3">
-                            🎓 <strong>Certificate Issued!</strong><br />
+                        if (cert != null)
+                        {
+                            <div class="alert alert-success mt-3">
+                                🎓 <strong>Certificate Issued!</strong><br />
 
-                            <div>Reference: <b>@cert.CertificateReferenceNumber</b></div>
-                            <div>Issued Date: <b>@cert.IssuedDate</b></div>
-                            <div>Status: <b>@cert.CertificateStatus</b></div>
+                                <div>Reference: <b>@cert.CertificateReferenceNumber</b></div>
+                                <div>Issued Date: <b>@cert.IssuedDate</b></div>
+                                <div>Status: <b>@cert.CertificateStatus</b></div>
 
-                            <a asp-controller="Certificate"
-                               asp-action="Download"
-                               asp-route-id="@cert.CertificateId"
-                               class="btn mt-3 fw-semibold text-white px-4"
-                               style="background-color:#0a1f5c; border-radius:12px;">
-                                ⬇ Download Certificate
-                            </a>
-
-                        </div>
-                    }
-                    else if (item.Status == "Eligible")
-                    {
-                        <div class="alert alert-warning mt-3">
-                            Certificate is being generated...
-                        </div>
+                                <a asp-controller="Certificate"
+                                   asp-action="Download"
+                                   asp-route-id="@cert.CertificateId"
+                                   class="btn mt-3 fw-semibold text-white px-4"
+                                   style="background-color:#0a1f5c; border-radius:12px;">
+                                    ⬇ Download Certificate
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning mt-3">
+                                Certificate is being generated...
+                            </div>
+                        }
                     }
 
                 </div>

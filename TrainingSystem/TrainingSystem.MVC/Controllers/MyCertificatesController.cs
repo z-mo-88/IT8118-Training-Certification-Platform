@@ -36,7 +36,6 @@ namespace TrainingSystem.MVC.Controllers
                     .Select(t => t.CourseId)
                     .ToListAsync();
 
-                
                 if (!requiredCourses.Any())
                 {
                     requiredCourses = await _context.CertificationTrackCourses
@@ -54,16 +53,32 @@ namespace TrainingSystem.MVC.Controllers
                     .Distinct()
                     .ToListAsync();
 
-                int matched = passedCourses.Count(pc => requiredCourses.Contains(pc));
+                // Only passed courses for THIS track
+                var matchedPassed = passedCourses
+                    .Where(pc => requiredCourses.Contains(pc))
+                    .Distinct()
+                    .ToList();
+
+            
+                bool hasStarted = matchedPassed.Any();
+
+                bool completed = requiredCourses.Any() &&
+                                 requiredCourses.All(rc => matchedPassed.Contains(rc));
 
                 int percent = requiredCourses.Count == 0
                     ? 0
-                    : (matched * 100) / requiredCourses.Count;
+                    : (matchedPassed.Count * 100) / requiredCourses.Count;
 
-                bool completed = requiredCourses.All(rc => passedCourses.Contains(rc));
-
-                int missing = requiredCourses.Count - matched;
+                int missing = requiredCourses.Count - matchedPassed.Count;
                 missingCoursesDict[trackId] = missing;
+
+                string status;
+                if (!hasStarted)
+                    status = "Not Started";
+                else if (!completed)
+                    status = "In Progress";
+                else
+                    status = "Eligible";
 
                 result.Add(new TraineeCertificationProgress
                 {
@@ -71,7 +86,7 @@ namespace TrainingSystem.MVC.Controllers
                     CertificationTrack = track,
                     UserId = userId,
                     ProgressPercent = percent,
-                    Status = completed ? "Eligible" : "In Progress",
+                    Status = status,
                     EligibleDate = completed
                         ? DateOnly.FromDateTime(DateTime.Now)
                         : DateOnly.MinValue

@@ -133,7 +133,9 @@ namespace TrainingSystem.MVC.Controllers
             
             if (string.IsNullOrWhiteSpace(remarks))
             {
-                TempData["Error"] = "Please enter remarks";
+                ModelState.AddModelError("Remarks_" + enrollmentId, "Please enter remarks");
+
+                TempData["Error_" + enrollmentId] = "Please enter remarks";
                 return RedirectToAction(nameof(Students), new { id = enrollment.SessionId });
             }
 
@@ -177,6 +179,7 @@ namespace TrainingSystem.MVC.Controllers
 
             await _notification.CreateNotification(enrollment.UserId, message);
 
+       
             // ===== CERTIFICATION LOGIC =====
             if (isPassed)
             {
@@ -192,13 +195,13 @@ namespace TrainingSystem.MVC.Controllers
 
                 foreach (var trackId in trackIds)
                 {
-                    // Get required courses
+                    // Required courses
                     var requiredCourses = await _context.CertificationTrackCourses
                         .Where(t => t.CertificationTrackId == trackId && t.IsRequired)
                         .Select(t => t.CourseId)
                         .ToListAsync();
 
-                    
+                    // If no required → take all
                     if (!requiredCourses.Any())
                     {
                         requiredCourses = await _context.CertificationTrackCourses
@@ -216,13 +219,31 @@ namespace TrainingSystem.MVC.Controllers
                         .Distinct()
                         .ToListAsync();
 
-                    bool completed = requiredCourses.All(rc => passedCourses.Contains(rc));
+                    // Only passed courses that belong to THIS track
+                    var matchedPassed = passedCourses
+                        .Where(pc => requiredCourses.Contains(pc))
+                        .Distinct()
+                        .ToList();
+
+                    // ===== STATES =====
+                    bool hasStarted = matchedPassed.Any();
+
+                    bool completed = requiredCourses.Any() &&
+                                     requiredCourses.All(rc => matchedPassed.Contains(rc));
 
                     int percent = requiredCourses.Count == 0
                         ? 0
-                        : (passedCourses.Count(pc => requiredCourses.Contains(pc)) * 100) / requiredCourses.Count;
+                        : (matchedPassed.Count * 100) / requiredCourses.Count;
 
-                    // ===== PROGRESS =====
+                    string status;
+                    if (!hasStarted)
+                        status = "Not Started";
+                    else if (!completed)
+                        status = "In Progress";
+                    else
+                        status = "Eligible";
+
+                    // ===== PROGRESS TABLE =====
                     var progress = await _context.TraineeCertificationProgresses
                         .FirstOrDefaultAsync(p =>
                             p.UserId == userId &&
@@ -233,24 +254,16 @@ namespace TrainingSystem.MVC.Controllers
                         progress = new TraineeCertificationProgress
                         {
                             UserId = userId,
-                            CertificationTrackId = trackId,
-                            Status = completed ? "Eligible" : "In Progress",
-                            ProgressPercent = percent,
-                            EligibleDate = completed
-                                ? DateOnly.FromDateTime(DateTime.Now)
-                                : DateOnly.MinValue
+                            CertificationTrackId = trackId
                         };
-
                         _context.TraineeCertificationProgresses.Add(progress);
                     }
-                    else
-                    {
-                        progress.Status = completed ? "Eligible" : "In Progress";
-                        progress.ProgressPercent = percent;
 
-                        if (completed)
-                            progress.EligibleDate = DateOnly.FromDateTime(DateTime.Now);
-                    }
+                    progress.Status = status;
+                    progress.ProgressPercent = percent;
+
+                    if (completed)
+                        progress.EligibleDate = DateOnly.FromDateTime(DateTime.Now);
 
                     // ===== CERTIFICATE =====
                     if (completed)

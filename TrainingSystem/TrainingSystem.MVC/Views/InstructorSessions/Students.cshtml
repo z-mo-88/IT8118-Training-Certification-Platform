@@ -109,14 +109,12 @@
                                                     <input type="text"
                                                            name="remarks"
                                                            class="form-control form-control-sm"
-                                                           placeholder="Remarks"
-                                                           style="width:140px;" />
+                                                           placeholder="Remarks" />
 
-                                                    @if (TempData["ErrorEnrollmentId"] != null &&
-                                                                                            (int)TempData["ErrorEnrollmentId"] == enrollment.EnrollmentId)
+                                                    @if (TempData["Error_" + enrollment.EnrollmentId] != null)
                                                     {
-                                                        <span class="text-danger" style="font-size:12px;">
-                                                            @TempData["ErrorMessage"]
+                                                        <span class="text-danger">
+                                                            @TempData["Error_" + enrollment.EnrollmentId]
                                                         </span>
                                                     }
 
