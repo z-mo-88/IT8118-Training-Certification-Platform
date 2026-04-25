@@ -81,8 +81,7 @@ namespace TrainingSystem.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Register(string name, string email, string password)
+        public async Task<IActionResult> Register(string name, string email, string phoneNumber, string password)
         {
             if (string.IsNullOrEmpty(password))
             {
@@ -102,6 +101,7 @@ namespace TrainingSystem.MVC.Controllers
             {
                 Name = name,
                 Email = email,
+                PhoneNumber = phoneNumber,
                 PasswordHash = HashPassword(password),
                 RoleId = 1,
                 IsActive = true
