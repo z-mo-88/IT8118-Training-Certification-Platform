@@ -62,9 +62,11 @@ namespace TrainingSystem.MVC.Controllers
         public async Task<IActionResult> Edit(int trackId, int courseId)
         {
             var item = await _context.CertificationTrackCourses
-                .FirstOrDefaultAsync(x =>
-                    x.CertificationTrackId == trackId &&
-                    x.CourseId == courseId);
+    .Include(x => x.CertificationTrack)
+    .Include(x => x.Course)
+    .FirstOrDefaultAsync(x =>
+        x.CertificationTrackId == trackId &&
+        x.CourseId == courseId);
 
             if (item == null) return NotFound();
 
