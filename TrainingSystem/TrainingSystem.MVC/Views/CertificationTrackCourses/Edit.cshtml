@@ -1,0 +1,31 @@
+﻿@model TrainingSystem.API.Models.CertificationTrackCourse
+
+<h2>Edit Track Course</h2>
+
+<form asp-action="Edit">
+
+    <input type="hidden" name="trackId" value="@Model.CertificationTrackId" />
+    <input type="hidden" name="courseId" value="@Model.CourseId" />
+
+    <div class="mb-3">
+        <label>Course</label>
+        <select name="newCourseId" class="form-control">
+            @foreach (var c in ViewBag.Courses)
+            {
+                <option value="@c.CourseId"
+                        selected="@(c.CourseId == Model.CourseId)">
+                    @c.Title
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" name="isRequired"
+               class="form-check-input"
+               checked="@Model.IsRequired" />
+        <label class="form-check-label">Required</label>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>

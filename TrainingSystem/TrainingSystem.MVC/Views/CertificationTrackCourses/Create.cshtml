@@ -1,16 +1,6 @@
-﻿<h3>Assign Course to Track</h3>
+﻿<h2>Assign Course to Track</h2>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-
-<form asp-action="AssignCourse" method="post">
+<form asp-action="Create">
 
     <div class="mb-3">
         <label>Track</label>
@@ -34,9 +24,8 @@
 
     <div class="form-check mb-3">
         <input type="checkbox" name="isRequired" class="form-check-input" />
-        <label class="form-check-label">Required Course</label>
+        <label class="form-check-label">Required</label>
     </div>
 
-    <button class="btn btn-primary">Assign</button>
-
+    <button type="submit" class="btn btn-primary">Assign</button>
 </form>

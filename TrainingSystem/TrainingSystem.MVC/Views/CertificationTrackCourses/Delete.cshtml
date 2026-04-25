@@ -1,0 +1,18 @@
+﻿@model TrainingSystem.API.Models.CertificationTrackCourse
+
+<h2>Delete Assignment</h2>
+
+<p>Are you sure you want to remove this course from the track?</p>
+
+<div>
+    <strong>Track:</strong> @Model.CertificationTrack.TrackName <br />
+    <strong>Course:</strong> @Model.Course.Title
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" name="trackId" value="@Model.CertificationTrackId" />
+    <input type="hidden" name="courseId" value="@Model.CourseId" />
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

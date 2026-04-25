@@ -250,8 +250,20 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="/SubjectCategory">Categories</a></li>
                                     <li><a class="dropdown-item" href="/Courses">Courses</a></li>
-                                    <li><a class="dropdown-item" href="/CertificationTracks/Create">Create Track</a></li>
-                                    <li><a class="dropdown-item" href="/CertificationTracks/AssignCourse">Assign Course</a></li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="CertificationTrackCourses"
+                                           asp-action="Index">
+                                            Track Courses
+                                        </a>                            
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="CertificationTracks"
+                                           asp-action="Index">
+                                            Create Track
+                                        </a>
+                                    </li>
                                     <li><a class="dropdown-item" href="/CourseSession">Sessions</a></li>
                                     <li><a class="dropdown-item" href="/EnrollmentManagement">Enrollments</a></li>
                                     <li><a class="dropdown-item" href="/CourseEquipmentRequirement">Course Requirements</a></li>

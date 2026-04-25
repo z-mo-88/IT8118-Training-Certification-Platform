@@ -14,7 +14,14 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-        //  CREATE TRACK 
+        // ================= INDEX =================
+        public async Task<IActionResult> Index()
+        {
+            var tracks = await _context.CertificationTracks.ToListAsync();
+            return View(tracks);
+        }
+
+        // ================= CREATE =================
         public IActionResult Create()
         {
             return View();
@@ -29,45 +36,64 @@ namespace TrainingSystem.MVC.Controllers
             _context.CertificationTracks.Add(track);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Track created successfully";
-
-            return RedirectToAction(nameof(Create));
+            return RedirectToAction(nameof(Index));
         }
 
-        //  ASSIGN COURSE 
-        public IActionResult AssignCourse()
+        // ================= EDIT =================
+        public async Task<IActionResult> Edit(int id)
         {
-            ViewBag.Tracks = _context.CertificationTracks.ToList();
-            ViewBag.Courses = _context.Courses.ToList();
+            var track = await _context.CertificationTracks.FindAsync(id);
+            if (track == null)
+                return NotFound();
 
-            return View();
+            return View(track);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssignCourse(int trackId, int courseId, bool isRequired)
+        public async Task<IActionResult> Edit(int id, CertificationTrack track)
         {
-            var exists = await _context.CertificationTrackCourses
-                .AnyAsync(x => x.CourseId == courseId && x.CertificationTrackId == trackId);
+            if (id != track.CertificationTrackId)
+                return NotFound();
 
-            if (exists)
-            {
-                TempData["Error"] = "Course already assigned to this track";
-            }
-            else
-            {
-                _context.CertificationTrackCourses.Add(new CertificationTrackCourse
-                {
-                    CertificationTrackId = trackId,
-                    CourseId = courseId,
-                    IsRequired = isRequired
-                });
+            if (!ModelState.IsValid)
+                return View(track);
 
-                await _context.SaveChangesAsync();
+            _context.Update(track);
+            await _context.SaveChangesAsync();
 
-                TempData["Success"] = "Course assigned successfully";
-            }
+            return RedirectToAction(nameof(Index));
+        }
 
-            return RedirectToAction(nameof(AssignCourse));
+        // ================= DELETE =================
+        public async Task<IActionResult> Delete(int id)
+        {
+            var track = await _context.CertificationTracks
+                .FirstOrDefaultAsync(t => t.CertificationTrackId == id);
+
+            if (track == null)
+                return NotFound();
+
+            return View(track);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var track = await _context.CertificationTracks
+                .Include(t => t.CertificationTrackCourses)
+                .FirstOrDefaultAsync(t => t.CertificationTrackId == id);
+
+            if (track == null)
+                return NotFound();
+
+            // delete related courses first
+            _context.CertificationTrackCourses.RemoveRange(track.CertificationTrackCourses);
+
+            _context.CertificationTracks.Remove(track);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

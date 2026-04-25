@@ -1,0 +1,49 @@
+﻿@model IEnumerable<TrainingSystem.API.Models.CertificationTrackCourse>
+
+<h2>Track Courses</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">+ Assign Course</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Track</th>
+            <th>Course</th>
+            <th>Required</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CertificationTrack.TrackName</td>
+                <td>@item.Course.Title</td>
+
+                <td>
+                    @if (item.IsRequired)
+                    {
+                        <span class="badge bg-success">Required</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Optional</span>
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-trackId="@item.CertificationTrackId"
+                       asp-route-courseId="@item.CourseId"
+                       class="btn btn-warning btn-sm">Edit</a>
+
+                    <a asp-action="Delete"
+                       asp-route-trackId="@item.CertificationTrackId"
+                       asp-route-courseId="@item.CourseId"
+                       class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
