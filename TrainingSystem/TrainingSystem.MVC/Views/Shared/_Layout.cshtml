@@ -184,6 +184,29 @@
             footer small {
                 color: #0a1f5c;
             }
+
+        .custom-navbar .dropdown-menu {
+            border: none;
+            border-radius: 14px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(10, 31, 92, 0.12);
+        }
+
+        .custom-navbar .dropdown-item {
+            color: #0a1f5c;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 9px 14px;
+        }
+
+            .custom-navbar .dropdown-item:hover {
+                background-color: rgba(10, 31, 92, 0.08);
+                color: #0a1f5c;
+            }
+
+        .custom-navbar .dropdown-toggle::after {
+            display: inline-block !important;
+        }
     </style>
 </head>
 
@@ -220,21 +243,50 @@
 
                         @if (isAuth && roleId == 3)
                         {
-                            <li class="nav-item"><a class="nav-link @ActiveClass("Courses")" href="/SubjectCategory">Categories</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("Courses")" href="/Courses">Courses</a></li>
-                            <li class="nav-item">
-                                <a class="nav-link @ActiveClass("CertificationTracks", "Create")" href="/CertificationTracks/Create"> Create Track</a></li>
-                            <li class="nav-item">
-                                <a class="nav-link @ActiveClass("CertificationTracks", "AssignCourse")"href="/CertificationTracks/AssignCourse">Assign Course </a> </li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("CourseSession")" href="/CourseSession">Sessions</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("Users")" href="/Users">Users</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("Room")" href="/Room">Rooms</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("Equipment")" href="/Equipment">Equipment</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("RoomEquipment")" href="/RoomEquipment">Room Equipment</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("CourseEquipmentRequirement")" href="/CourseEquipmentRequirement">Course Requirements</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("Instructor")" href="/Instructor">Instructors</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("Payment")" href="/Payment">Payments</a></li>
-                            <li class="nav-item"><a class="nav-link @ActiveClass("EnrollmentManagement")" href="/EnrollmentManagement">Enrollments</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Training Management
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/SubjectCategory">Categories</a></li>
+                                    <li><a class="dropdown-item" href="/Courses">Courses</a></li>
+                                    <li><a class="dropdown-item" href="/CertificationTracks/Create">Create Track</a></li>
+                                    <li><a class="dropdown-item" href="/CertificationTracks/AssignCourse">Assign Course</a></li>
+                                    <li><a class="dropdown-item" href="/CourseSession">Sessions</a></li>
+                                    <li><a class="dropdown-item" href="/EnrollmentManagement">Enrollments</a></li>
+                                    <li><a class="dropdown-item" href="/CourseEquipmentRequirement">Course Requirements</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    User Management
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/Users">Users</a></li>
+                                    <li><a class="dropdown-item" href="/Instructor">Instructors</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Resource Management
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/Room">Rooms</a></li>
+                                    <li><a class="dropdown-item" href="/Equipment">Equipment</a></li>
+                                    <li><a class="dropdown-item" href="/RoomEquipment">Room Equipment</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Financial Management
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/Payment">Payments</a></li>
+                                </ul>
+                            </li>
                         }
 
                         @if (isAuth && roleId == 1)
