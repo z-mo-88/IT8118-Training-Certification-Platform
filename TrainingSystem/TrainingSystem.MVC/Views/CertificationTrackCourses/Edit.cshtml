@@ -2,7 +2,7 @@
 
 <h2>Edit Track Course</h2>
 
-<form asp-action="Edit">
+<form asp-action="Edit" method="post">
 
     <input type="hidden" name="trackId" value="@Model.CertificationTrackId" />
     <input type="hidden" name="courseId" value="@Model.CourseId" />
@@ -21,10 +21,13 @@
     </div>
 
     <div class="form-check mb-3">
-        <input type="checkbox" name="isRequired"
+        <input type="checkbox"
+               name="isRequired"
+               value="true"
                class="form-check-input"
-               checked="@Model.IsRequired" />
-        <label class="form-check-label">Required</label>
+               id="isRequired"
+               @(Model.IsRequired ? "checked" : "") />
+        <label class="form-check-label" for="isRequired">Required</label>
     </div>
 
     <button type="submit" class="btn btn-warning">Update</button>

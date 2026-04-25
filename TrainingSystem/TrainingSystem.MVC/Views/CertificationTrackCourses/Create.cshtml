@@ -1,6 +1,6 @@
 ﻿<h2>Assign Course to Track</h2>
 
-<form asp-action="Create">
+<form asp-action="Create" method="post">
 
     <div class="mb-3">
         <label>Track</label>
@@ -23,8 +23,8 @@
     </div>
 
     <div class="form-check mb-3">
-        <input type="checkbox" name="isRequired" class="form-check-input" />
-        <label class="form-check-label">Required</label>
+        <input type="checkbox" name="isRequired" value="true" class="form-check-input" id="isRequired" />
+        <label class="form-check-label" for="isRequired">Required</label>
     </div>
 
     <button type="submit" class="btn btn-primary">Assign</button>

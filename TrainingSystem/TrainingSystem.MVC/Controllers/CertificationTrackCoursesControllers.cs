@@ -26,6 +26,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         // ================= CREATE =================
+        [HttpGet]
         public IActionResult Create()
         {
             ViewBag.Tracks = _context.CertificationTracks.ToList();
@@ -34,8 +35,10 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(int trackId, int courseId, bool isRequired)
+        public async Task<IActionResult> Create(int trackId, int courseId)
         {
+            bool isRequired = Request.Form.ContainsKey("isRequired");
+
             var exists = await _context.CertificationTrackCourses
                 .AnyAsync(x => x.CertificationTrackId == trackId && x.CourseId == courseId);
 
@@ -55,6 +58,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         // ================= EDIT =================
+        [HttpGet]
         public async Task<IActionResult> Edit(int trackId, int courseId)
         {
             var item = await _context.CertificationTrackCourses
@@ -71,8 +75,10 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int trackId, int courseId, int newCourseId, bool isRequired)
+        public async Task<IActionResult> Edit(int trackId, int courseId, int newCourseId)
         {
+            bool isRequired = Request.Form.ContainsKey("isRequired");
+
             var item = await _context.CertificationTrackCourses
                 .FirstOrDefaultAsync(x =>
                     x.CertificationTrackId == trackId &&
@@ -80,12 +86,11 @@ namespace TrainingSystem.MVC.Controllers
 
             if (item == null) return NotFound();
 
-            // Prevent duplicate
             bool exists = await _context.CertificationTrackCourses
                 .AnyAsync(x =>
                     x.CertificationTrackId == trackId &&
                     x.CourseId == newCourseId &&
-                    !(x.CourseId == courseId));
+                    x.CourseId != courseId);
 
             if (exists)
             {
@@ -104,6 +109,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         // ================= DELETE =================
+        [HttpGet]
         public async Task<IActionResult> Delete(int trackId, int courseId)
         {
             var item = await _context.CertificationTrackCourses
