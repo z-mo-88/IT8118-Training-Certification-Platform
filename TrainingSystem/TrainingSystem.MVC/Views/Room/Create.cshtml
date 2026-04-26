@@ -6,13 +6,13 @@
 
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5">
+        <div class="col-12 col-lg-6">
 
-            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+            <div class="card border-0 shadow-sm" style="border-radius:18px;">
                 <div class="card-body p-4 p-lg-5">
 
-                    <div class="mb-4 text-center">
-                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Add Room</h3>
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Add Room</h3>
                         <p class="text-muted mb-0">Enter room details below.</p>
                     </div>
 
@@ -25,41 +25,36 @@
                     <form asp-action="Create" method="post">
 
                         <div class="mb-3">
-                            <label asp-for="RoomName" class="form-label fw-semibold" style="color: #0a1f5c;">
-                                Room Name
-                            </label>
+                            <label asp-for="RoomName" class="form-label fw-semibold" style="color:#0a1f5c;">Room Name</label>
                             <input asp-for="RoomName"
                                    class="form-control"
                                    placeholder="Enter room name"
-                                   style="height: 50px; border-radius: 10px;" />
-                            <span asp-validation-for="RoomName" class="text-danger"></span>
+                                   style="height:50px; border-radius:10px;" />
+                            <span asp-validation-for="RoomName" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Capacity" class="form-label fw-semibold" style="color: #0a1f5c;">
-                                Capacity
-                            </label>
+                            <label asp-for="Capacity" class="form-label fw-semibold" style="color:#0a1f5c;">Capacity</label>
                             <input asp-for="Capacity"
                                    class="form-control"
                                    placeholder="Enter capacity"
-                                   style="height: 50px; border-radius: 10px;" />
-                            <span asp-validation-for="Capacity" class="text-danger"></span>
+                                   style="height:50px; border-radius:10px;" />
+                            <span asp-validation-for="Capacity" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Location" class="form-label fw-semibold" style="color: #0a1f5c;">
-                                Location
-                            </label>
+                            <label asp-for="Location" class="form-label fw-semibold" style="color:#0a1f5c;">Location</label>
                             <input asp-for="Location"
                                    class="form-control"
                                    placeholder="Enter location"
-                                   style="height: 50px; border-radius: 10px;" />
-                            <span asp-validation-for="Location" class="text-danger"></span>
+                                   style="height:50px; border-radius:10px;" />
+                            <span asp-validation-for="Location" class="text-danger small"></span>
                         </div>
 
-                        <div class="d-grid">
-                            <button class="btn text-white fw-semibold"
-                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                        <div class="d-flex justify-content-end">
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4 d-flex align-items-center justify-content-center"
+                                    style="background-color:#0a1f5c; height:46px; border-radius:10px; border:none;">
                                 Save
                             </button>
                         </div>

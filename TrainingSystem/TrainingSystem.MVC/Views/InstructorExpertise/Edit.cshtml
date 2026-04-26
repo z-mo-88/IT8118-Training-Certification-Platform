@@ -7,71 +7,64 @@
 
 @if (roleId != 3)
 {
-    <div class="container py-5">
-        <div class="alert alert-danger text-center">
-            Access Denied
-        </div>
-
-        <a href="/Instructor" class="btn btn-secondary mt-3">
-            Back to Instructors
-        </a>
+    <div class="container py-5 text-center">
+        <div class="alert alert-danger">Access Denied</div>
+        <a href="/Instructor" class="btn btn-secondary">Back</a>
     </div>
 }
 else
 {
-    <div class="container py-5">
+    <div class="container-fluid py-5 px-3 px-md-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-7">
 
-      
-        <a href="/Instructor" class="btn btn-outline-secondary mb-3">
-             Back to Instructors
-        </a>
+                <div class="card border-0 shadow-sm" style="border-radius:18px;">
+                    <div class="card-body p-4 p-lg-5">
 
-        <div class="card border-0 shadow-sm mx-auto" style="max-width: 700px; border-radius: 18px;">
-            <div class="card-body p-4 p-md-5">
+                        <h3 class="fw-bold mb-4 text-center" style="color:#0a1f5c;">
+                            Edit Expertise
+                        </h3>
 
-                <h2 class="fw-bold mb-4 text-center" style="color:#0a1f5c;">
-                    Edit Expertise
-                </h2>
+                        <form asp-action="Edit" method="post">
 
-                <form asp-action="Edit" method="post">
+                            <input type="hidden" asp-for="InstructorExpertiseId" />
+                            <input type="hidden" name="userId" value="@targetUserId" />
 
-                 
-                    <input type="hidden" asp-for="InstructorExpertiseId" />
-                    <input type="hidden" name="userId" value="@targetUserId" />
+                            <div class="mb-4">
+                                <label class="fw-semibold mb-2" style="color:#0a1f5c;">
+                                    Expertise
+                                </label>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold" style="color:#0a1f5c;">
-                            Expertise
-                        </label>
+                                <select asp-for="ExpertiseId"
+                                        asp-items="ViewBag.ExpertiseList"
+                                        class="form-select"
+                                        style="height:50px; border-radius:10px;">
+                                </select>
+                            </div>
 
-                        <select asp-for="ExpertiseId"
-                                asp-items="ViewBag.ExpertiseList"
-                                class="form-select"
-                                style="height:50px; border-radius:10px;">
-                        </select>
+                            <div class="d-flex justify-content-between">
+
+                                <a asp-action="Index"
+                                   asp-route-userId="@targetUserId"
+                                   class="btn"
+                                   style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px;">
+                                    Cancel
+                                </a>
+
+                                <button type="submit"
+                                        class="btn text-white"
+                                        style="background:#0a1f5c; border-radius:10px;">
+                                    Save Changes
+                                </button>
+
+                            </div>
+
+                        </form>
+
                     </div>
-
-                    <div class="d-flex justify-content-between mt-4">
-
-                        <a asp-action="Index"
-                           asp-route-userId="@targetUserId"
-                           class="btn btn-outline-secondary px-4"
-                           style="border-radius:10px;">
-                            Cancel
-                        </a>
-
-                        <button type="submit"
-                                class="btn text-white px-4"
-                                style="background:#0a1f5c; border-radius:10px;">
-                            Save Changes
-                        </button>
-
-                    </div>
-
-                </form>
+                </div>
 
             </div>
         </div>
-
     </div>
 }

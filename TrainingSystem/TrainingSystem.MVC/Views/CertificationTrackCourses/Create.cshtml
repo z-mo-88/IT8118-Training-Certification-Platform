@@ -1,40 +1,63 @@
-﻿<h2>Assign Course to Track</h2>
+﻿<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-7">
 
-<form asp-action="Create" method="post">
+            <div class="card border-0 shadow-sm" style="border-radius:18px;">
+                <div class="card-body p-4 p-lg-5">
 
-    <div class="mb-3">
-        <label>Track</label>
-        <select name="trackId" class="form-control" required>
-            <option value="" disabled selected>-- Choose a track --</option>
+                    <h3 class="fw-bold mb-3" style="color:#0a1f5c;">Assign Course to Track</h3>
+                    <p class="text-muted mb-4">Link a course to a certification track.</p>
 
-            @foreach (var t in ViewBag.Tracks)
-            {
-                <option value="@t.CertificationTrackId">@t.TrackName</option>
-            }
-        </select>
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-1">Track</label>
+                            <select name="trackId" class="form-select" style="border-radius:10px;" required>
+                                <option value="" disabled selected>-- Choose a track --</option>
+                                @foreach (var t in ViewBag.Tracks)
+                                {
+                                    <option value="@t.CertificationTrackId">@t.TrackName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-1">Course</label>
+                            <select name="courseId" class="form-select" style="border-radius:10px;" required>
+                                <option value="" disabled selected>-- Choose a course --</option>
+                                @foreach (var c in ViewBag.Courses)
+                                {
+                                    <option value="@c.CourseId">@c.Title</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input type="checkbox" name="isRequired" value="true" class="form-check-input" id="isRequired" />
+                            <label class="form-check-label" for="isRequired">Required</label>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-action="Index"
+                               class="btn"
+                               style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px;">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white"
+                                    style="background:#0a1f5c; border-radius:10px;">
+                                Assign
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Course</label>
-        <select name="courseId" class="form-control" required>
-            <option value="" disabled selected>-- Choose a course --</option>
-
-            @foreach (var c in ViewBag.Courses)
-            {
-                <option value="@c.CourseId">@c.Title</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-check mb-3">
-        <input type="checkbox" name="isRequired" value="true" class="form-check-input" id="isRequired" />
-        <label class="form-check-label" for="isRequired">Required</label>
-    </div>
-
-    <div class="mt-3">
-    <button type="submit" class="btn btn-primary">Assign</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">
-        Cancel
-    </a>
-    </div>
-</form>
+</div>

@@ -6,28 +6,27 @@
 
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="row justify-content-center">
-        <div class="col-12 col-xl-8">
-            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+        <div class="col-12 col-lg-6">
+
+            <div class="card border-0 shadow-sm text-center" style="border-radius:18px;">
                 <div class="card-body p-4 p-lg-5">
 
-                    <div class="mb-4">
-                        <h3 class="fw-bold mb-2 text-danger">Delete Room Equipment</h3>
-                        <p class="text-muted mb-0">Are you sure you want to delete this room equipment record?</p>
-                    </div>
+                    <h3 class="fw-bold text-danger mb-3">Delete Room Equipment</h3>
+                    <p class="text-muted mb-4">Are you sure you want to delete this room equipment record?</p>
 
-                    <div class="mb-4 p-3 rounded-3" style="background-color: #f8f9fc;">
-                        <div class="mb-2">
-                            <span class="fw-semibold" style="color: #0a1f5c;">Room:</span>
+                    <div class="mb-4 text-start mx-auto" style="max-width:420px;">
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="fw-semibold" style="color:#0a1f5c;">Room</span>
                             <span class="text-muted">@Model.Room?.RoomName</span>
                         </div>
 
-                        <div class="mb-2">
-                            <span class="fw-semibold" style="color: #0a1f5c;">Equipment:</span>
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="fw-semibold" style="color:#0a1f5c;">Equipment</span>
                             <span class="text-muted">@Model.Equipment?.EquipmentName</span>
                         </div>
 
-                        <div>
-                            <span class="fw-semibold" style="color: #0a1f5c;">Quantity:</span>
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="fw-semibold" style="color:#0a1f5c;">Quantity</span>
                             <span class="text-muted">@Model.Quantity</span>
                         </div>
                     </div>
@@ -36,16 +35,16 @@
                         @Html.AntiForgeryToken()
                         <input asp-for="RoomEquipmentId" type="hidden" />
 
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-center gap-3">
                             <a asp-action="Index"
-                               class="btn btn-light fw-semibold"
-                               style="border-radius: 10px;">
+                               class="btn fw-semibold px-4 d-flex align-items-center justify-content-center"
+                               style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px; height:46px;">
                                 Cancel
                             </a>
 
                             <button type="submit"
-                                    class="btn text-white fw-semibold px-4"
-                                    style="background-color: #dc3545; height: 48px; border-radius: 10px; border: none;">
+                                    class="btn text-white fw-semibold px-4 d-flex align-items-center justify-content-center"
+                                    style="background-color:#dc3545; height:46px; border-radius:10px; border:none;">
                                 Delete
                             </button>
                         </div>
@@ -53,6 +52,7 @@
 
                 </div>
             </div>
+
         </div>
     </div>
 </div>

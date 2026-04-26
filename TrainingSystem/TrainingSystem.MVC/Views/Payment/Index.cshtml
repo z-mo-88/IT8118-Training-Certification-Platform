@@ -25,7 +25,7 @@
 
         <div class="mt-3 mt-md-0">
             <a asp-action="Create"
-               class="btn text-white fw-semibold px-4"
+               class="btn text-white fw-semibold px-4 d-flex align-items-center justify-content-center"
                style="background-color: #0a1f5c; border-radius: 10px; border: none; height: 46px;">
                 Record Payment
             </a>
@@ -34,7 +34,7 @@
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success mb-4">
+        <div class="alert alert-success mb-4 rounded-3">
             @TempData["Success"]
         </div>
     }
@@ -67,10 +67,11 @@
                             <thead>
                                 <tr>
                                     <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Course</th>
-                                    <th class="fw-semibold py-3" style="color: #0a1f5c;">Amount Paid</th>
-                                    <th class="fw-semibold py-3" style="color: #0a1f5c;">Current Remaining Balance</th>
-                                    <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
-                                    <th class="fw-semibold py-3" style="color: #0a1f5c;">Date</th>
+                                    <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Amount Paid</th>
+                                    <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Current Remaining Balance</th>
+                                    <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Overdue</th>
+                                    <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Status</th>
+                                    <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Date</th>
                                 </tr>
                             </thead>
 
@@ -85,23 +86,30 @@
                                             @item.Enrollment?.Session?.Course?.Title
                                         </td>
 
-                                        <td class="py-3 fw-semibold" style="color: #0a1f5c;">
+                                        <td class="py-3 text-center fw-semibold" style="color: #0a1f5c;">
                                             @item.AmountPaid
                                         </td>
 
-                                        <td class="py-3 fw-semibold"
+                                        <td class="py-3 text-center fw-semibold"
                                             style="color:@(remainingBalance > 0 ? "#dc3545" : "#198754")">
                                             @remainingBalance
                                         </td>
 
-                                        <td>
+                                        <td class="py-3 text-center">
                                             @if (item.Enrollment?.IsOverdue == true)
                                             {
-                                                <span class="badge bg-danger">Overdue</span>
+                                                <span class="badge rounded-pill px-3 py-2"
+                                                      style="background-color: #dc3545; color: white;">
+                                                    Overdue
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
                                             }
                                         </td>
 
-                                        <td class="py-3">
+                                        <td class="py-3 text-center">
                                             @if (displayStatus == "Paid")
                                             {
                                                 <span class="badge rounded-pill px-3 py-2"
@@ -118,7 +126,7 @@
                                             }
                                         </td>
 
-                                        <td class="py-3 text-muted">
+                                        <td class="py-3 text-center text-muted">
                                             @item.PaidDate
                                         </td>
                                     </tr>

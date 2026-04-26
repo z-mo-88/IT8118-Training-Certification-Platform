@@ -6,12 +6,13 @@
 
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5">
-            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+        <div class="col-12 col-lg-6">
 
+            <div class="card border-0 shadow-sm" style="border-radius:18px;">
                 <div class="card-body p-4 p-lg-5">
-                    <div class="mb-4 text-center">
-                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Add Equipment</h3>
+
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Add Equipment</h3>
                         <p class="text-muted mb-0">Enter the equipment details below.</p>
                     </div>
 
@@ -24,34 +25,35 @@
                     <form asp-action="Create" method="post">
 
                         <div class="mb-3">
-                            <label asp-for="EquipmentName" class="form-label fw-semibold" style="color: #0a1f5c;">
+                            <label asp-for="EquipmentName" class="form-label fw-semibold" style="color:#0a1f5c;">
                                 Equipment Name
                             </label>
 
                             <input asp-for="EquipmentName"
                                    class="form-control"
                                    placeholder="Enter equipment name"
-                                   style="height: 50px; border-radius: 10px;" />
+                                   style="height:50px; border-radius:10px;" />
 
-                            <span asp-validation-for="EquipmentName" class="text-danger"></span>
+                            <span asp-validation-for="EquipmentName" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Description" class="form-label fw-semibold" style="color: #0a1f5c;">
+                            <label asp-for="Description" class="form-label fw-semibold" style="color:#0a1f5c;">
                                 Description
                             </label>
 
                             <input asp-for="Description"
                                    class="form-control"
                                    placeholder="Enter description"
-                                   style="height: 50px; border-radius: 10px;" />
+                                   style="height:50px; border-radius:10px;" />
 
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
 
-                        <div class="d-grid">
-                            <button class="btn text-white fw-semibold"
-                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
+                        <div class="d-flex justify-content-end">
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4 d-inline-flex align-items-center justify-content-center"
+                                    style="background-color:#0a1f5c; height:46px; border-radius:10px; border:none; line-height:1;">
                                 Save
                             </button>
                         </div>

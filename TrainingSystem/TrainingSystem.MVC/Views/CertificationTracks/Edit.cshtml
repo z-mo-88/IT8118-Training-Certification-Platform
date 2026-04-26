@@ -1,20 +1,46 @@
 ﻿@model TrainingSystem.API.Models.CertificationTrack
 
-<h2>Edit Track</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-7">
 
-<form asp-action="Edit">
-    <input type="hidden" asp-for="CertificationTrackId" />
+            <div class="card border-0 shadow-sm" style="border-radius:18px;">
+                <div class="card-body p-4 p-lg-5">
 
-    <div class="mb-3">
-        <label>Track Name</label>
-        <input asp-for="TrackName" class="form-control" />
+                    <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Edit Track</h3>
+                    <p class="text-muted mb-4">Update certification track details.</p>
+
+                    <form asp-action="Edit">
+                        <input type="hidden" asp-for="CertificationTrackId" />
+
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-1">Track Name</label>
+                            <input asp-for="TrackName" class="form-control" style="border-radius:10px;" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="fw-semibold mb-1">Description</label>
+                            <input asp-for="Description" class="form-control" style="border-radius:10px;" />
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index"
+                               class="btn"
+                               style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px;">
+                                Back
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white"
+                                    style="background-color:#0a1f5c; border-radius:10px; font-weight:600;">
+                                Update
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Description</label>
-        <input asp-for="Description" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-warning">Update</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
-</form>
+</div>
