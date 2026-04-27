@@ -66,15 +66,24 @@
                 font-weight: 700;
                 font-size: 1.75rem;
                 text-decoration: none !important;
+                border: none !important;
+                box-shadow: none !important;
+                background-image: none !important;
             }
 
                 .custom-navbar .navbar-brand:hover,
-                .custom-navbar .navbar-brand:focus {
+                .custom-navbar .navbar-brand:focus,
+                .custom-navbar .navbar-brand:active {
                     color: #0a1f5c !important;
                     text-decoration: none !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    outline: none !important;
+                    background-image: none !important;
                 }
 
-            .custom-navbar .nav-link {
+            .custom-navbar .nav-link,
+            .custom-navbar .dropdown-toggle {
                 color: #0a1f5c !important;
                 font-weight: 500;
                 padding: 0.5rem 0.9rem;
@@ -83,23 +92,25 @@
                 text-decoration: none !important;
                 box-shadow: none !important;
                 border: none !important;
+                outline: none !important;
                 background-image: none !important;
             }
 
                 .custom-navbar .nav-link:hover,
                 .custom-navbar .nav-link:focus,
-                .custom-navbar .nav-link:active {
+                .custom-navbar .nav-link:active,
+                .custom-navbar .nav-link.show,
+                .custom-navbar .dropdown-toggle:hover,
+                .custom-navbar .dropdown-toggle:focus,
+                .custom-navbar .dropdown-toggle:active,
+                .custom-navbar .dropdown-toggle.show {
                     color: #0a1f5c !important;
                     background-color: rgba(10, 31, 92, 0.08) !important;
                     text-decoration: none !important;
                     box-shadow: none !important;
                     border: none !important;
                     outline: none !important;
-                }
-
-                .custom-navbar .nav-link::after,
-                .custom-navbar .nav-link::before {
-                    display: none !important;
+                    background-image: none !important;
                 }
 
                 .custom-navbar .nav-link.active-nav {
@@ -109,6 +120,91 @@
                     box-shadow: none !important;
                     border: none !important;
                     outline: none !important;
+                    background-image: none !important;
+                }
+
+                .custom-navbar .nav-link::before,
+                .custom-navbar .nav-link::after {
+                    display: none !important;
+                    content: none !important;
+                    border: none !important;
+                    text-decoration: none !important;
+                    box-shadow: none !important;
+                    background: none !important;
+                }
+
+                .custom-navbar .dropdown-toggle::after {
+                    display: inline-block !important;
+                    margin-left: 0.35em;
+                    vertical-align: middle;
+                    border-top-color: #0a1f5c !important;
+                    border-right-color: transparent !important;
+                    border-bottom-color: transparent !important;
+                    border-left-color: transparent !important;
+                    background: none !important;
+                    box-shadow: none !important;
+                    text-decoration: none !important;
+                }
+
+            .custom-navbar .dropdown-menu {
+                border: none !important;
+                border-radius: 14px;
+                padding: 10px;
+                box-shadow: 0 10px 30px rgba(10, 31, 92, 0.12);
+            }
+
+            .custom-navbar .dropdown-item {
+                color: #0a1f5c !important;
+                font-weight: 500;
+                border-radius: 8px;
+                padding: 9px 14px;
+                text-decoration: none !important;
+                border: none !important;
+                outline: none !important;
+                box-shadow: none !important;
+                background-image: none !important;
+            }
+
+                .custom-navbar .dropdown-item:hover,
+                .custom-navbar .dropdown-item:focus,
+                .custom-navbar .dropdown-item:active,
+                .custom-navbar .dropdown-item.active-nav {
+                    background-color: rgba(10, 31, 92, 0.08) !important;
+                    color: #0a1f5c !important;
+                    font-weight: 600;
+                    text-decoration: none !important;
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    background-image: none !important;
+                }
+
+                .custom-navbar .dropdown-item::before,
+                .custom-navbar .dropdown-item::after {
+                    display: none !important;
+                    content: none !important;
+                    border: none !important;
+                    text-decoration: none !important;
+                    box-shadow: none !important;
+                    background: none !important;
+                }
+
+            .custom-navbar a,
+            .custom-navbar a:hover,
+            .custom-navbar a:focus,
+            .custom-navbar a:active,
+            .custom-navbar a:visited {
+                text-decoration: none !important;
+                box-shadow: none !important;
+                outline: none !important;
+                border-bottom: none !important;
+                background-image: none !important;
+            }
+
+                .custom-navbar a:focus-visible,
+                .custom-navbar button:focus-visible {
+                    outline: none !important;
+                    box-shadow: none !important;
                 }
 
             .custom-navbar .nav-text {
@@ -138,8 +234,13 @@
             padding: 8px 18px;
             text-decoration: none !important;
             transition: all 0.2s ease;
-            display: inline-block;
-            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none !important;
+            height: 42px;
+            line-height: 1;
+            box-shadow: none !important;
         }
 
         .login-btn {
@@ -147,25 +248,10 @@
             color: white !important;
         }
 
-            .login-btn:hover,
-            .login-btn:focus {
-                background-color: #0a1f5c !important;
-                color: white !important;
-                opacity: 0.92;
-                text-decoration: none !important;
-            }
-
         .logout-btn {
             background-color: #dc3545;
             color: white !important;
         }
-
-            .logout-btn:hover,
-            .logout-btn:focus {
-                background-color: #c82333 !important;
-                color: white !important;
-                text-decoration: none !important;
-            }
 
         .content-container {
             margin-top: 0 !important;
@@ -184,29 +270,6 @@
             footer small {
                 color: #0a1f5c;
             }
-
-        .custom-navbar .dropdown-menu {
-            border: none;
-            border-radius: 14px;
-            padding: 10px;
-            box-shadow: 0 10px 30px rgba(10, 31, 92, 0.12);
-        }
-
-        .custom-navbar .dropdown-item {
-            color: #0a1f5c;
-            font-weight: 500;
-            border-radius: 8px;
-            padding: 9px 14px;
-        }
-
-            .custom-navbar .dropdown-item:hover {
-                background-color: rgba(10, 31, 92, 0.08);
-                color: #0a1f5c;
-            }
-
-        .custom-navbar .dropdown-toggle::after {
-            display: inline-block !important;
-        }
     </style>
 </head>
 
@@ -240,7 +303,6 @@
                             <a class="nav-link @ActiveClass("Certificate", "Lookup")" href="/Certificate/Lookup">Certificate Lookup</a>
                         </li>
 
-
                         @if (isAuth && roleId == 3)
                         {
                             <li class="nav-item dropdown">
@@ -248,25 +310,25 @@
                                     Training Management
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/SubjectCategory">Categories</a></li>
-                                    <li><a class="dropdown-item" href="/Courses">Courses</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("SubjectCategory")" href="/SubjectCategory">Categories</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("Courses")" href="/Courses">Courses</a></li>
                                     <li>
-                                        <a class="dropdown-item"
+                                        <a class="dropdown-item @ActiveClass("CertificationTrackCourses")"
                                            asp-controller="CertificationTrackCourses"
                                            asp-action="Index">
                                             Track Courses
-                                        </a>                            
+                                        </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item"
+                                        <a class="dropdown-item @ActiveClass("CertificationTracks")"
                                            asp-controller="CertificationTracks"
                                            asp-action="Index">
                                             Create Track
                                         </a>
                                     </li>
-                                    <li><a class="dropdown-item" href="/CourseSession">Sessions</a></li>
-                                    <li><a class="dropdown-item" href="/EnrollmentManagement">Enrollments</a></li>
-                                    <li><a class="dropdown-item" href="/CourseEquipmentRequirement">Course Requirements</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("CourseSession")" href="/CourseSession">Sessions</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("EnrollmentManagement")" href="/EnrollmentManagement">Enrollments</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("CourseEquipmentRequirement")" href="/CourseEquipmentRequirement">Course Requirements</a></li>
                                 </ul>
                             </li>
 
@@ -275,8 +337,8 @@
                                     User Management
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/Users">Users</a></li>
-                                    <li><a class="dropdown-item" href="/Instructor">Instructors</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("Users")" href="/Users">Users</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("Instructor")" href="/Instructor">Instructors</a></li>
                                 </ul>
                             </li>
 
@@ -285,9 +347,9 @@
                                     Resource Management
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/Room">Rooms</a></li>
-                                    <li><a class="dropdown-item" href="/Equipment">Equipment</a></li>
-                                    <li><a class="dropdown-item" href="/RoomEquipment">Room Equipment</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("Room")" href="/Room">Rooms</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("Equipment")" href="/Equipment">Equipment</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("RoomEquipment")" href="/RoomEquipment">Room Equipment</a></li>
                                 </ul>
                             </li>
 
@@ -296,7 +358,7 @@
                                     Financial Management
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/Payment">Payments</a></li>
+                                    <li><a class="dropdown-item @ActiveClass("Payment")" href="/Payment">Payments</a></li>
                                 </ul>
                             </li>
                         }

@@ -6,7 +6,7 @@
     var missingDict = ViewBag.MissingCourses as Dictionary<int, int>;
 }
 
-<div class="container py-5">
+<div class="container-fluid py-5 px-3 px-md-5">
 
     <h2 class="mb-4 fw-bold" style="color:#0a1f5c;">
         My Certification Progress
@@ -23,61 +23,55 @@
             ? missingDict[item.CertificationTrackId]
             : 0;
 
-            <div class="card mb-4 shadow-sm" style="border-radius:15px;">
-                <div class="card-body">
+            <div class="card mb-4 border-0 shadow-sm" style="border-radius:18px;">
+                <div class="card-body p-4 p-lg-5">
 
-                    <!-- TRACK NAME -->
                     <h5 class="fw-bold mb-3" style="color:#0a1f5c;">
                         @item.CertificationTrack?.TrackName
                     </h5>
 
-                    <!-- PROGRESS -->
                     <p><strong>Progress:</strong> @item.ProgressPercent %</p>
 
-                    <div class="progress mb-3" style="height: 20px;">
+                    <div class="progress mb-3" style="height: 20px; border-radius:999px;">
                         <div class="progress-bar bg-success"
-                             style="width:@item.ProgressPercent%">
+                             style="width:@item.ProgressPercent%; border-radius:999px;">
                             @item.ProgressPercent%
                         </div>
                     </div>
 
-                    <!-- MISSING COURSES -->
                     @if (missing > 0)
                     {
-                        <div class="text-warning mt-2">
+                        <div class="text-warning mt-2 mb-3">
                             You need @missing @(missing == 1 ? "more course" : "more courses") to complete this track
                         </div>
                     }
 
-                    <!-- STATUS -->
                     <p>
                         <strong>Status:</strong>
                         @if (item.Status == "Not Started")
                         {
-                            <span class="badge bg-secondary">Not Started</span>
+                            <span class="badge bg-secondary rounded-pill px-3 py-2">Not Started</span>
                         }
                         else if (item.Status == "In Progress")
                         {
-                            <span class="badge bg-info">In Progress</span>
+                            <span class="badge bg-info rounded-pill px-3 py-2">In Progress</span>
                         }
                         else
                         {
-                            <span class="badge bg-success">Eligible</span>
+                            <span class="badge bg-success rounded-pill px-3 py-2">Eligible</span>
                         }
                     </p>
 
-                    <!-- ELIGIBLE DATE -->
                     @if (item.ProgressPercent == 100)
                     {
                         <p><strong>Eligible Date:</strong> @item.EligibleDate</p>
                     }
 
-                    <!-- CERTIFICATE SECTION -->
                     @if (item.ProgressPercent == 100)
                     {
                         if (cert != null)
                         {
-                            <div class="alert alert-success mt-3">
+                            <div class="alert alert-success mt-3 rounded-3">
                                 🎓 <strong>Certificate Issued!</strong><br />
 
                                 <div>Reference: <b>@cert.CertificateReferenceNumber</b></div>
@@ -87,15 +81,15 @@
                                 <a asp-controller="Certificate"
                                    asp-action="Download"
                                    asp-route-id="@cert.CertificateId"
-                                   class="btn mt-3 fw-semibold text-white px-4"
-                                   style="background-color:#0a1f5c; border-radius:12px;">
+                                   class="btn mt-3 fw-semibold text-white px-4 d-inline-flex align-items-center justify-content-center"
+                                   style="background-color:#0a1f5c; border-radius:12px; height:46px; line-height:1;">
                                     ⬇ Download Certificate
                                 </a>
                             </div>
                         }
                         else
                         {
-                            <div class="alert alert-warning mt-3">
+                            <div class="alert alert-warning mt-3 rounded-3">
                                 Certificate is being generated...
                             </div>
                         }
@@ -107,7 +101,11 @@
     }
     else
     {
-        <p class="text-muted">No certification progress found.</p>
+        <div class="card border-0 shadow-sm" style="border-radius:18px;">
+            <div class="card-body text-center text-muted py-5">
+                No certification progress found.
+            </div>
+        </div>
     }
 
 </div>
