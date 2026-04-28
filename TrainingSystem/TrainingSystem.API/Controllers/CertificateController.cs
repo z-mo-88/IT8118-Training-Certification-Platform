@@ -16,6 +16,29 @@ namespace TrainingSystem.API.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetCertificates()
+        {
+            var certificates = await _context.Certificates
+                .AsNoTracking()
+                .Include(c => c.User)
+                .Include(c => c.CertificationTrack)
+                .Select(c => new
+                {
+                    c.CertificateId,
+                    c.CertificateReferenceNumber,
+                    c.CertificateStatus,
+                    c.IssuedDate,
+                    c.UserId,
+                    TraineeName = c.User.Name,
+                    TrackName = c.CertificationTrack.TrackName
+                })
+                .ToListAsync();
+
+            return Ok(certificates);
+        }
+
         [HttpGet("lookup")]
         [AllowAnonymous]
         public async Task<IActionResult> LookupCertificate(int userId, string reference)

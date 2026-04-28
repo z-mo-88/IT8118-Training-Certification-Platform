@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Reports Dashboard";
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2" style="color:#0a1f5c;">
+            Reports Dashboard
+        </h2>
+        <p class="text-muted mb-0">
+            View read-only operational reports retrieved from the Web API.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold" style="color:#0a1f5c;">Users Report</h5>
+                    <p class="text-muted small">View all users and roles in the system.</p>
+                    <a asp-action="Users"
+                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
+                       style="background:#0a1f5c; height:44px; border-radius:10px;">
+                        Open
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold" style="color:#0a1f5c;">Courses Report</h5>
+                    <p class="text-muted small">View training courses and duration.</p>
+                    <a asp-action="Courses"
+                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
+                       style="background:#0a1f5c; height:44px; border-radius:10px;">
+                        Open
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold" style="color:#0a1f5c;">Enrollments Report</h5>
+                    <p class="text-muted small">View trainee enrollments and balances.</p>
+                    <a asp-action="Enrollments"
+                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
+                       style="background:#0a1f5c; height:44px; border-radius:10px;">
+                        Open
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold" style="color:#0a1f5c;">Certificates Report</h5>
+                    <p class="text-muted small">View issued certificate records.</p>
+                    <a asp-action="Certificates"
+                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
+                       style="background:#0a1f5c; height:44px; border-radius:10px;">
+                        Open
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

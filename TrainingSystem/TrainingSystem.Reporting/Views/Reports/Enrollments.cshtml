@@ -1,0 +1,48 @@
+﻿@model List<TrainingSystem.Reporting.Models.EnrollmentViewModel>
+
+@{
+    ViewData["Title"] = "Enrollments Report";
+}
+
+<div class="container py-5">
+
+    <h2 class="fw-bold mb-4" style="color:#0a1f5c;">
+        Enrollments Report
+    </h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            <strong>@ViewBag.Error</strong>
+            <pre style="white-space:pre-wrap;">@ViewBag.ErrorDetails</pre>
+        </div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Enrollment ID</th>
+                <th>Trainee</th>
+                <th>Course</th>
+                <th>Status</th>
+                <th>Enrollment Date</th>
+                <th>Outstanding Balance</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var enrollment in Model)
+            {
+                <tr>
+                    <td>@enrollment.EnrollmentId</td>
+                    <td>@enrollment.TraineeName</td>
+                    <td>@enrollment.CourseTitle</td>
+                    <td>@enrollment.Status</td>
+                    <td>@enrollment.EnrollmentDate</td>
+                    <td>@enrollment.OutstandingBalance</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

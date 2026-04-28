@@ -1,0 +1,44 @@
+﻿@model List<TrainingSystem.Reporting.Models.CourseViewModel>
+
+@{
+    ViewData["Title"] = "Courses Report";
+}
+
+<div class="container py-5">
+
+    <h2 class="fw-bold mb-4" style="color:#0a1f5c;">
+        Courses Report
+    </h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            <strong>@ViewBag.Error</strong>
+            <pre style="white-space:pre-wrap;">@ViewBag.ErrorDetails</pre>
+        </div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Course ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Duration Hours</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td>@course.CourseId</td>
+                    <td>@course.Title</td>
+                    <td>@course.Description</td>
+                    <td>@course.DurationHours</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

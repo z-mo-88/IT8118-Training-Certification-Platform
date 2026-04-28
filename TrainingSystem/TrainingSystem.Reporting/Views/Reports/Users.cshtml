@@ -1,0 +1,43 @@
+﻿@model List<System.Text.Json.JsonElement>
+
+@{
+    ViewData["Title"] = "Users Report";
+}
+
+<div class="container py-5">
+
+    <h2 class="fw-bold mb-4" style="color:#0a1f5c;">
+        Users Report
+    </h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@(user.TryGetProperty("userId", out var userId) ? userId.GetInt32() : "")</td>
+                    <td>@(user.TryGetProperty("name", out var name) ? name.GetString() : "")</td>
+                    <td>@(user.TryGetProperty("email", out var email) ? email.GetString() : "")</td>
+                    <td>@(user.TryGetProperty("phoneNumber", out var phone) ? phone.GetString() : "")</td>
+                    <td>@(user.TryGetProperty("roleId", out var role) ? role.GetInt32() : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

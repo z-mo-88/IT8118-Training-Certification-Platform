@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Reporting Login";
+}
+
+<div class="container py-5">
+    <div class="card border-0 shadow-sm p-4" style="max-width: 420px; margin: auto; border-radius: 18px;">
+        <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Reporting Login</h3>
+        <p class="text-muted mb-4">Login to view reports.</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger rounded-3">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label fw-semibold" style="color:#0a1f5c;">Email</label>
+                <input name="email" class="form-control" placeholder="Enter email" style="height: 48px; border-radius: 10px;" />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold" style="color:#0a1f5c;">Password</label>
+                <input name="password" type="password" class="form-control" placeholder="Enter password" style="height: 48px; border-radius: 10px;" />
+            </div>
+
+            <button type="submit"
+                    class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
+                    style="background-color:#0a1f5c; height:48px; border-radius:10px; border:none;">
+                Login
+            </button>
+        </form>
+    </div>
+</div>

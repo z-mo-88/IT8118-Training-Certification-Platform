@@ -1,0 +1,48 @@
+﻿@model List<TrainingSystem.Reporting.Models.CertificateViewModel>
+
+@{
+    ViewData["Title"] = "Certificates Report";
+}
+
+<div class="container py-5">
+
+    <h2 class="fw-bold mb-4" style="color:#0a1f5c;">
+        Certificates Report
+    </h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            <strong>@ViewBag.Error</strong>
+            <pre style="white-space:pre-wrap;">@ViewBag.ErrorDetails</pre>
+        </div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Certificate ID</th>
+                <th>Reference</th>
+                <th>Trainee</th>
+                <th>Track</th>
+                <th>Status</th>
+                <th>Issued Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var cert in Model)
+            {
+                <tr>
+                    <td>@cert.CertificateId</td>
+                    <td>@cert.CertificateReferenceNumber</td>
+                    <td>@cert.TraineeName</td>
+                    <td>@cert.TrackName</td>
+                    <td>@cert.CertificateStatus</td>
+                    <td>@cert.IssuedDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
