@@ -1,18 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Text.Json;
-using TrainingSystem.Reporting.Models;
 using System.Net.Http.Json;
+using TrainingSystem.Reporting.Models;
 
 public class AuthController : Controller
 {
-    private readonly HttpClient _httpClient;
-
-    public AuthController()
-    {
-        _httpClient = new HttpClient();
-    }
-
     public IActionResult Login()
     {
         return View();
@@ -30,7 +21,7 @@ public class AuthController : Controller
         };
 
         var response = await client.PostAsJsonAsync(
-            "https://localhost:7258/api/Auth/login", // YOUR API
+            "https://localhost:7258/api/Auth/login",
             loginData
         );
 
@@ -38,12 +29,23 @@ public class AuthController : Controller
         {
             var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
 
-            HttpContext.Session.SetString("token", result.Token);
-
-            return RedirectToAction("Index", "Home");
+            if (result != null && !string.IsNullOrEmpty(result.Token))
+            {
+                HttpContext.Session.SetString("token", result.Token);
+                return RedirectToAction("Index", "Reports");
+            }
         }
 
         ViewBag.Error = "Invalid login";
         return View();
+    }
+
+    [HttpGet]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Remove("token");
+        HttpContext.Session.Clear();
+
+        return Redirect("/Auth/Login");
     }
 }

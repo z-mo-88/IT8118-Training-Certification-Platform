@@ -38,7 +38,7 @@ public class ReportsController : Controller
 
         if (string.IsNullOrEmpty(token))
         {
-            return RedirectToAction("Login", "Auth");
+            return Redirect("/Auth/Login");
         }
 
         var client = new HttpClient();
@@ -65,7 +65,7 @@ public class ReportsController : Controller
 
         if (string.IsNullOrEmpty(token))
         {
-            return RedirectToAction("Login", "Auth");
+            return Redirect("/Auth/Login");
         }
 
         var client = new HttpClient();
@@ -126,7 +126,7 @@ public class ReportsController : Controller
 
         if (string.IsNullOrEmpty(token))
         {
-            return RedirectToAction("Login", "Auth");
+            return Redirect("/Auth/Login");
         }
 
         var client = new HttpClient();
