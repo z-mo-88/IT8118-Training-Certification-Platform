@@ -1,8 +1,207 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .report-home {
+        min-height: calc(100vh - 170px);
+        display: flex;
+        align-items: center;
+        padding: 50px 0;
+    }
+
+    .hero-card {
+        width: 100%;
+        background: linear-gradient(135deg, #0a1f5c 0%, #12308a 100%);
+        border-radius: 26px;
+        padding: 70px 55px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 18px 45px rgba(10,31,92,0.22);
+    }
+
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            top: -90px;
+            right: -80px;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            bottom: -70px;
+            left: -60px;
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 780px;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.22);
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .hero-title {
+        font-size: clamp(34px, 5vw, 58px);
+        font-weight: 800;
+        line-height: 1.08;
+        margin-bottom: 18px;
+    }
+
+    .hero-text {
+        color: #dbe4ff;
+        font-size: 17px;
+        line-height: 1.75;
+        margin-bottom: 30px;
+        max-width: 700px;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .primary-action,
+    .secondary-action {
+        height: 50px;
+        padding: 0 26px;
+        border-radius: 12px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .primary-action {
+        background: white;
+        color: #0a1f5c;
+    }
+
+    .secondary-action {
+        background: rgba(255,255,255,0.08);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .primary-action:hover {
+        color: #0a1f5c;
+        opacity: 0.94;
+    }
+
+    .secondary-action:hover {
+        color: white;
+        background: rgba(255,255,255,0.14);
+    }
+
+    .feature-row {
+        margin-top: 28px;
+    }
+
+    .feature-card {
+        background: white;
+        border: 1px solid #e6eaf2;
+        border-radius: 18px;
+        padding: 24px;
+        height: 100%;
+        box-shadow: 0 10px 28px rgba(16,24,40,0.07);
+    }
+
+        .feature-card h5 {
+            color: #0a1f5c;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: #667085;
+            margin-bottom: 0;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+    @@media (max-width: 768px) {
+        .hero-card {
+            padding: 45px 28px;
+        }
+
+        .primary-action,
+        .secondary-action {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="report-home">
+    <div class="container-fluid px-3 px-md-5">
+
+        <div class="hero-card">
+            <div class="hero-content">
+                <span class="hero-badge">Training Insights</span>
+
+                <h1 class="hero-title">
+                    Smarter Reporting for Training Operations
+                </h1>
+
+                <p class="hero-text">
+                    Monitor courses, trainees, enrollments, and certificates from one clean dashboard.
+                    Access the latest training data quickly and make better operational decisions.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="/Auth/Login" class="primary-action">
+                        Login
+                    </a>
+
+                    <a href="/Reports" class="secondary-action">
+                        View Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 feature-row">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h5>Clear Overview</h5>
+                    <p>Quickly review key training records and understand what is happening across the system.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h5>Enrollment Tracking</h5>
+                    <p>Check trainee enrollments, course status, outstanding balances, and progress information.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h5>Certificate Monitoring</h5>
+                    <p>View issued certificates, references, trainee names, tracks, and certificate status.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
