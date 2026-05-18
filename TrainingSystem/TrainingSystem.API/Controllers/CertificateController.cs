@@ -17,7 +17,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> GetCertificates()
         {
             var certificates = await _context.Certificates
