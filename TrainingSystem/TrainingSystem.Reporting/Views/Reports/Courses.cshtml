@@ -10,11 +10,13 @@
         Courses Report
     </h2>
 
-    <a href="/Reports"
+    <a asp-controller="Reports"
+       asp-action="Index"
        class="btn fw-semibold mb-4"
        style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px;">
         Back to Reports
     </a>
+
 
     @if (ViewBag.Error != null)
     {

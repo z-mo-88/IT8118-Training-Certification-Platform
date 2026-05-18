@@ -2,50 +2,73 @@
 using System.Net.Http.Json;
 using TrainingSystem.Reporting.Models;
 
-public class AuthController : Controller
+namespace TrainingSystem.Reporting.Controllers
 {
-    public IActionResult Login()
+    public class AuthController : Controller
     {
-        return View();
-    }
+        private readonly IHttpClientFactory _factory;
 
-    [HttpPost]
-    public async Task<IActionResult> Login(string email, string password)
-    {
-        var client = new HttpClient();
-
-        var loginData = new
+        public AuthController(IHttpClientFactory factory)
         {
-            Email = email,
-            Password = password
-        };
-
-        var response = await client.PostAsJsonAsync(
-            "https://localhost:7258/api/Auth/login",
-            loginData
-        );
-
-        if (response.IsSuccessStatusCode)
-        {
-            var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-
-            if (result != null && !string.IsNullOrEmpty(result.Token))
-            {
-                HttpContext.Session.SetString("token", result.Token);
-                return RedirectToAction("Index", "Reports");
-            }
+            _factory = factory;
         }
 
-        ViewBag.Error = "Invalid login";
-        return View();
-    }
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
 
-    [HttpGet]
-    public IActionResult Logout()
-    {
-        HttpContext.Session.Remove("token");
-        HttpContext.Session.Clear();
+        [HttpPost]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            var client = _factory.CreateClient("ApiClient");
 
-        return Redirect("/Auth/Login");
+            var loginData = new
+            {
+                Email = email,
+                Password = password
+            };
+
+            var response = await client.PostAsJsonAsync(
+                "api/Auth/login",
+                loginData
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ViewBag.Error = "Invalid login";
+                return View();
+            }
+
+            var result = await response.Content
+                .ReadFromJsonAsync<LoginResponse>();
+
+            if (result == null || string.IsNullOrEmpty(result.Token))
+            {
+                ViewBag.Error = "Invalid login";
+                return View();
+            }
+
+            // Restrict to coordinator role
+            if (result.RoleId != 3)
+            {
+                ViewBag.Error = "Access denied. Reporting app is restricted.";
+                return View();
+            }
+
+            HttpContext.Session.SetString("token", result.Token);
+            HttpContext.Session.SetInt32("roleId", result.RoleId);
+            HttpContext.Session.SetInt32("userId", result.UserId);
+
+            return RedirectToAction("Index", "Reports");
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
     }
 }
