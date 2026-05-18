@@ -4,6 +4,7 @@
     ViewData["Title"] = "Register";
 }
 
+
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10">
@@ -59,6 +60,11 @@
                                            placeholder="Enter your phone number"
                                            style="height: 50px; border-radius: 10px;" />
 
+                                    @if (ViewBag.PhoneError != null)
+                                    {
+                                        <span class="text-danger">@ViewBag.PhoneError</span>
+                                    }
+
                                     <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                                 </div>
 
@@ -68,6 +74,10 @@
                                            class="form-control"
                                            placeholder="Enter your password"
                                            style="height: 50px; border-radius: 10px;" />
+                                    @if (ViewBag.PasswordError != null)
+                                    {
+                                        <span class="text-danger">@ViewBag.PasswordError</span>
+                                    }
                                     <span asp-validation-for="PasswordHash" class="text-danger small"></span>
                                 </div>
 

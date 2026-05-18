@@ -83,9 +83,17 @@ namespace TrainingSystem.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(string name, string email, string phoneNumber, string password)
         {
-            if (string.IsNullOrEmpty(password))
+            if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
             {
-                ViewBag.Error = "Password required";
+                ViewBag.PasswordError = "Password must be at least 6 characters";
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(phoneNumber) ||
+     phoneNumber.Length != 8 ||
+     !phoneNumber.All(char.IsDigit))
+            {
+                ViewBag.PhoneError = "Phone number must be 8 digits";
                 return View();
             }
 
