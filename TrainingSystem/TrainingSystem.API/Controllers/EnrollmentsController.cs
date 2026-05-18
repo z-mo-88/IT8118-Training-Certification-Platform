@@ -30,6 +30,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpGet]
+        
         public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments()
         {
             var enrollments = await _context.Enrollments
@@ -42,6 +43,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "1")]
         public async Task<ActionResult> CreateEnrollment(Enrollment enrollment)
         {
             var session = await _context.CourseSessions
@@ -80,6 +82,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> DeleteEnrollment(int id)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
@@ -106,6 +109,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpPost("record-result")]
+        [Authorize(Roles = "2")]
         public async Task<IActionResult> RecordResult([FromBody] RecordResultRequest request)
         {
             if (request == null)

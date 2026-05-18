@@ -8,7 +8,7 @@ namespace TrainingSystem.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "3")]
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;
