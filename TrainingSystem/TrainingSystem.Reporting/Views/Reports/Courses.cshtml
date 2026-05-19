@@ -6,47 +6,123 @@
 
 <div class="container py-5">
 
-    <h2 class="fw-bold mb-4" style="color:#0a1f5c;">
-        Courses Report
-    </h2>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
 
-    <a asp-controller="Reports"
-       asp-action="Index"
-       class="btn fw-semibold mb-4"
-       style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px;">
-        Back to Reports
-    </a>
+        <div>
+            <h2 class="fw-bold mb-1" style="color:#0a1f5c;">
+                Courses Report
+            </h2>
 
+            <p class="text-muted mb-0">
+                View all available training courses and course duration details.
+            </p>
+        </div>
 
+        <a asp-controller="Reports"
+           asp-action="Index"
+           class="btn px-4 py-2 fw-semibold"
+           style="border:1px solid #0a1f5c;
+                  color:#0a1f5c;
+                  border-radius:12px;">
+            ← Back to Reports
+        </a>
+
+    </div>
+
+    <!-- Error Message -->
     @if (ViewBag.Error != null)
     {
-        <div class="alert alert-danger">
+        <div class="alert alert-danger shadow-sm border-0 mb-4"
+             style="border-radius:14px;">
             <strong>@ViewBag.Error</strong>
-            <pre style="white-space:pre-wrap;">@ViewBag.ErrorDetails</pre>
+
+            @if (ViewBag.ErrorDetails != null)
+            {
+                <pre class="mt-2 mb-0"
+                     style="white-space:pre-wrap;">@ViewBag.ErrorDetails</pre>
+            }
         </div>
     }
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Course ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Duration Hours</th>
-            </tr>
-        </thead>
+    <!-- Report Card -->
+    <div class="card border-0 shadow-sm"
+         style="border-radius:20px; overflow:hidden;">
 
-        <tbody>
-            @foreach (var course in Model)
-            {
-                <tr>
-                    <td>@course.CourseId</td>
-                    <td>@course.Title</td>
-                    <td>@course.Description</td>
-                    <td>@course.DurationHours</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <!-- Card Header -->
+        <div class="card-header border-0 py-3 px-4"
+             style="background:#0a1f5c;">
+
+            <h5 class="text-white fw-semibold mb-0">
+                Course Records
+            </h5>
+
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead style="background:#f5f7fb;">
+                    <tr>
+                        <th class="py-3 px-4">Course ID</th>
+                        <th class="py-3">Title</th>
+                        <th class="py-3">Description</th>
+                        <th class="py-3">Duration</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var course in Model)
+                        {
+                            <tr>
+
+                                <td class="px-4 fw-semibold">
+                                    #@course.CourseId
+                                </td>
+
+                                <td>
+                                    <span class="fw-semibold">
+                                        @course.Title
+                                    </span>
+                                </td>
+
+                                <td style="max-width:400px;">
+                                    <span class="text-muted">
+                                        @course.Description
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-primary px-3 py-2"
+                                          style="border-radius:10px;">
+                                        @course.DurationHours Hours
+                                    </span>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4"
+                                class="text-center py-5 text-muted">
+                                No course records found.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>

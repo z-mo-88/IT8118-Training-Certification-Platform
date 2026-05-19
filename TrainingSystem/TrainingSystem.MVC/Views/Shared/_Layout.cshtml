@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
 
+
+
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
@@ -21,6 +23,8 @@
     var isAuth = userId != null;
 }
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,6 +34,7 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
 
     <style>
         html, body {
@@ -267,9 +272,33 @@
             border-top: 1px solid #e9ecef;
         }
 
+        @@media (max-width: 1400px) {
+            .custom-navbar .nav-link, .custom-navbar .dropdown-toggle
+
+        {
+            font-size: 14px;
+            padding: 0.45rem 0.55rem;
+        }
+
+        .custom-navbar .navbar-brand {
+            font-size: 1.4rem;
+        }
+
+        .auth-btn {
+            padding: 8px 14px;
+        }
+
+        .nav-text {
+            padding: 0.4rem 0.6rem;
+        }
+
+        }
+
             footer small {
                 color: #0a1f5c;
             }
+
+
     </style>
 </head>
 
@@ -293,7 +322,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarNav">
 
-                    <ul class="navbar-nav ms-auto d-flex gap-lg-2">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
 
                         <li class="nav-item">
                             <a class="nav-link @ActiveClass("Home", "Index")" href="/">Home</a>
@@ -334,7 +363,7 @@
 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    User Management
+                                    Users
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item @ActiveClass("Users")" href="/Users">Users</a></li>
@@ -344,7 +373,7 @@
 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Resource Management
+                                    Resources 
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item @ActiveClass("Room")" href="/Room">Rooms</a></li>
@@ -355,7 +384,7 @@
 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Financial Management
+                                    Financial 
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item @ActiveClass("Payment")" href="/Payment">Payments</a></li>
@@ -382,7 +411,7 @@
 
                     </ul>
 
-                    <ul class="navbar-nav align-items-lg-center gap-2 ms-lg-3">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
                         @if (Context.Session.GetInt32("UserId") != null)
                         {
                             <li class="nav-item">
@@ -418,7 +447,7 @@
         </main>
 
         <footer class="text-center">
-            <div class="container-fluid px-4">
+            <div class="container-fluid px-3">
                 <small>© 2026 Training System. All rights reserved.</small>
             </div>
         </footer>

@@ -4,71 +4,274 @@
 
 <div class="container py-5">
 
-    <div class="mb-4">
-        <h2 class="fw-bold mb-2" style="color:#0a1f5c;">
+    <!-- Header -->
+    <div class="text-center mb-5">
+
+        <h1 class="fw-bold mb-3"
+            style="color:#0a1f5c; font-size:48px;">
             Reports Dashboard
-        </h2>
-        <p class="text-muted mb-0">
-            View read-only operational reports retrieved from the Web API.
+        </h1>
+
+        <p class="text-muted fs-5 mb-0">
+            View read-only operational reports retrieved securely from the Web API.
+        </p>
+
+    </div>
+
+    <!-- Statistics Banner -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100"
+                 style="border-radius:20px; background:#0a1f5c;">
+
+                <div class="card-body p-4 text-white">
+
+                    <h6 class="text-uppercase opacity-75 mb-3">
+                        System Access
+                    </h6>
+
+                    <h3 class="fw-bold mb-2">
+                        JWT Secured
+                    </h3>
+
+                    <p class="mb-0 opacity-75">
+                        Reports are retrieved securely through authenticated API requests.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100"
+                 style="border-radius:20px; background:#ffffff;">
+
+                <div class="card-body p-4">
+
+                    <h6 class="text-uppercase text-muted mb-3">
+                        Application Type
+                    </h6>
+
+                    <h3 class="fw-bold mb-2"
+                        style="color:#0a1f5c;">
+                        Read-Only Reports
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        Data is displayed from the API without direct database access.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100"
+                 style="border-radius:20px; background:#ffffff;">
+
+                <div class="card-body p-4">
+
+                    <h6 class="text-uppercase text-muted mb-3">
+                        Integration
+                    </h6>
+
+                    <h3 class="fw-bold mb-2"
+                        style="color:#0a1f5c;">
+                        HttpClient API
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        Operational reports are retrieved entirely through API endpoints.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Reports Section -->
+    <div class="mb-4">
+        <h3 class="fw-bold"
+            style="color:#0a1f5c;">
+            Available Reports
+        </h3>
+
+        <p class="text-muted">
+            Select a report to view operational business information.
         </p>
     </div>
 
+    <!-- Report Cards -->
     <div class="row g-4">
 
+        <!-- Users -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold" style="color:#0a1f5c;">Users Report</h5>
-                    <p class="text-muted small">View all users and roles in the system.</p>
+
+            <div class="card border-0 shadow-sm h-100"
+                 style="border-radius:22px; transition:0.3s;">
+
+                <div class="card-body p-4 d-flex flex-column">
+
+                    <div class="mb-4"
+                         style="width:60px;
+                                height:60px;
+                                border-radius:16px;
+                                background:#eef3ff;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                font-size:28px;">
+                        👥
+                    </div>
+
+                    <h5 class="fw-bold mb-3"
+                        style="color:#0a1f5c;">
+                        Users Report
+                    </h5>
+
+                    <p class="text-muted small flex-grow-1">
+                        View all users, account details, and assigned system roles.
+                    </p>
+
                     <a asp-action="Users"
-                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
-                       style="background:#0a1f5c; height:44px; border-radius:10px;">
-                        Open
+                       class="btn text-white fw-semibold w-100 mt-3"
+                       style="background:#0a1f5c;
+                              height:46px;
+                              border-radius:12px;">
+                        Open Report
                     </a>
+
                 </div>
             </div>
+
         </div>
 
+        <!-- Courses -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold" style="color:#0a1f5c;">Courses Report</h5>
-                    <p class="text-muted small">View training courses and duration.</p>
+
+            <div class="card border-0 shadow-sm h-100"
+                 style="border-radius:22px;">
+
+                <div class="card-body p-4 d-flex flex-column">
+
+                    <div class="mb-4"
+                         style="width:60px;
+                                height:60px;
+                                border-radius:16px;
+                                background:#eef3ff;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                font-size:28px;">
+                        📚
+                    </div>
+
+                    <h5 class="fw-bold mb-3"
+                        style="color:#0a1f5c;">
+                        Courses Report
+                    </h5>
+
+                    <p class="text-muted small flex-grow-1">
+                        View training courses, descriptions, and course duration information.
+                    </p>
+
                     <a asp-action="Courses"
-                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
-                       style="background:#0a1f5c; height:44px; border-radius:10px;">
-                        Open
+                       class="btn text-white fw-semibold w-100 mt-3"
+                       style="background:#0a1f5c;
+                              height:46px;
+                              border-radius:12px;">
+                        Open Report
                     </a>
+
                 </div>
             </div>
+
         </div>
 
+        <!-- Enrollments -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold" style="color:#0a1f5c;">Enrollments Report</h5>
-                    <p class="text-muted small">View trainee enrollments and balances.</p>
+
+            <div class="card border-0 shadow-sm h-100"
+                 style="border-radius:22px;">
+
+                <div class="card-body p-4 d-flex flex-column">
+
+                    <div class="mb-4"
+                         style="width:60px;
+                                height:60px;
+                                border-radius:16px;
+                                background:#eef3ff;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                font-size:28px;">
+                        📝
+                    </div>
+
+                    <h5 class="fw-bold mb-3"
+                        style="color:#0a1f5c;">
+                        Enrollments Report
+                    </h5>
+
+                    <p class="text-muted small flex-grow-1">
+                        View trainee enrollments, balances, and course participation.
+                    </p>
+
                     <a asp-action="Enrollments"
-                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
-                       style="background:#0a1f5c; height:44px; border-radius:10px;">
-                        Open
+                       class="btn text-white fw-semibold w-100 mt-3"
+                       style="background:#0a1f5c;
+                              height:46px;
+                              border-radius:12px;">
+                        Open Report
                     </a>
+
                 </div>
             </div>
+
         </div>
 
+        <!-- Certificates -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius:18px;">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold" style="color:#0a1f5c;">Certificates Report</h5>
-                    <p class="text-muted small">View issued certificate records.</p>
+
+            <div class="card border-0 shadow-sm h-100"
+                 style="border-radius:22px;">
+
+                <div class="card-body p-4 d-flex flex-column">
+
+                    <div class="mb-4"
+                         style="width:60px;
+                                height:60px;
+                                border-radius:16px;
+                                background:#eef3ff;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                font-size:28px;">
+                        🎓
+                    </div>
+
+                    <h5 class="fw-bold mb-3"
+                        style="color:#0a1f5c;">
+                        Certificates Report
+                    </h5>
+
+                    <p class="text-muted small flex-grow-1">
+                        View issued certification records and trainee certification status.
+                    </p>
+
                     <a asp-action="Certificates"
-                       class="btn text-white fw-semibold w-100 d-flex align-items-center justify-content-center"
-                       style="background:#0a1f5c; height:44px; border-radius:10px;">
-                        Open
+                       class="btn text-white fw-semibold w-100 mt-3"
+                       style="background:#0a1f5c;
+                              height:46px;
+                              border-radius:12px;">
+                        Open Report
                     </a>
+
                 </div>
             </div>
+
         </div>
 
     </div>
