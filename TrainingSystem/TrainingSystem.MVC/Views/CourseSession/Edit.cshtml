@@ -22,7 +22,10 @@
 
                         <input type="hidden" asp-for="SessionId" />
 
-                        <div asp-validation-summary="All" class="alert alert-danger rounded-3 mb-4"></div>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div asp-validation-summary="All" class="alert alert-danger rounded-3 mb-4"></div>
+                        }
 
                         <div class="row">
 

@@ -71,20 +71,31 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectByRole();
         }
 
-        
-        //Register
-
+        // Register
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string name, string email, string phoneNumber, string password)
+        public async Task<IActionResult> Register(string name, string cpr, string email, string phoneNumber, string password)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                ViewBag.Error = "Name is required";
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(cpr) ||
+                cpr.Length != 9 ||
+                !cpr.All(char.IsDigit))
+            {
+                ViewBag.CPRError = "CPR must be 9 digits";
+                return View();
+            }
+
             if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
             {
                 ViewBag.PasswordError = "Password must be at least 6 characters";
@@ -92,8 +103,8 @@ namespace TrainingSystem.MVC.Controllers
             }
 
             if (string.IsNullOrWhiteSpace(phoneNumber) ||
-     phoneNumber.Length != 8 ||
-     !phoneNumber.All(char.IsDigit))
+                phoneNumber.Length != 8 ||
+                !phoneNumber.All(char.IsDigit))
             {
                 ViewBag.PhoneError = "Phone number must be 8 digits";
                 return View();
@@ -107,9 +118,18 @@ namespace TrainingSystem.MVC.Controllers
                 return View();
             }
 
+            var cprExists = await _context.Users.AnyAsync(u => u.CPR == cpr);
+
+            if (cprExists)
+            {
+                ViewBag.CPRError = "CPR already exists";
+                return View();
+            }
+
             var user = new User
             {
                 Name = name,
+                CPR = cpr,
                 Email = email,
                 PhoneNumber = phoneNumber,
                 PasswordHash = HashPassword(password),

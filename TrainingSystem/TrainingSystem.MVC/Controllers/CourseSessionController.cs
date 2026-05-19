@@ -47,6 +47,7 @@ namespace TrainingSystem.MVC.Controllers
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
+
             ModelState.Remove("Course");
             ModelState.Remove("Room");
             ModelState.Remove("User");
@@ -81,7 +82,6 @@ namespace TrainingSystem.MVC.Controllers
             {
                 ModelState.AddModelError("RoomId", "Selected room does not meet course equipment requirements");
             }
-
 
             if (selectedCourse == null)
             {
@@ -141,9 +141,9 @@ namespace TrainingSystem.MVC.Controllers
                 await _context.SaveChangesAsync();
 
                 await _notification.CreateNotification(
-    session.UserId,
-    "You have been assigned to a new session"
-);
+                    session.UserId,
+                    "You have been assigned to a new session"
+                );
 
                 var createdSession = await _context.CourseSessions
                     .Include(s => s.Course)
@@ -178,10 +178,17 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CourseSession session)
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
+
+            ModelState.Remove("Course");
+            ModelState.Remove("Room");
+            ModelState.Remove("User");
+            ModelState.Remove("Status");
+            ModelState.Remove("Enrollments");
 
             ValidateSession(session);
 
@@ -282,7 +289,7 @@ namespace TrainingSystem.MVC.Controllers
             if (session == null) return NotFound();
 
             bool hasEnrollments = await _context.Enrollments
-        .AnyAsync(e => e.SessionId == id);
+                .AnyAsync(e => e.SessionId == id);
 
             if (hasEnrollments)
             {
@@ -295,11 +302,6 @@ namespace TrainingSystem.MVC.Controllers
 
             TempData["Success"] = "Session deleted successfully";
             return RedirectToAction(nameof(Index));
-
-
-            return View(session);
-
-
         }
 
         [HttpPost, ActionName("Delete")]

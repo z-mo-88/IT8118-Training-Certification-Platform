@@ -4,7 +4,6 @@
     ViewData["Title"] = "Register";
 }
 
-
 <div class="container-fluid py-5 px-3 px-md-5">
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10">
@@ -33,6 +32,13 @@
                                 </div>
                             }
 
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="alert alert-danger rounded-3 mb-4">
+                                    @ViewBag.Error
+                                </div>
+                            }
+
                             <form asp-action="Register" method="post">
 
                                 <div class="mb-3">
@@ -45,6 +51,21 @@
                                 </div>
 
                                 <div class="mb-3">
+                                    <label asp-for="CPR" class="form-label fw-semibold" style="color: #0a1f5c;">CPR</label>
+                                    <input asp-for="CPR"
+                                           class="form-control"
+                                           placeholder="Enter your CPR"
+                                           style="height: 50px; border-radius: 10px;" />
+
+                                    @if (ViewBag.CPRError != null)
+                                    {
+                                        <span class="text-danger">@ViewBag.CPRError</span>
+                                    }
+
+                                    <span asp-validation-for="CPR" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
                                     <label asp-for="Email" class="form-label fw-semibold" style="color: #0a1f5c;">Email</label>
                                     <input asp-for="Email"
                                            class="form-control"
@@ -52,6 +73,7 @@
                                            style="height: 50px; border-radius: 10px;" />
                                     <span asp-validation-for="Email" class="text-danger small"></span>
                                 </div>
+
                                 <div class="mb-3">
                                     <label asp-for="PhoneNumber" class="form-label fw-semibold" style="color: #0a1f5c;">Phone</label>
 
@@ -107,3 +129,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

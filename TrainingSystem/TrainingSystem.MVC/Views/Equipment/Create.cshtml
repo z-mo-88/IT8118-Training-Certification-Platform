@@ -25,7 +25,9 @@
                     <form asp-action="Create" method="post">
 
                         <div class="mb-3">
-                            <label asp-for="EquipmentName" class="form-label fw-semibold" style="color:#0a1f5c;">
+                            <label asp-for="EquipmentName"
+                                   class="form-label fw-semibold"
+                                   style="color:#0a1f5c;">
                                 Equipment Name
                             </label>
 
@@ -34,11 +36,14 @@
                                    placeholder="Enter equipment name"
                                    style="height:50px; border-radius:10px;" />
 
-                            <span asp-validation-for="EquipmentName" class="text-danger small"></span>
+                            <span asp-validation-for="EquipmentName"
+                                  class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Description" class="form-label fw-semibold" style="color:#0a1f5c;">
+                            <label asp-for="Description"
+                                   class="form-label fw-semibold"
+                                   style="color:#0a1f5c;">
                                 Description
                             </label>
 
@@ -47,15 +52,32 @@
                                    placeholder="Enter description"
                                    style="height:50px; border-radius:10px;" />
 
-                            <span asp-validation-for="Description" class="text-danger small"></span>
+                            <span asp-validation-for="Description"
+                                  class="text-danger small"></span>
                         </div>
 
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+
+                            <a asp-action="Index"
+                               class="btn fw-semibold px-4 d-inline-flex align-items-center justify-content-center"
+                               style="border:1px solid #0a1f5c;
+                                      color:#0a1f5c;
+                                      border-radius:10px;
+                                      height:46px;
+                                      line-height:1;">
+                                Back
+                            </a>
+
                             <button type="submit"
                                     class="btn text-white fw-semibold px-4 d-inline-flex align-items-center justify-content-center"
-                                    style="background-color:#0a1f5c; height:46px; border-radius:10px; border:none; line-height:1;">
+                                    style="background-color:#0a1f5c;
+                                           height:46px;
+                                           border-radius:10px;
+                                           border:none;
+                                           line-height:1;">
                                 Save
                             </button>
+
                         </div>
 
                     </form>
