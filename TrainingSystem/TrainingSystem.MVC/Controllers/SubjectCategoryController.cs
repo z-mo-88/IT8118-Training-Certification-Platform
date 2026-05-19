@@ -104,7 +104,7 @@ namespace TrainingSystem.MVC.Controllers
             _context.SubjectCategories.Remove(category);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Category deleted.";
+            TempData["Success"] = "Category deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
     }

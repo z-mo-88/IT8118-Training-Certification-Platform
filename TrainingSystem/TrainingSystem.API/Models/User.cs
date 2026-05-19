@@ -20,6 +20,7 @@ public partial class User
 
     [Required]
     [StringLength(255)]
+    [Display(Name = "Password")]
     public string PasswordHash { get; set; } = null!;
 
     [Phone]

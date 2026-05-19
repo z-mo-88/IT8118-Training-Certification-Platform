@@ -9,6 +9,11 @@
                         Edit Track Course
                     </h3>
 
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+                    }
+
                     <form asp-action="Edit" method="post">
 
                         <input type="hidden" name="trackId" value="@Model.CertificationTrackId" />

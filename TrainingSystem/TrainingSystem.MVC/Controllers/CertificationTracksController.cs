@@ -36,6 +36,8 @@ namespace TrainingSystem.MVC.Controllers
             _context.CertificationTracks.Add(track);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Certification track created successfully";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -60,6 +62,7 @@ namespace TrainingSystem.MVC.Controllers
 
             _context.Update(track);
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Certification track updated successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -92,6 +95,8 @@ namespace TrainingSystem.MVC.Controllers
             _context.CertificationTracks.Remove(track);
 
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Certification track deleted successfully";
+
 
             return RedirectToAction(nameof(Index));
         }

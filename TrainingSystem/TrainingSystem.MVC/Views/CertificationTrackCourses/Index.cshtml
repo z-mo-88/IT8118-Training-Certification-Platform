@@ -10,6 +10,13 @@
         </a>
     </div>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
     <div class="card border-0 shadow-sm" style="border-radius:18px;">
         <div class="card-body p-4">
 

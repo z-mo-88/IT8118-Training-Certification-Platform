@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 using TrainingSystem.MVC.Services;
-using System.Security.Cryptography;
-using System.Text;
+using static Azure.Core.HttpHeader;
 
 namespace TrainingSystem.MVC.Controllers
 {
@@ -60,7 +61,21 @@ namespace TrainingSystem.MVC.Controllers
             {
                 ModelState.AddModelError("", "Email already exists");
             }
+            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "Email already exists");
+            }
 
+            if (string.IsNullOrWhiteSpace(user.PasswordHash) || user.PasswordHash.Length < 6)
+            {
+                ModelState.AddModelError("PasswordHash", "Password must be at least 6 characters");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.PhoneNumber) ||
+                user.PhoneNumber.Length < 8)
+            {
+                ModelState.AddModelError("PhoneNumber", "Phone number must be at least 8 digits");
+            }
             if (ModelState.IsValid)
             {
                 user.PasswordHash = HashPassword(user.PasswordHash);
@@ -106,7 +121,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(User user, string Bio, string Notes)
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
@@ -121,7 +136,31 @@ namespace TrainingSystem.MVC.Controllers
             {
                 ModelState.AddModelError("", "Email already exists");
             }
+            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "Email already exists");
+            }
 
+            if (string.IsNullOrWhiteSpace(user.PasswordHash) || user.PasswordHash.Length < 6)
+            {
+                ModelState.AddModelError("PasswordHash", "Password must be at least 6 characters");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.PhoneNumber) ||
+     user.PhoneNumber.Length < 8)
+            {
+                ModelState.AddModelError("PhoneNumber", "Phone number must be at least 8 digits");
+            }
+
+            if (string.IsNullOrWhiteSpace(Bio))
+            {
+                ModelState.AddModelError("Bio", "Bio is required");
+            }
+
+            if (string.IsNullOrWhiteSpace(Notes))
+            {
+                ModelState.AddModelError("Notes", "Notes are required");
+            }
             if (ModelState.IsValid)
             {
                 user.PasswordHash = HashPassword(user.PasswordHash);
@@ -155,7 +194,6 @@ namespace TrainingSystem.MVC.Controllers
             LoadRoles();
             return View(user);
         }
-
         [HttpPost]
         public async Task<IActionResult> Edit(User user)
         {
@@ -164,8 +202,21 @@ namespace TrainingSystem.MVC.Controllers
 
             CleanModelState();
 
+            // Make password optional in edit
+            if (string.IsNullOrWhiteSpace(user.PasswordHash))
+            {
+                ModelState.Remove("PasswordHash");
+            }
+            else if (user.PasswordHash.Length < 6)
+            {
+                ModelState.AddModelError("PasswordHash",
+                    "Password must be at least 6 characters");
+            }
+
             var existingUser = await _context.Users.FindAsync(user.UserId);
-            if (existingUser == null) return NotFound();
+
+            if (existingUser == null)
+                return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -175,12 +226,15 @@ namespace TrainingSystem.MVC.Controllers
                 existingUser.RoleId = user.RoleId;
                 existingUser.IsActive = user.IsActive;
 
+                // Update password only if entered
                 if (!string.IsNullOrWhiteSpace(user.PasswordHash))
                 {
                     existingUser.PasswordHash = HashPassword(user.PasswordHash);
                 }
 
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] = "User updated successfully";
 
                 return RedirectToAction(nameof(Index));
             }

@@ -42,17 +42,24 @@ namespace TrainingSystem.MVC.Controllers
             var exists = await _context.CertificationTrackCourses
                 .AnyAsync(x => x.CertificationTrackId == trackId && x.CourseId == courseId);
 
-            if (!exists)
+            if (exists)
             {
-                _context.CertificationTrackCourses.Add(new CertificationTrackCourse
-                {
-                    CertificationTrackId = trackId,
-                    CourseId = courseId,
-                    IsRequired = isRequired
-                });
+                ModelState.AddModelError("", "Course already exists in this track");
 
-                await _context.SaveChangesAsync();
+                ViewBag.Tracks = _context.CertificationTracks.ToList();
+                ViewBag.Courses = _context.Courses.ToList();
+
+                return View();
             }
+
+            _context.CertificationTrackCourses.Add(new CertificationTrackCourse
+            {
+                CertificationTrackId = trackId,
+                CourseId = courseId,
+                IsRequired = isRequired
+            });
+
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -138,6 +145,8 @@ namespace TrainingSystem.MVC.Controllers
             {
                 _context.CertificationTrackCourses.Remove(item);
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Course removed from track successfully";
             }
 
             return RedirectToAction(nameof(Index));
