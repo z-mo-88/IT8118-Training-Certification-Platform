@@ -6,8 +6,10 @@ using TrainingSystem.API.Models;
 
 namespace TrainingSystem.MVC.Controllers
 {
+    // Controller responsible for payment management
     public class PaymentController : BaseController
     {
+        // Database context
         private readonly AppDbContext _context;
 
         public PaymentController(AppDbContext context)
@@ -15,7 +17,7 @@ namespace TrainingSystem.MVC.Controllers
             _context = context;
         }
 
-        
+        // Displays all recorded payments
         public async Task<IActionResult> Index()
         {
             var auth = AuthorizeRole(3);
@@ -33,7 +35,7 @@ namespace TrainingSystem.MVC.Controllers
             return View(payments);
         }
 
-        //CREATE GET
+        // Opens create payment page
         [HttpGet]
         public IActionResult Create()
         {
@@ -44,7 +46,7 @@ namespace TrainingSystem.MVC.Controllers
             return View();
         }
 
-        //  CREATE POST 
+        // Records a new payment
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Payment payment)
@@ -71,7 +73,6 @@ namespace TrainingSystem.MVC.Controllers
             if (enrollment == null)
                 ModelState.AddModelError("EnrollmentId", "Invalid enrollment.");
 
-            
             if (enrollment != null && enrollment.Status == "Dropped")
                 ModelState.AddModelError("EnrollmentId", "Dropped enrollments cannot receive payments.");
 
@@ -91,7 +92,6 @@ namespace TrainingSystem.MVC.Controllers
                 return View(payment);
             }
 
-            // SAVE PAYMENT
             payment.PaidDate = DateOnly.FromDateTime(DateTime.Now);
 
             enrollment!.OutstandingBalance -= payment.AmountPaid;
@@ -106,7 +106,6 @@ namespace TrainingSystem.MVC.Controllers
             {
                 payment.PaymentStatus = "Partial";
 
-                
                 if (enrollment.Session.SessionDate < DateOnly.FromDateTime(DateTime.Now))
                 {
                     enrollment.IsOverdue = true;
@@ -120,7 +119,7 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // DROPDOWN 
+        // Loads unpaid enrollments into dropdown
         private void LoadEnrollments(int? selectedEnrollmentId = null)
         {
             var unpaidEnrollments = _context.Enrollments
@@ -129,7 +128,7 @@ namespace TrainingSystem.MVC.Controllers
                     .ThenInclude(s => s.Course)
                 .Where(e =>
                     e.OutstandingBalance > 0 &&
-                    e.Status != "Dropped") 
+                    e.Status != "Dropped")
                 .Select(e => new
                 {
                     e.EnrollmentId,
