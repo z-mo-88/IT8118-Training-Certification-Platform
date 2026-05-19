@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 using TrainingSystem.MVC.Services;
+using Microsoft.AspNetCore.SignalR;
+using TrainingSystem.API.Hubs;
 
 namespace TrainingSystem.MVC.Controllers
 {
@@ -10,11 +12,16 @@ namespace TrainingSystem.MVC.Controllers
     {
         private readonly AppDbContext _context;
         private readonly NotificationService _notification;
+        private readonly IHubContext<EnrollmentHub> _hubContext;
 
-        public EnrollmentsController(AppDbContext context, NotificationService notification)
+        public EnrollmentsController(
+     AppDbContext context,
+     NotificationService notification,
+     IHubContext<EnrollmentHub> hubContext)
         {
             _context = context;
             _notification = notification;
+            _hubContext = hubContext;
         }
 
         // ================= VIEW MY ENROLLMENTS =================
@@ -115,6 +122,13 @@ namespace TrainingSystem.MVC.Controllers
      $"{user.Name} enrolled in your session"
 );
 
+            await _hubContext.Clients.All.SendAsync(
+    "EnrollmentUpdated",
+    session.SessionId,
+    session.AvailableSeats
+);
+
+
             TempData["Success"] = "Enrollment successful!";
 
             return RedirectToAction("Index", "Courses");
@@ -170,6 +184,12 @@ namespace TrainingSystem.MVC.Controllers
             await _notification.CreateNotification(
     session.UserId,
    $"{user.Name} has dropped your session"
+);
+
+            await _hubContext.Clients.All.SendAsync(
+    "EnrollmentUpdated",
+    session.SessionId,
+    session.AvailableSeats
 );
 
             TempData["Success"] = "Course dropped successfully";

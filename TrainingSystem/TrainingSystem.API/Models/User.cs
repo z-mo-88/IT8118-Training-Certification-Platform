@@ -28,6 +28,10 @@ public partial class User
     public string? PhoneNumber { get; set; }
 
     [Required]
+    [StringLength(9)]
+    public string CPR { get; set; }
+
+    [Required]
     public int RoleId { get; set; }
 
     public bool IsActive { get; set; }

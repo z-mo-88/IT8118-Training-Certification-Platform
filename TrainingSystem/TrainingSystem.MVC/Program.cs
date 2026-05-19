@@ -1,9 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 using TrainingSystem.API.Data;
+using TrainingSystem.API.Hubs;
 using TrainingSystem.MVC.Helpers;
 using TrainingSystem.MVC.Services;
-using QuestPDF.Infrastructure;
 
 
 
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddSignalR();
 QuestPDF.Settings.License = LicenseType.Community;
 
 // DbContext 
@@ -63,5 +65,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHub<EnrollmentHub>("/enrollmentHub");
 
 app.Run();

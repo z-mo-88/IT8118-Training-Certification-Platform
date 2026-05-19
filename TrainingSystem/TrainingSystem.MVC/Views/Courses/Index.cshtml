@@ -191,23 +191,23 @@
 </div>
 
 <!-- SIGNALR SCRIPT -->
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
 
-    <script>
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7258/enrollmentHub") // API URL
-            .build();
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
-        connection.on("EnrollmentUpdated", function (sessionId, availableSeats) {
-            const seatCell = document.getElementById("seats-" + sessionId);
-            if (seatCell) {
-                seatCell.textContent = availableSeats;
-            }
-        });
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/enrollmentHub")
+        .build();
 
-        connection.start()
-            .then(() => console.log("Connected to SignalR"))
-            .catch(err => console.error(err.toString()));
-    </script>
-}
+    connection.on("EnrollmentUpdated", function (sessionId, availableSeats) {
+
+        const element = document.getElementById("seats-" + sessionId);
+
+        if (element) {
+            element.innerText = availableSeats;
+        }
+    });
+
+    connection.start()
+        .catch(err => console.error(err.toString()));
+</script>
