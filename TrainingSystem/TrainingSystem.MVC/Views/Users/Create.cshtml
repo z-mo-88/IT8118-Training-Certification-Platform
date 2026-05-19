@@ -1,7 +1,7 @@
 ﻿@model TrainingSystem.API.Models.User
 
 @{
-    ViewData["Title"] = "Edit User";
+    ViewData["Title"] = "Add User";
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
@@ -12,8 +12,8 @@
                 <div class="card-body p-4 p-lg-5">
 
                     <div class="mb-4">
-                        <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Edit User</h3>
-                        <p class="text-muted mb-0">Update user details below.</p>
+                        <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Add User</h3>
+                        <p class="text-muted mb-0">Enter user details below.</p>
                     </div>
 
                     @if (!ViewData.ModelState.IsValid)
@@ -21,35 +21,54 @@
                         <div asp-validation-summary="All" class="alert alert-danger rounded-3 mb-4"></div>
                     }
 
-                    <form asp-action="Edit" method="post">
-
-                        <input type="hidden" asp-for="UserId" />
+                    <form asp-action="Create" method="post">
 
                         <div class="mb-3">
-                            <label asp-for="Name" class="form-label fw-semibold" style="color:#0a1f5c;">Name</label>
-                            <input asp-for="Name" class="form-control" style="height:50px; border-radius:10px;" />
+                            <label asp-for="Name" class="form-label fw-semibold" style="color:#0a1f5c;">
+                                Name
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
+                        <!-- CPR -->
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold" style="color:#0a1f5c;">Email</label>
-                            <input asp-for="Email" class="form-control" style="height:50px; border-radius:10px;" />
+                            <label asp-for="CPR" class="form-label fw-semibold" style="color:#0a1f5c;">
+                                CPR
+                            </label>
+
+                            <input asp-for="CPR"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
+                            <span asp-validation-for="CPR" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold" style="color:#0a1f5c;">
+                                Email
+                            </label>
+
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="PasswordHash" class="form-label fw-semibold" style="color:#0a1f5c;">
-                                New Password
+                                Password
                             </label>
 
                             <input asp-for="PasswordHash"
                                    type="password"
                                    class="form-control"
                                    style="height:50px; border-radius:10px;" />
-
-                            <small class="text-muted">
-                                Leave blank to keep current password
-                            </small>
 
                             <span asp-validation-for="PasswordHash" class="text-danger"></span>
                         </div>
@@ -78,12 +97,7 @@
                             </select>
                         </div>
 
-                        <div class="form-check mb-4">
-                            <input asp-for="IsActive" class="form-check-input" />
-                            <label asp-for="IsActive" class="form-check-label fw-semibold">
-                                Active User
-                            </label>
-                        </div>
+                        <input type="hidden" asp-for="IsActive" value="true" />
 
                         <div class="d-flex justify-content-between align-items-center mt-4">
 
@@ -96,7 +110,7 @@
                             <button type="submit"
                                     class="btn text-white fw-semibold px-4 d-flex align-items-center justify-content-center"
                                     style="background-color:#0a1f5c; border-radius:10px; border:none; height:46px;">
-                                Save Changes
+                                Create User
                             </button>
 
                         </div>

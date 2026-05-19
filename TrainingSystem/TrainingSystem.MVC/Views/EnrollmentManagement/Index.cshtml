@@ -31,6 +31,7 @@
                     <thead style="background-color: rgba(10, 31, 92, 0.06);">
                         <tr>
                             <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Trainee</th>
+                            <th class="fw-semibold py-3" style="color: #0a1f5c;">CPR</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Course</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Session Date</th>
                             <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
@@ -59,6 +60,10 @@
                                 <tr>
                                     <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
                                         @item.User?.Name
+                                    </td>
+
+                                    <td class="py-3 text-muted">
+                                        @item.User?.CPR
                                     </td>
 
                                     <td class="py-3 text-muted">
@@ -133,7 +138,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-5">
+                                <td colspan="8" class="text-center text-muted py-5">
                                     No enrollments found.
                                 </td>
                             </tr>

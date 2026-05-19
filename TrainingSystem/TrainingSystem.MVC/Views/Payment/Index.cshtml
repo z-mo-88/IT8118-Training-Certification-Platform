@@ -9,6 +9,7 @@
         {
             UserId = p.Enrollment!.User!.UserId,
             Name = p.Enrollment.User.Name,
+            CPR = p.Enrollment.User.CPR,
             Email = p.Enrollment.User.Email
         })
         .OrderBy(g => g.Key.UserId)
@@ -45,19 +46,29 @@
         {
             <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px; overflow: hidden;">
                 <div class="card-header border-0 py-3 px-4" style="background-color: rgba(10, 31, 92, 0.06);">
+
                     <div class="row g-2 align-items-center">
+
                         <div class="col-md-2">
                             <span class="fw-semibold" style="color: #0a1f5c;">User ID:</span>
                             <span class="text-muted">@userGroup.Key.UserId</span>
                         </div>
-                        <div class="col-md-4">
+
+                        <div class="col-md-3">
                             <span class="fw-semibold" style="color: #0a1f5c;">Student:</span>
                             <span class="text-muted">@userGroup.Key.Name</span>
                         </div>
-                        <div class="col-md-6">
+
+                        <div class="col-md-3">
+                            <span class="fw-semibold" style="color: #0a1f5c;">CPR:</span>
+                            <span class="text-muted">@userGroup.Key.CPR</span>
+                        </div>
+
+                        <div class="col-md-4">
                             <span class="fw-semibold" style="color: #0a1f5c;">Email:</span>
                             <span class="text-muted">@userGroup.Key.Email</span>
                         </div>
+
                     </div>
                 </div>
 

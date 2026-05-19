@@ -51,6 +51,7 @@
                         <tr>
                             <th class="fw-semibold px-4 py-3" style="color:#0a1f5c;">User ID</th>
                             <th class="fw-semibold py-3" style="color:#0a1f5c;">Name</th>
+                            <th class="fw-semibold py-3" style="color:#0a1f5c;">CPR</th>
                             <th class="fw-semibold py-3" style="color:#0a1f5c;">Email</th>
                             <th class="fw-semibold py-3" style="color:#0a1f5c;">Phone</th>
                             <th class="fw-semibold py-3" style="color:#0a1f5c;">Role</th>
@@ -70,6 +71,8 @@
                                     <td class="py-3 fw-semibold" style="color:#0a1f5c;">
                                         @item.Name
                                     </td>
+
+                                    <td class="py-3 text-muted">@item.CPR</td>
 
                                     <td class="py-3 text-muted">@item.Email</td>
                                     <td class="py-3 text-muted">@item.PhoneNumber</td>
@@ -125,7 +128,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-5">
+                                <td colspan="8" class="text-center text-muted py-5">
                                     No users found.
                                 </td>
                             </tr>

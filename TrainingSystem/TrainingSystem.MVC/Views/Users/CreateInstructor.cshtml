@@ -15,6 +15,7 @@
                         <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Add Instructor</h3>
                         <p class="text-muted mb-0">Enter instructor details below.</p>
                     </div>
+
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <div asp-validation-summary="All" class="alert alert-danger rounded-3 mb-4"></div>
@@ -23,14 +24,39 @@
                     <form asp-action="CreateInstructor" method="post">
 
                         <div class="mb-3">
-                            <label asp-for="Name" class="form-label fw-semibold" style="color:#0a1f5c;"></label>
-                            <input asp-for="Name" class="form-control" style="height:50px; border-radius:10px;" />
+                            <label asp-for="Name" class="form-label fw-semibold" style="color:#0a1f5c;">
+                                Name
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
+                        <!-- CPR -->
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold" style="color:#0a1f5c;"></label>
-                            <input asp-for="Email" class="form-control" style="height:50px; border-radius:10px;" />
+                            <label asp-for="CPR" class="form-label fw-semibold" style="color:#0a1f5c;">
+                                CPR
+                            </label>
+
+                            <input asp-for="CPR"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
+                            <span asp-validation-for="CPR" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold" style="color:#0a1f5c;">
+                                Email
+                            </label>
+
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
@@ -38,28 +64,50 @@
                             <label asp-for="PhoneNumber" class="form-label fw-semibold" style="color:#0a1f5c;">
                                 Phone Number
                             </label>
-                            <input asp-for="PhoneNumber" class="form-control" style="height:50px; border-radius:10px;" />
+
+                            <input asp-for="PhoneNumber"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="PasswordHash" class="form-label fw-semibold" style="color:#0a1f5c;">Password</label>
-                            <input asp-for="PasswordHash" type="password" class="form-control" style="height:50px; border-radius:10px;" />
-                            <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                            <label asp-for="PasswordHash" class="form-label fw-semibold" style="color:#0a1f5c;">
+                                Password
+                            </label>
 
+                            <input asp-for="PasswordHash"
+                                   type="password"
+                                   class="form-control"
+                                   style="height:50px; border-radius:10px;" />
+
+                            <span asp-validation-for="PasswordHash" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#0a1f5c;">Bio</label>
-                            <textarea name="Bio" class="form-control" style="border-radius:10px; min-height:100px;"></textarea>
+                            <label class="form-label fw-semibold" style="color:#0a1f5c;">
+                                Bio
+                            </label>
+
+                            <textarea name="Bio"
+                                      class="form-control"
+                                      style="border-radius:10px; min-height:100px;"></textarea>
+
                             <span class="text-danger">
                                 @Html.ValidationMessage("Bio")
                             </span>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold" style="color:#0a1f5c;">Notes</label>
-                            <textarea name="Notes" class="form-control" style="border-radius:10px; min-height:100px;"></textarea>
+                            <label class="form-label fw-semibold" style="color:#0a1f5c;">
+                                Notes
+                            </label>
+
+                            <textarea name="Notes"
+                                      class="form-control"
+                                      style="border-radius:10px; min-height:100px;"></textarea>
+
                             <span class="text-danger">
                                 @Html.ValidationMessage("Notes")
                             </span>
@@ -69,6 +117,7 @@
                         <input type="hidden" asp-for="IsActive" value="true" />
 
                         <div class="d-flex justify-content-between align-items-center">
+
                             <a asp-action="Index"
                                class="btn fw-semibold px-4 d-flex align-items-center justify-content-center"
                                style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px; height:46px;">
@@ -80,6 +129,7 @@
                                     style="background-color:#0a1f5c; height:46px; border-radius:10px; border:none;">
                                 Create Instructor
                             </button>
+
                         </div>
 
                     </form>

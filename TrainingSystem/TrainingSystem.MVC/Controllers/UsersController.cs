@@ -53,10 +53,9 @@ namespace TrainingSystem.MVC.Controllers
 
             CleanModelState();
 
-            user.RoleId = 2; 
+            user.RoleId = 2;
             user.IsActive = true;
 
-            // Duplicate email check
             if (await _context.Users.AnyAsync(u => u.Email == user.Email))
             {
                 ModelState.AddModelError("", "Email already exists");
@@ -64,6 +63,11 @@ namespace TrainingSystem.MVC.Controllers
             if (await _context.Users.AnyAsync(u => u.Email == user.Email))
             {
                 ModelState.AddModelError("Email", "Email already exists");
+            }
+
+            if (await _context.Users.AnyAsync(u => u.CPR == user.CPR))
+            {
+                ModelState.AddModelError("CPR", "CPR already exists");
             }
 
             if (string.IsNullOrWhiteSpace(user.PasswordHash) || user.PasswordHash.Length < 6)
@@ -76,6 +80,12 @@ namespace TrainingSystem.MVC.Controllers
             {
                 ModelState.AddModelError("PhoneNumber", "Phone number must be at least 8 digits");
             }
+
+            if (string.IsNullOrWhiteSpace(user.CPR) || user.CPR.Length != 9)
+            {
+                ModelState.AddModelError("CPR", "CPR must be 9 digits");
+            }
+
             if (ModelState.IsValid)
             {
                 user.PasswordHash = HashPassword(user.PasswordHash);
@@ -128,7 +138,6 @@ namespace TrainingSystem.MVC.Controllers
 
             CleanModelState();
 
-            
             user.RoleId = 1;
             user.IsActive = true;
 
@@ -141,15 +150,25 @@ namespace TrainingSystem.MVC.Controllers
                 ModelState.AddModelError("Email", "Email already exists");
             }
 
+            if (await _context.Users.AnyAsync(u => u.CPR == user.CPR))
+            {
+                ModelState.AddModelError("CPR", "CPR already exists");
+            }
+
             if (string.IsNullOrWhiteSpace(user.PasswordHash) || user.PasswordHash.Length < 6)
             {
                 ModelState.AddModelError("PasswordHash", "Password must be at least 6 characters");
             }
 
             if (string.IsNullOrWhiteSpace(user.PhoneNumber) ||
-     user.PhoneNumber.Length < 8)
+                user.PhoneNumber.Length < 8)
             {
                 ModelState.AddModelError("PhoneNumber", "Phone number must be at least 8 digits");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.CPR) || user.CPR.Length != 9)
+            {
+                ModelState.AddModelError("CPR", "CPR must be 9 digits");
             }
 
             if (string.IsNullOrWhiteSpace(Bio))
@@ -161,6 +180,7 @@ namespace TrainingSystem.MVC.Controllers
             {
                 ModelState.AddModelError("Notes", "Notes are required");
             }
+
             if (ModelState.IsValid)
             {
                 user.PasswordHash = HashPassword(user.PasswordHash);
@@ -194,6 +214,7 @@ namespace TrainingSystem.MVC.Controllers
             LoadRoles();
             return View(user);
         }
+
         [HttpPost]
         public async Task<IActionResult> Edit(User user)
         {
@@ -202,7 +223,6 @@ namespace TrainingSystem.MVC.Controllers
 
             CleanModelState();
 
-            // Make password optional in edit
             if (string.IsNullOrWhiteSpace(user.PasswordHash))
             {
                 ModelState.Remove("PasswordHash");
@@ -211,6 +231,19 @@ namespace TrainingSystem.MVC.Controllers
             {
                 ModelState.AddModelError("PasswordHash",
                     "Password must be at least 6 characters");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.CPR) || user.CPR.Length != 9)
+            {
+                ModelState.AddModelError("CPR", "CPR must be 9 digits");
+            }
+
+            bool cprExists = await _context.Users
+                .AnyAsync(u => u.CPR == user.CPR && u.UserId != user.UserId);
+
+            if (cprExists)
+            {
+                ModelState.AddModelError("CPR", "CPR already exists");
             }
 
             var existingUser = await _context.Users.FindAsync(user.UserId);
@@ -222,11 +255,11 @@ namespace TrainingSystem.MVC.Controllers
             {
                 existingUser.Name = user.Name;
                 existingUser.Email = user.Email;
+                existingUser.CPR = user.CPR;
                 existingUser.PhoneNumber = user.PhoneNumber;
                 existingUser.RoleId = user.RoleId;
                 existingUser.IsActive = user.IsActive;
 
-                // Update password only if entered
                 if (!string.IsNullOrWhiteSpace(user.PasswordHash))
                 {
                     existingUser.PasswordHash = HashPassword(user.PasswordHash);
@@ -275,7 +308,6 @@ namespace TrainingSystem.MVC.Controllers
             if (user == null)
                 return NotFound();
 
-            // block if instructor used in sessions
             var hasSessions = await _context.CourseSessions
                 .AnyAsync(s => s.UserId == id);
 
@@ -285,11 +317,10 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // block if trainee has enrollments
             var hasEnrollments = await _context.Enrollments
-     .AnyAsync(e =>
-         e.UserId == id &&
-         e.Status != "Dropped");
+                .AnyAsync(e =>
+                    e.UserId == id &&
+                    e.Status != "Dropped");
 
             if (hasEnrollments)
             {
@@ -297,7 +328,6 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-           
             if (user.Notifications.Any())
                 _context.Notifications.RemoveRange(user.Notifications);
 
@@ -327,6 +357,7 @@ namespace TrainingSystem.MVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         // ================= HELPERS =================
         private void LoadRoles()
         {

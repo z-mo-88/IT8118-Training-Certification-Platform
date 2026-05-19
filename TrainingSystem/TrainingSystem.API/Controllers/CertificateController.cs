@@ -31,6 +31,7 @@ namespace TrainingSystem.API.Controllers
                     c.CertificateStatus,
                     c.IssuedDate,
                     c.UserId,
+                    CPR = c.User.CPR,
                     TraineeName = c.User.Name,
                     TrackName = c.CertificationTrack.TrackName
                 })
@@ -41,15 +42,21 @@ namespace TrainingSystem.API.Controllers
 
         [HttpGet("lookup")]
         [AllowAnonymous]
-        public async Task<IActionResult> LookupCertificate(int userId, string reference)
+        public async Task<IActionResult> LookupCertificate(string cpr, string reference)
         {
-            if (userId <= 0 || string.IsNullOrWhiteSpace(reference))
+            // Validate CPR and certificate reference
+            if (string.IsNullOrWhiteSpace(cpr) || string.IsNullOrWhiteSpace(reference))
             {
-                return BadRequest(new { message = "Trainee ID and certificate reference are required." });
+                return BadRequest(new
+                {
+                    message = "CPR and certificate reference are required."
+                });
             }
 
+            cpr = cpr.Trim();
             reference = reference.Trim();
 
+            // Search certificate using CPR + Certificate Reference
             var certificate = await _context.Certificates
                 .AsNoTracking()
                 .Include(c => c.User)
@@ -57,14 +64,19 @@ namespace TrainingSystem.API.Controllers
                     .ThenInclude(ct => ct.CertificationTrackCourses)
                         .ThenInclude(tc => tc.Course)
                 .FirstOrDefaultAsync(c =>
-                    c.UserId == userId &&
+                    c.User.CPR == cpr &&
                     c.CertificateReferenceNumber == reference);
 
+            // Certificate not found
             if (certificate == null)
             {
-                return NotFound(new { message = "Certificate not found" });
+                return NotFound(new
+                {
+                    message = "Certificate not found"
+                });
             }
 
+            // Get completed courses
             var completedCourses = certificate.CertificationTrack.CertificationTrackCourses
                 .Where(tc => tc.Course != null)
                 .Select(tc => new
@@ -76,15 +88,21 @@ namespace TrainingSystem.API.Controllers
                 .OrderBy(c => c.Title)
                 .ToList();
 
+            // Return certificate information
             return Ok(new
             {
                 certificate.CertificateId,
                 certificate.CertificateReferenceNumber,
                 certificate.CertificateStatus,
                 certificate.IssuedDate,
+
                 TrackName = certificate.CertificationTrack.TrackName,
+
                 certificate.UserId,
+                CPR = certificate.User.CPR,
+
                 TraineeName = certificate.User.Name,
+
                 CompletedCourses = completedCourses
             });
         }

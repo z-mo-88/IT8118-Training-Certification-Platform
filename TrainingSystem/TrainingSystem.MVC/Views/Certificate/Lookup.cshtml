@@ -14,29 +14,35 @@
 
                     <div class="mb-4">
                         <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Certificate Lookup</h3>
-                        <p class="text-muted mb-0">Search for a certificate using trainee ID and reference.</p>
+                        <p class="text-muted mb-0">
+                            Search for a certificate using CPR and certificate reference.
+                        </p>
                     </div>
 
                     <form method="post">
                         <div class="row">
+
+                            <!-- CPR INPUT -->
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold" style="color: #0a1f5c;">
-                                    Trainee ID
+                                    CPR
                                 </label>
-                                <input name="userId"
-                                       type="number"
-                                       min="1"
+
+                                <input name="cpr"
+                                       type="text"
                                        required
                                        class="form-control"
-                                       placeholder="Enter trainee ID"
-                                       value="@(ViewBag.SearchedUserId ?? "")"
+                                       placeholder="Enter CPR"
+                                       value="@(ViewBag.SearchedCPR ?? "")"
                                        style="height: 50px; border-radius: 10px;" />
                             </div>
 
+                            <!-- CERTIFICATE REFERENCE -->
                             <div class="col-md-6 mb-4">
                                 <label class="form-label fw-semibold" style="color: #0a1f5c;">
                                     Certificate Reference
                                 </label>
+
                                 <input name="reference"
                                        required
                                        class="form-control"
@@ -46,6 +52,7 @@
                             </div>
                         </div>
 
+                        <!-- SEARCH BUTTON -->
                         <div>
                             <button type="submit"
                                     class="btn text-white fw-semibold px-5"
@@ -55,6 +62,7 @@
                         </div>
                     </form>
 
+                    <!-- ERROR MESSAGE -->
                     @if (ViewBag.ResultMessage != null)
                     {
                         <div class="alert alert-danger mt-4 rounded-3">
@@ -64,6 +72,7 @@
                 </div>
             </div>
 
+            <!-- CERTIFICATE DETAILS -->
             @if (ViewBag.CertificateId != null)
             {
                 <div class="card border-0 shadow-sm" style="border-radius: 18px;">
@@ -75,21 +84,49 @@
 
                         <div class="row">
 
+                            <!-- TRAINEE NAME -->
                             <div class="col-md-3 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">Trainee Name</div>
-                                <div class="text-muted">@ViewBag.TraineeName</div>
+                                <div class="fw-semibold" style="color: #0a1f5c;">
+                                    Trainee Name
+                                </div>
+
+                                <div class="text-muted">
+                                    @ViewBag.TraineeName
+                                </div>
                             </div>
 
+                            <!-- CPR -->
                             <div class="col-md-3 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">Reference</div>
-                                <div class="text-muted">@ViewBag.CertificateReferenceNumber</div>
+                                <div class="fw-semibold" style="color: #0a1f5c;">
+                                    CPR
+                                </div>
+
+                                <div class="text-muted">
+                                    @ViewBag.CPR
+                                </div>
                             </div>
 
+                            <!-- REFERENCE -->
                             <div class="col-md-2 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">Status</div>
+                                <div class="fw-semibold" style="color: #0a1f5c;">
+                                    Reference
+                                </div>
+
+                                <div class="text-muted">
+                                    @ViewBag.CertificateReferenceNumber
+                                </div>
+                            </div>
+
+                            <!-- STATUS -->
+                            <div class="col-md-2 mb-3">
+                                <div class="fw-semibold" style="color: #0a1f5c;">
+                                    Status
+                                </div>
+
                                 <div>
                                     @{
                                         var status = ViewBag.CertificateStatus as string;
+
                                         string badgeColor = status switch
                                         {
                                             "Certified" => "background-color: #d4edda; color: #155724;",
@@ -105,20 +142,33 @@
                                 </div>
                             </div>
 
+                            <!-- ISSUED DATE -->
                             <div class="col-md-2 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">Issued Date</div>
-                                <div class="text-muted">@ViewBag.IssuedDate</div>
+                                <div class="fw-semibold" style="color: #0a1f5c;">
+                                    Issued Date
+                                </div>
+
+                                <div class="text-muted">
+                                    @ViewBag.IssuedDate
+                                </div>
                             </div>
 
+                            <!-- TRACK -->
                             <div class="col-md-2 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">Track</div>
-                                <div class="text-muted">@ViewBag.TrackName</div>
+                                <div class="fw-semibold" style="color: #0a1f5c;">
+                                    Track
+                                </div>
+
+                                <div class="text-muted">
+                                    @ViewBag.TrackName
+                                </div>
                             </div>
 
                         </div>
 
                         <hr class="my-4" />
 
+                        <!-- COMPLETED COURSES -->
                         <h5 class="fw-bold mb-3" style="color: #0a1f5c;">
                             Completed Courses
                         </h5>
@@ -135,22 +185,29 @@
                                     hasCourses = true;
 
                                     <div class="col-md-6 col-lg-4 mb-3">
-                                        <div class="border rounded-3 p-3 h-100" style="background-color: #f8f9fc;">
+                                        <div class="border rounded-3 p-3 h-100"
+                                             style="background-color: #f8f9fc;">
+
                                             <div class="fw-semibold" style="color: #0a1f5c;">
                                                 @course.GetType().GetProperty("Title")?.GetValue(course, null)
                                             </div>
 
                                             @if (course.GetType().GetProperty("IsRequired") != null)
                                             {
-                                                var isRequired = course.GetType().GetProperty("IsRequired")?.GetValue(course, null);
+                                                var isRequired =
+                                                course.GetType().GetProperty("IsRequired")
+                                                ?.GetValue(course, null);
 
                                                 <div class="mt-2">
                                                     <span class="badge rounded-pill px-3 py-2"
                                                           style="background-color: rgba(10,31,92,0.08); color: #0a1f5c;">
-                                                        @(isRequired != null && (bool)isRequired ? "Required" : "Optional")
-                                                    </span>
-                                                </div>
-                                            }
+
+                                                        @(isRequired != null && (bool)isRequired
+                                                                                                ? "Required"
+                                                                                                : "Optional")
+                                    </span>
+                                </div>
+                                                                }
                                         </div>
                                     </div>
                                 }
