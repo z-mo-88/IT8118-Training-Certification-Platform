@@ -27,7 +27,7 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(string email, string password, bool rememberMe)
         {
             if (HttpContext.Session.GetInt32("UserId") != null)
                 return RedirectByRole();
@@ -57,7 +57,9 @@ namespace TrainingSystem.MVC.Controllers
             // COOKIE 
             var cookieOptions = new CookieOptions
             {
-                Expires = DateTimeOffset.Now.AddMinutes(60), 
+                Expires = rememberMe
+               ? DateTimeOffset.Now.AddDays(7)
+               : DateTimeOffset.Now.AddMinutes(60),
                 HttpOnly = true,
                 IsEssential = true
             };
