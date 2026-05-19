@@ -126,12 +126,12 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            LoadRoles();
+            
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user, string Bio, string Notes)
+        public async Task<IActionResult> Create(User user)
         {
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
@@ -171,15 +171,6 @@ namespace TrainingSystem.MVC.Controllers
                 ModelState.AddModelError("CPR", "CPR must be 9 digits");
             }
 
-            if (string.IsNullOrWhiteSpace(Bio))
-            {
-                ModelState.AddModelError("Bio", "Bio is required");
-            }
-
-            if (string.IsNullOrWhiteSpace(Notes))
-            {
-                ModelState.AddModelError("Notes", "Notes are required");
-            }
 
             if (ModelState.IsValid)
             {
@@ -211,13 +202,13 @@ namespace TrainingSystem.MVC.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            LoadRoles();
             return View(user);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(User user)
         {
+
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
@@ -257,7 +248,6 @@ namespace TrainingSystem.MVC.Controllers
                 existingUser.Email = user.Email;
                 existingUser.CPR = user.CPR;
                 existingUser.PhoneNumber = user.PhoneNumber;
-                existingUser.RoleId = user.RoleId;
                 existingUser.IsActive = user.IsActive;
 
                 if (!string.IsNullOrWhiteSpace(user.PasswordHash))
@@ -272,7 +262,8 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            LoadRoles();
+           
+
             return View(user);
         }
 
@@ -359,10 +350,8 @@ namespace TrainingSystem.MVC.Controllers
         }
 
         // ================= HELPERS =================
-        private void LoadRoles()
-        {
-            ViewBag.Roles = new SelectList(_context.Roles.ToList(), "RoleId", "RoleName");
-        }
+
+      
 
         private void CleanModelState()
         {

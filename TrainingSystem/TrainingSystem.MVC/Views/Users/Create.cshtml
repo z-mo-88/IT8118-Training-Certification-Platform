@@ -85,18 +85,6 @@
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-4">
-                            <label asp-for="RoleId" class="form-label fw-semibold" style="color:#0a1f5c;">
-                                Role
-                            </label>
-
-                            <select asp-for="RoleId"
-                                    asp-items="ViewBag.Roles"
-                                    class="form-select"
-                                    style="height:50px; border-radius:10px;">
-                            </select>
-                        </div>
-
                         <input type="hidden" asp-for="IsActive" value="true" />
 
                         <div class="d-flex justify-content-between align-items-center mt-4">
