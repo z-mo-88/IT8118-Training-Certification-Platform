@@ -287,7 +287,9 @@ namespace TrainingSystem.MVC.Controllers
 
             // block if trainee has enrollments
             var hasEnrollments = await _context.Enrollments
-                .AnyAsync(e => e.UserId == id);
+     .AnyAsync(e =>
+         e.UserId == id &&
+         e.Status != "Dropped");
 
             if (hasEnrollments)
             {
@@ -313,6 +315,9 @@ namespace TrainingSystem.MVC.Controllers
 
             if (user.InstructorAvailabilities.Any())
                 _context.InstructorAvailabilities.RemoveRange(user.InstructorAvailabilities);
+
+            if (user.Enrollments.Any())
+                _context.Enrollments.RemoveRange(user.Enrollments);
 
             _context.Users.Remove(user);
 
