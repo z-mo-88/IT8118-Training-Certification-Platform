@@ -105,12 +105,16 @@ namespace TrainingSystem.MVC.Controllers
             else
             {
                 payment.PaymentStatus = "Partial";
+            }
 
-                
-                if (enrollment.Session.SessionDate < DateOnly.FromDateTime(DateTime.Now))
-                {
-                    enrollment.IsOverdue = true;
-                }
+            if (enrollment.OutstandingBalance > 0 &&
+                enrollment.Session.SessionDate < DateOnly.FromDateTime(DateTime.Now))
+            {
+                enrollment.IsOverdue = true;
+            }
+            else
+            {
+                enrollment.IsOverdue = false;
             }
 
             _context.Payments.Add(payment);
