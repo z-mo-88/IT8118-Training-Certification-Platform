@@ -4,25 +4,69 @@
     ViewData["Title"] = "Session Students";
 }
 
-
 <div class="container-fluid py-5 px-3 px-md-5">
 
-    <div class="mb-4">
-        <h2 class="fw-bold mb-1" style="color: #0a1f5c;">
-            Session Students - @Model.Course.Title
+    <!-- Header -->
+    <div class="text-center mb-4">
+
+        <h2 class="fw-bold mb-2"
+            style="color: #0a1f5c;">
+            Session Students
         </h2>
-    
-        <p class="text-muted mb-0">
-            Manage attendance and results for this session.
+
+        <p class="text-muted mb-1">
+            @Model.Course.Title
         </p>
+
+        <small class="text-muted">
+            Manage attendance and results for this session.
+        </small>
+
     </div>
 
-    <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
-        <div class="card-body p-0">
+    <!-- Card -->
+    <div class="card border-0 shadow-sm overflow-hidden"
+         style="border-radius: 22px;">
+
+        <!-- Top Bar -->
+        <div class="px-4 py-3 text-white"
+             style="background: linear-gradient(135deg, #0a1f5c, #123a9c);">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        Students List
+                    </h5>
+
+                    <small class="text-white-50">
+                        Total Students:
+                        @(Model.Enrollments?.Count() ?? 0)
+                    </small>
+                </div>
+
+                <div class="px-3 py-2 rounded-pill"
+                     style="background: rgba(255,255,255,0.12);">
+
+                    <small>
+                        Session Management
+                    </small>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Table -->
+        <div class="card-body p-0"
+             style="background-color:#f8faff;">
 
             <div class="table-responsive">
+
                 <table class="table align-middle mb-0">
-                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
+
+                    <thead style="background-color: rgba(10, 31, 92, 0.05);">
+
                         <tr>
                             <th class="px-4 py-3">Student Name</th>
                             <th>Status</th>
@@ -30,67 +74,128 @@
                             <th>Remarks</th>
                             <th class="text-center">Actions</th>
                         </tr>
+
                     </thead>
 
                     <tbody>
+
                         @if (Model.Enrollments != null && Model.Enrollments.Any())
                         {
                             @foreach (var enrollment in Model.Enrollments)
                             {
                                 var result = enrollment.AssessmentResults?.FirstOrDefault();
 
-                                <tr>
-                                    <td class="px-4 py-3 fw-semibold" style="color:#0a1f5c;">
-                                        @enrollment.User?.Name
+                                <tr style="border-bottom: 1px solid #eef2f7;">
+
+                                    <!-- NAME -->
+                                    <td class="px-4 py-4">
+
+                                        <div class="d-flex align-items-center gap-3">
+
+                                            <div class="d-flex align-items-center justify-content-center fw-bold text-white"
+                                                 style="width:42px;
+                                                                height:42px;
+                                                                border-radius:50%;
+                                                                background: linear-gradient(135deg, #0a1f5c, #123a9c);">
+
+                                                @(enrollment.User?.Name?.Substring(0, 1).ToUpper())
+                                            </div>
+
+                                            <div>
+
+                                                <div class="fw-semibold"
+                                                     style="color:#0a1f5c;">
+                                                    @enrollment.User?.Name
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
                                     </td>
 
                                     <!-- STATUS -->
                                     <td>
-                                        <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color: rgba(10,31,92,0.08); color:#0a1f5c;">
-                                            @enrollment.Status
-                                        </span>
+
+                                        @if (enrollment.Status == "Attending")
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2 bg-success-subtle text-success">
+                                                @enrollment.Status
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background-color: rgba(10,31,92,0.08);
+                                                                     color:#0a1f5c;">
+
+                                                @enrollment.Status
+
+                                            </span>
+                                        }
+
                                     </td>
 
                                     <!-- RESULT -->
                                     <td>
+
                                         @if (result != null)
                                         {
                                             if (result.IsPassed)
                                             {
-                                                <span class="badge bg-success">Pass</span>
+                                                <span class="badge rounded-pill bg-success px-3 py-2">
+                                                    Pass
+                                                </span>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-danger">Fail</span>
+                                                <span class="badge rounded-pill bg-danger px-3 py-2">
+                                                    Fail
+                                                </span>
                                             }
                                         }
                                         else
                                         {
-                                            <span class="text-muted">Not Recorded</span>
+                                            <span class="text-muted">
+                                                Not Recorded
+                                            </span>
                                         }
-                                    </td>
 
-                                    <!-- REMARKS -->
-                                    <td class="text-muted">
-                                        @(string.IsNullOrWhiteSpace(result?.Remarks) ? "-" : result!.Remarks)
+                                </td>
 
-                                    </td>
+                                <!-- REMARKS -->
+                                <td class="text-muted">
+
+                                    @(string.IsNullOrWhiteSpace(result?.Remarks)
+                                                                    ? "-"
+                                                                    : result!.Remarks)
+
+                            </td>
 
                                     <!-- ACTIONS -->
                                     <td class="text-center">
 
                                         <!-- MARK ATTENDING -->
-                                        @if (enrollment.Status == "Confirmed")
+                                @if (enrollment.Status == "Confirmed")
                                         {
-                                            <form asp-action="MarkAttending" method="post" class="mb-2">
+                                            <form asp-action="MarkAttending"
+                                                  method="post"
+                                                  class="mb-2">
+
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="enrollmentId" value="@enrollment.EnrollmentId" />
+
+                                                <input type="hidden"
+                                                       name="enrollmentId"
+                                                       value="@enrollment.EnrollmentId" />
 
                                                 <button type="submit"
-                                                        class="btn btn-sm btn-primary">
+                                                        class="btn btn-sm btn-primary fw-semibold px-3"
+                                                        style="border-radius: 10px;">
+
                                                     Mark Attending
+
                                                 </button>
+
                                             </form>
                                         }
 
@@ -100,20 +205,24 @@
                                             <form asp-action="RecordResult"
                                                   method="post"
                                                   class="d-flex gap-2 justify-content-center flex-wrap">
+
                                                 @Html.AntiForgeryToken()
 
-                                                <input type="hidden" name="enrollmentId" value="@enrollment.EnrollmentId" />
+                                                <input type="hidden"
+                                                       name="enrollmentId"
+                                                       value="@enrollment.EnrollmentId" />
 
-                                                <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                                                <div>
 
                                                     <input type="text"
                                                            name="remarks"
                                                            class="form-control form-control-sm"
-                                                           placeholder="Remarks" />
+                                                           placeholder="Remarks"
+                                                           style="border-radius: 10px;" />
 
                                                     @if (TempData["Error_" + enrollment.EnrollmentId] != null)
                                                     {
-                                                        <span class="text-danger">
+                                                        <span class="text-danger small">
                                                             @TempData["Error_" + enrollment.EnrollmentId]
                                                         </span>
                                                     }
@@ -123,44 +232,71 @@
                                                 <button type="submit"
                                                         name="isPassed"
                                                         value="true"
-                                                        class="btn btn-sm btn-success">
+                                                        class="btn btn-sm btn-success px-3"
+                                                        style="border-radius: 10px;">
+
                                                     Pass
+
                                                 </button>
 
                                                 <button type="submit"
                                                         name="isPassed"
                                                         value="false"
-                                                        class="btn btn-sm btn-danger">
+                                                        class="btn btn-sm btn-danger px-3"
+                                                        style="border-radius: 10px;">
+
                                                     Fail
+
                                                 </button>
+
                                             </form>
                                         }
 
                                     </td>
+
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-5">
+
+                                <td colspan="5"
+                                    class="text-center text-muted py-5">
+
+                                    <i class="bi bi-people fs-1 d-block mb-3"></i>
+
                                     No students enrolled.
+
                                 </td>
+
                             </tr>
                         }
+
                     </tbody>
+
                 </table>
+
             </div>
 
         </div>
+
     </div>
 
-    <div class="mt-4">
+    <!-- Button -->
+    <div class="text-center mt-4">
+
         <a asp-action="Index"
-           class="btn btn-light fw-semibold"
-           style="border-radius: 10px;">
+           class="btn fw-semibold px-4 py-2 text-white"
+           style="background: linear-gradient(135deg, #0a1f5c, #123a9c);
+                  border-radius: 12px;
+                  min-width: 180px;">
+
+            <i class="bi bi-arrow-left me-2"></i>
             Back to My Sessions
+
         </a>
+
     </div>
 
 </div>

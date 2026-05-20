@@ -7,13 +7,25 @@
 
 <div class="container-fluid py-5 px-3 px-md-5">
 
+    <!-- HEADER -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+
         <div>
-            <h2 class="fw-bold mb-1" style="color:#0a1f5c;">Expertise</h2>
-            <p class="text-muted mb-0">Manage instructor expertise areas.</p>
+
+            <h2 class="fw-bold mb-1"
+                style="color:#0a1f5c;">
+
+                Expertise
+
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage instructor expertise areas.
+            </p>
+
         </div>
 
-        <div class="mt-3 mt-md-0 d-flex gap-2">
+        <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
 
             @if (roleId == 3)
             {
@@ -23,9 +35,12 @@
                    style="border:1px solid #0a1f5c;
                               color:#0a1f5c;
                               border-radius:10px;
-                              height:46px;
-                              line-height:1;">
+                              height:44px;
+                              line-height:1;
+                              font-size:0.9rem;">
+
                     Back
+
                 </a>
             }
 
@@ -35,35 +50,66 @@
                style="background-color:#0a1f5c;
                       border-radius:10px;
                       border:none;
-                      height:46px;
-                      line-height:1;">
+                      height:44px;
+                      line-height:1;
+                      font-size:0.9rem;">
+
                 Add Expertise
+
             </a>
 
         </div>
+
     </div>
 
-    <div class="card border-0 shadow-sm" style="border-radius:18px; overflow:hidden;">
+    <!-- CARD -->
+    <div class="card border-0 shadow-sm"
+         style="border-radius:18px; overflow:hidden;">
+
+        <!-- TOP BAR -->
+        <div class="px-4 py-3 text-white"
+             style="background: linear-gradient(135deg, #0a1f5c, #123a9c);">
+
+            <h5 class="fw-bold mb-1">
+                Expertise List
+            </h5>
+
+            <small class="text-white-50">
+                Total Expertise:
+                @(Model?.Count() ?? 0)
+            </small>
+
+        </div>
+
+        <!-- TABLE -->
         <div class="card-body p-0">
+
             <div class="table-responsive">
 
-                <table class="table align-middle mb-0">
+                <table class="table align-middle mb-0"
+                       style="font-size:0.92rem;">
 
                     <thead style="background-color:rgba(10,31,92,0.06);">
+
                         <tr>
-                            <th class="fw-semibold px-4 py-3"
+
+                            <th class="fw-bold small px-4 py-3"
                                 style="color:#0a1f5c;">
                                 Expertise
                             </th>
 
                             @if (roleId == 3)
                             {
-                                <th class="fw-semibold py-3 text-center"
-                                    style="color:#0a1f5c;">
+                                <th class="fw-bold small py-3 text-center"
+                                    style="color:#0a1f5c; width:220px;">
+
                                     Actions
+
                                 </th>
                             }
+
                         </tr>
+
                     </thead>
 
                     <tbody>
@@ -72,18 +118,29 @@
                         {
                             @foreach (var item in Model)
                             {
-                                <tr>
+                                <tr style="vertical-align:middle;">
 
-                                    <td class="px-4 py-3 fw-semibold"
-                                        style="color:#0a1f5c;">
-                                        @item.Expertise?.ExpertiseName
+                                    <!-- EXPERTISE -->
+                                    <td class="px-4 py-3">
+
+                                        <span class="badge px-3 py-2"
+                                              style="background-color:rgba(10,31,92,0.08);
+                                                             color:#0a1f5c;
+                                                             font-size:0.82rem;
+                                                             border-radius:999px;">
+
+                                            @item.Expertise?.ExpertiseName
+
+                                        </span>
+
                                     </td>
 
+                                    <!-- ACTIONS -->
                                     @if (roleId == 3)
                                     {
                                         <td class="text-center py-3">
 
-                                            <div class="d-flex justify-content-center gap-2">
+                                            <div class="d-flex justify-content-center gap-2 flex-wrap">
 
                                                 <a asp-action="Edit"
                                                    asp-route-id="@item.InstructorExpertiseId"
@@ -93,8 +150,12 @@
                                                                       border-radius:10px;
                                                                       border:none;
                                                                       color:#212529;
-                                                                      line-height:1;">
+                                                                      line-height:1;
+                                                                      min-width:90px;
+                                                                      font-size:0.78rem;">
+
                                                     Edit
+
                                                 </a>
 
                                                 <a asp-action="Delete"
@@ -104,8 +165,12 @@
                                                    style="background-color:#dc3545;
                                                                       border-radius:10px;
                                                                       border:none;
-                                                                      line-height:1;">
+                                                                      line-height:1;
+                                                                      min-width:90px;
+                                                                      font-size:0.78rem;">
+
                                                     Delete
+
                                                 </a>
 
                                             </div>
@@ -119,10 +184,14 @@
                         else
                         {
                             <tr>
+
                                 <td colspan="2"
                                     class="text-center text-muted py-5">
+
                                     No expertise added yet.
+
                                 </td>
+
                             </tr>
                         }
 
@@ -131,7 +200,9 @@
                 </table>
 
             </div>
+
         </div>
+
     </div>
 
 </div>

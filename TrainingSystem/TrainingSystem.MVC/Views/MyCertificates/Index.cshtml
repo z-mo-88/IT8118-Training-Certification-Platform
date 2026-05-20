@@ -2,15 +2,28 @@
 
 @{
     ViewData["Title"] = "My Certification Progress";
+
     var certs = ViewBag.Certificates as List<TrainingSystem.API.Models.Certificate>;
     var missingDict = ViewBag.MissingCourses as Dictionary<int, int>;
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
 
-    <h2 class="mb-4 fw-bold" style="color:#0a1f5c;">
-        My Certification Progress
-    </h2>
+    <!-- HEADER -->
+    <div class="text-center mb-4">
+
+        <h2 class="fw-bold mb-2"
+            style="color:#0a1f5c;">
+
+            My Certification Progress
+
+        </h2>
+
+        <p class="text-muted mb-0">
+            Track your certification completion and issued certificates.
+        </p>
+
+    </div>
 
     @if (Model != null && Model.Any())
     {
@@ -19,92 +32,213 @@
             var cert = certs?.FirstOrDefault(c =>
             c.CertificationTrackId == item.CertificationTrackId);
 
-            var missing = (missingDict != null && missingDict.ContainsKey(item.CertificationTrackId))
+            var missing = (missingDict != null &&
+            missingDict.ContainsKey(item.CertificationTrackId))
             ? missingDict[item.CertificationTrackId]
             : 0;
 
-            <div class="card mb-4 border-0 shadow-sm" style="border-radius:18px;">
-                <div class="card-body p-4 p-lg-5">
+            <div class="card border-0 shadow-sm overflow-hidden mb-4"
+                 style="border-radius:18px; max-width:900px; margin:auto;">
 
-                    <h5 class="fw-bold mb-3" style="color:#0a1f5c;">
-                        @item.CertificationTrack?.TrackName
-                    </h5>
+                <!-- TOP BAR -->
+                <div class="px-4 py-3 text-white"
+                     style="background: linear-gradient(135deg, #123a9c, #0a1f5c);">
 
-                    <p><strong>Progress:</strong> @item.ProgressPercent %</p>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                    <div class="progress mb-3" style="height: 20px; border-radius:999px;">
-                        <div class="progress-bar bg-success"
-                             style="width:@item.ProgressPercent%; border-radius:999px;">
-                            @item.ProgressPercent%
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+                                @item.CertificationTrack?.TrackName
+                            </h5>
+
+                            <small class="text-white-50">
+                                Certification Progress Overview
+                            </small>
+
                         </div>
+
+                       
                     </div>
 
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body p-3 p-md-4"
+                     style="background-color:#ffffff;">
+
+                    <!-- PROGRESS -->
+                    <div class="mb-4">
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span class="fw-semibold"
+                                  style="color:#0a1f5c;">
+
+                                Progress
+
+                            </span>
+
+                            <span class="text-muted">
+                                @item.ProgressPercent%
+                            </span>
+
+                        </div>
+
+                        <div class="progress"
+                             style="height:18px;
+                                            border-radius:999px;
+                                            background-color:#e9ecef;">
+
+                            <div class="progress-bar bg-success fw-semibold"
+                                 role="progressbar"
+                                 style="width:@item.ProgressPercent%;
+                                                border-radius:999px;">
+
+                                @item.ProgressPercent%
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- MISSING -->
                     @if (missing > 0)
                     {
-                        <div class="text-warning mt-2 mb-3">
-                            You need @missing @(missing == 1 ? "more course" : "more courses") to complete this track
+                        <div class="alert alert-warning border-0 shadow-sm mb-4"
+                             style="border-radius:14px;
+                        background-color:#cfecf7 ;
+                        color:#019;
+                        border-radius:10px;
+                        font-size:0.92rem;">
+                            
+
+                            You need
+                            <strong>@missing</strong>
+                            @(missing == 1 ? "more course" : "more courses")
+                            to complete this track.
+
                         </div>
                     }
 
-                    <p>
-                        <strong>Status:</strong>
+                    <!-- STATUS -->
+                    <div class="mb-3">
+
+                        <span class="fw-semibold"
+                              style="color:#0a1f5c;">
+
+                            Status:
+
+                        </span>
+
                         @if (item.Status == "Not Started")
                         {
-                            <span class="badge bg-secondary rounded-pill px-3 py-2">Not Started</span>
+                            <span class="badge bg-secondary rounded-pill px-3 py-2 ms-2">
+                                Not Started
+                            </span>
                         }
                         else if (item.Status == "In Progress")
                         {
-                            <span class="badge bg-info rounded-pill px-3 py-2">In Progress</span>
+                            <span class="badge bg-info rounded-pill px-3 py-2 ms-2">
+                                In Progress
+                            </span>
                         }
                         else
                         {
-                            <span class="badge bg-success rounded-pill px-3 py-2">Eligible</span>
+                            <span class="badge bg-success rounded-pill px-3 py-2 ms-2">
+                                Eligible
+                            </span>
                         }
-                    </p>
 
+                    </div>
+
+                    <!-- ELIGIBLE DATE -->
                     @if (item.ProgressPercent == 100)
                     {
-                        <p><strong>Eligible Date:</strong> @item.EligibleDate</p>
+                        <div class="mb-3">
+
+                            <span class="fw-semibold"
+                                  style="color:#0a1f5c;">
+
+                                Eligible Date:
+
+                            </span>
+
+                            <span class="text-muted">
+                                @item.EligibleDate
+                            </span>
+
+                        </div>
                     }
 
+                    <!-- CERTIFICATE -->
                     @if (item.ProgressPercent == 100)
                     {
                         if (cert != null)
                         {
-                            <div class="alert alert-success mt-3 rounded-3">
-                                🎓 <strong>Certificate Issued!</strong><br />
+                            <div class="alert alert-success border-0 shadow-sm mt-4"
+                                 style="border-radius:16px;">
 
-                                <div>Reference: <b>@cert.CertificateReferenceNumber</b></div>
-                                <div>Issued Date: <b>@cert.IssuedDate</b></div>
-                                <div>Status: <b>@cert.CertificateStatus</b></div>
+                                <h6 class="fw-bold mb-3">
+                                    🎓 Certificate Issued
+                                </h6>
+
+                                <div class="mb-2">
+                                    <strong>Reference:</strong>
+                                    @cert.CertificateReferenceNumber
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Issued Date:</strong>
+                                    @cert.IssuedDate
+                                </div>
+
+                                <div class="mb-3">
+                                    <strong>Status:</strong>
+                                    @cert.CertificateStatus
+                                </div>
 
                                 <a asp-controller="Certificate"
                                    asp-action="Download"
                                    asp-route-id="@cert.CertificateId"
-                                   class="btn mt-3 fw-semibold text-white px-4 d-inline-flex align-items-center justify-content-center"
-                                   style="background-color:#0a1f5c; border-radius:12px; height:46px; line-height:1;">
+                                   class="btn fw-semibold text-white px-4 py-2"
+                                   style="background: linear-gradient(135deg, #0a1f5c, #123a9c);
+                                                          border-radius: 12px;">
+
                                     ⬇ Download Certificate
+
                                 </a>
+
                             </div>
                         }
                         else
                         {
-                            <div class="alert alert-warning mt-3 rounded-3">
+                            <div class="alert alert-warning border-0 shadow-sm mt-4"
+                                 style="border-radius:14px;">
+
                                 Certificate is being generated...
+
                             </div>
                         }
                     }
 
                 </div>
+
             </div>
         }
     }
     else
     {
-        <div class="card border-0 shadow-sm" style="border-radius:18px;">
+        <div class="card border-0 shadow-sm"
+             style="border-radius:22px;">
+
             <div class="card-body text-center text-muted py-5">
+
                 No certification progress found.
+
             </div>
+
         </div>
     }
 

@@ -5,73 +5,142 @@
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
+
     <div class="row justify-content-center">
         <div class="col-12 col-lg-7 col-xl-6">
 
-            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
-                <div class="card-body p-4 p-lg-5">
+            <div class="card border-0 shadow-sm overflow-hidden"
+                 style="border-radius: 22px;">
 
-                    <div class="mb-4 text-center">
-                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Session Details</h3>
-                        <p class="text-muted mb-0">View detailed information about this session.</p>
+                <!-- Top Header -->
+                <div class="p-4 text-center text-white"
+                     style="background: linear-gradient(135deg, #0a1f5c, #123a9c);">
+
+                    <h3 class="fw-bold mb-2">
+                        Session Details
+                    </h3>
+
+                    <p class="mb-0 text-white-50">
+                        View detailed information about this session.
+                    </p>
+
+                </div>
+
+                <div class="card-body p-4 p-lg-5"
+                     style="background-color: #f8faff;">
+
+                    <!-- Course Title -->
+                    <div class="text-center mb-4">
+
+                        <div class="d-inline-block px-4 py-2 mb-3"
+                             style="background-color: rgba(10, 31, 92, 0.08);
+                                    border-radius: 50px;">
+
+                            <span class="fw-semibold"
+                                  style="color:#0a1f5c;">
+                                @Model.Status
+                            </span>
+
+                        </div>
+
+                        <h3 class="fw-bold mb-1"
+                            style="color: #0a1f5c;">
+                            @Model.Course?.Title
+                        </h3>
+
+                        <small class="text-muted">
+                            @Model.SessionDate.ToString("dddd, dd MMM yyyy")
+                        </small>
+
                     </div>
 
-                    <div class="mb-4">
-                        <h4 class="fw-semibold mb-3 text-center" style="color: #0a1f5c;">
-                            @Model.Course?.Title
-                        </h4>
+                    <!-- Details -->
+                    <div class="bg-white shadow-sm p-4"
+                         style="border-radius: 18px;">
 
                         <div class="d-flex flex-column gap-3">
 
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-semibold" style="color: #0a1f5c;">Room</span>
-                                <span class="text-muted">@Model.Room?.RoomName</span>
-                            </div>
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+                                <span class="fw-semibold"
+                                      style="color: #0a1f5c;">
+                                    <i class="bi bi-door-open me-2"></i>Room
+                                </span>
 
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-semibold" style="color: #0a1f5c;">Date</span>
-                                <span class="text-muted">@Model.SessionDate.ToShortDateString()</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-semibold" style="color: #0a1f5c;">Time</span>
-                                <span class="text-muted">@Model.StartTime - @Model.EndTime</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-semibold" style="color: #0a1f5c;">Status</span>
-                                <span class="badge rounded-pill px-3 py-2"
-                                      style="background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c;">
-                                    @Model.Status
+                                <span class="text-muted fw-medium">
+                                    @Model.Room?.RoomName
                                 </span>
                             </div>
 
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-semibold" style="color: #0a1f5c;">Capacity</span>
-                                <span class="text-muted">@Model.SessionCapacity</span>
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+                                <span class="fw-semibold"
+                                      style="color: #0a1f5c;">
+                                    <i class="bi bi-calendar-event me-2"></i>Date
+                                </span>
+
+                                <span class="text-muted fw-medium">
+                                    @Model.SessionDate.ToShortDateString()
+                                </span>
                             </div>
 
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-semibold" style="color: #0a1f5c;">Available Seats</span>
-                                <span class="fw-semibold" style="color: #0a1f5c;">
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+                                <span class="fw-semibold"
+                                      style="color: #0a1f5c;">
+                                    <i class="bi bi-clock me-2"></i>Time
+                                </span>
+
+                                <span class="text-muted fw-medium">
+                                    @Model.StartTime - @Model.EndTime
+                                </span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+                                <span class="fw-semibold"
+                                      style="color: #0a1f5c;">
+                                    <i class="bi bi-people me-2"></i>Capacity
+                                </span>
+
+                                <span class="text-muted fw-medium">
+                                    @Model.SessionCapacity
+                                </span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold"
+                                      style="color: #0a1f5c;">
+                                    <i class="bi bi-check-circle me-2"></i>Available Seats
+                                </span>
+
+                                <span class="fw-bold"
+                                      style="color: #198754;">
                                     @Model.AvailableSeats
                                 </span>
                             </div>
 
                         </div>
+
                     </div>
 
+                    <!-- Button -->
                     <div class="text-center mt-4">
+
                         <a asp-action="Index"
-                           class="btn btn-light fw-semibold px-4"
-                           style="border-radius: 10px;">
-                            Back
+                           class="btn fw-semibold px-4 py-2 text-white"
+                           style="background: linear-gradient(135deg, #0a1f5c, #123a9c);
+                                  border-radius: 12px;
+                                  min-width: 140px;">
+
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Back to My Sessions
+
                         </a>
+
                     </div>
 
                 </div>
+
             </div>
 
         </div>
     </div>
+
 </div>

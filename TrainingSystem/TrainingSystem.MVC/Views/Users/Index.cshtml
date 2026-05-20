@@ -6,137 +6,300 @@
 
 <div class="container-fluid py-5 px-3 px-md-5">
 
+    <!-- HEADER -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+
         <div>
-            <h2 class="fw-bold mb-1" style="color: #0a1f5c;">Users</h2>
-            <p class="text-muted mb-0">Manage trainee and instructor accounts.</p>
+
+            <h2 class="fw-bold mb-1"
+                style="color:#0a1f5c;">
+
+                Users
+
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage trainee and instructor accounts.
+            </p>
+
         </div>
 
-        <div class="mt-3 mt-md-0 d-flex gap-2">
+        <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
+
             <a asp-action="Create"
-               class="btn text-white fw-semibold px-4 d-flex align-items-center justify-content-center"
-               style="background-color:#0a1f5c; border-radius:10px; border:none; height:46px;">
+               class="btn text-white fw-semibold px-4 py-2"
+               style="background: linear-gradient(135deg, #0a1f5c, #123a9c);
+                      border-radius:12px;">
+
                 Add User
+
             </a>
 
             <a asp-action="CreateInstructor"
-               class="btn text-white fw-semibold px-4 d-flex align-items-center justify-content-center"
-               style="background-color:#0a1f5c; border-radius:10px; border:none; height:46px;">
+               class="btn text-white fw-semibold px-4 py-2"
+               style="background: linear-gradient(135deg, #0a1f5c, #123a9c);
+                      border-radius:12px;">
+
                 Add Instructor
+
             </a>
+
         </div>
+
     </div>
 
+    <!-- ALERTS -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show rounded-3">
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm"
+             style="border-radius:12px;">
+
             @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"></button>
+
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show rounded-3">
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm"
+             style="border-radius:12px;">
+
             @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"></button>
+
         </div>
     }
 
-    <div class="card border-0 shadow-sm" style="border-radius:18px; overflow:hidden;">
-        <div class="card-body p-0">
+    <!-- CARD -->
+    <div class="card border-0 shadow-sm overflow-hidden"
+         style="border-radius:22px;">
+
+        <!-- TOP BAR -->
+        <div class="px-4 py-3 text-white"
+             style="background: linear-gradient(135deg, #0a1f5c, #123a9c);">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Users List
+                    </h5>
+
+                    <small class="text-white-50">
+                        Total Users:
+                        @(Model?.Count() ?? 0)
+                    </small>
+
+                </div>
+
+                <div class="px-3 py-2 rounded-pill"
+                     style="background: rgba(255,255,255,0.12);">
+
+                    <small>
+                        User Management
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TABLE -->
+        <div class="card-body p-0"
+             style="background-color:#ffffff;">
+
             <div class="table-responsive">
+
                 <table class="table align-middle mb-0">
-                    <thead style="background-color: rgba(10,31,92,0.06);">
+
+                    <thead style="background-color: rgba(10,31,92,0.05);">
+
                         <tr>
-                            <th class="fw-semibold px-4 py-3" style="color:#0a1f5c;">User ID</th>
-                            <th class="fw-semibold py-3" style="color:#0a1f5c;">Name</th>
-                            <th class="fw-semibold py-3" style="color:#0a1f5c;">CPR</th>
-                            <th class="fw-semibold py-3" style="color:#0a1f5c;">Email</th>
-                            <th class="fw-semibold py-3" style="color:#0a1f5c;">Phone</th>
-                            <th class="fw-semibold py-3" style="color:#0a1f5c;">Role</th>
-                            <th class="fw-semibold py-3" style="color:#0a1f5c;">Status</th>
-                            <th class="fw-semibold py-3 text-center" style="color:#0a1f5c;">Actions</th>
+
+                            <th class="fw-semibold px-4 py-3"
+                                style="color:#0a1f5c;">
+                                User ID
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Name
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                CPR
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Email
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Phone
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Role
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Status
+                            </th>
+
+                            <th class="fw-semibold py-3 text-center"
+                                style="color:#0a1f5c;">
+                                Actions
+                            </th>
+
                         </tr>
+
                     </thead>
 
                     <tbody>
+
                         @if (Model != null && Model.Any())
                         {
                             @foreach (var item in Model)
                             {
-                                <tr>
-                                    <td class="px-4 py-3 text-muted">@item.UserId</td>
+                                <tr style="border-bottom:1px solid #eef2f7;">
 
-                                    <td class="py-3 fw-semibold" style="color:#0a1f5c;">
-                                        @item.Name
+                                    <!-- USER ID -->
+                                    <td class="px-4 py-4 text-muted">
+
+                                        @item.UserId
+
                                     </td>
 
-                                    <td class="py-3 text-muted">@item.CPR</td>
+                                    <!-- NAME -->
+                                    <td>
 
-                                    <td class="py-3 text-muted">@item.Email</td>
-                                    <td class="py-3 text-muted">@item.PhoneNumber</td>
+                                        <div class="fw-semibold"
+                                             style="color:#0a1f5c;">
 
-                                    <td class="py-3">
+                                            @item.Name
+
+                                        </div>
+
+                                    </td>
+
+                                    <!-- CPR -->
+                                    <td class="text-muted">
+
+                                        @item.CPR
+
+                                    </td>
+
+                                    <!-- EMAIL -->
+                                    <td class="text-muted">
+
+                                        @item.Email
+
+                                    </td>
+
+                                    <!-- PHONE -->
+                                    <td class="text-muted">
+
+                                        @item.PhoneNumber
+
+                                    </td>
+
+                                    <!-- ROLE -->
+                                    <td>
+
                                         <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color:rgba(10,31,92,0.08); color:#0a1f5c;">
+                                              style="background-color:rgba(10,31,92,0.08);
+                                                     color:#0a1f5c;">
+
                                             @item.Role?.RoleName
+
                                         </span>
+
                                     </td>
 
-                                    <td class="py-3">
+                                    <!-- STATUS -->
+                                    <td>
+
                                         @if (item.IsActive)
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color:#198754; color:white;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-success">
                                                 Active
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color:#6c757d; color:white;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-secondary">
                                                 Inactive
                                             </span>
                                         }
+
                                     </td>
 
-                                    <td class="text-center py-3">
+                                    <!-- ACTIONS -->
+                                    <td class="text-center">
 
-                                        <div class="d-flex justify-content-center gap-2">
+                                        <div class="d-flex justify-content-center gap-2 flex-wrap">
 
                                             <a asp-action="Edit"
                                                asp-route-id="@item.UserId"
-                                               class="btn btn-sm fw-semibold px-3"
-                                               style="background-color:#ffc107; border-radius:10px; border:none; color:black;">
+                                               class="btn btn-sm btn-warning fw-semibold px-3"
+                                               style="border-radius:10px;">
+
                                                 Edit
+
                                             </a>
 
                                             <a asp-action="Delete"
                                                asp-route-id="@item.UserId"
-                                               class="btn btn-sm text-white fw-semibold px-3"
-                                               style="background-color:#dc3545; border-radius:10px; border:none;">
+                                               class="btn btn-sm btn-danger fw-semibold px-3"
+                                               style="border-radius:10px;">
+
                                                 Delete
+
                                             </a>
 
                                         </div>
 
                                     </td>
+
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-5">
+
+                                <td colspan="8"
+                                    class="text-center text-muted py-5">
+
                                     No users found.
+
                                 </td>
+
                             </tr>
                         }
+
                     </tbody>
+
                 </table>
+
             </div>
+
         </div>
+
     </div>
 
 </div>

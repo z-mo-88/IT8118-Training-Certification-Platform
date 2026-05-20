@@ -5,27 +5,48 @@
     var completedCourses = ViewBag.CompletedCourses as IEnumerable;
 }
 
-<div class="container-fluid py-5 px-4 px-lg-5">
+<div class="container-fluid py-5 px-3 px-md-5"
+     style="background-color:#f6f8fc; min-height:100vh;">
+
     <div class="row justify-content-center">
+
         <div class="col-12 col-xl-10">
 
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
+            <!-- SEARCH CARD -->
+            <div class="card border-0 shadow-sm mb-4"
+                 style="border-radius:22px;
+                        overflow:hidden;
+                        background-color:white;">
+
+                <!-- TOP BAR -->
+                <div class="px-4 py-3 text-white"
+                     style="background: linear-gradient(135deg, #0a1f5c, #163d99);">
+
+                    <h4 class="fw-bold mb-1">
+                        Certificate Lookup
+                    </h4>
+
+                    <small class="text-white-50">
+                        Search for a certificate using CPR and certificate reference.
+                    </small>
+
+                </div>
+
+                <!-- BODY -->
                 <div class="card-body p-4 p-lg-5">
 
-                    <div class="mb-4">
-                        <h3 class="fw-bold mb-2" style="color: #0a1f5c;">Certificate Lookup</h3>
-                        <p class="text-muted mb-0">
-                            Search for a certificate using CPR and certificate reference.
-                        </p>
-                    </div>
-
                     <form method="post">
+
                         <div class="row">
 
-                            <!-- CPR INPUT -->
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold" style="color: #0a1f5c;">
+                            <!-- CPR -->
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-semibold"
+                                       style="color:#0a1f5c;">
+
                                     CPR
+
                                 </label>
 
                                 <input name="cpr"
@@ -34,13 +55,20 @@
                                        class="form-control"
                                        placeholder="Enter CPR"
                                        value="@(ViewBag.SearchedCPR ?? "")"
-                                       style="height: 50px; border-radius: 10px;" />
+                                       style="height:50px;
+                                              border-radius:12px;
+                                              border:1px solid #dfe5f1;" />
+
                             </div>
 
-                            <!-- CERTIFICATE REFERENCE -->
+                            <!-- REFERENCE -->
                             <div class="col-md-6 mb-4">
-                                <label class="form-label fw-semibold" style="color: #0a1f5c;">
+
+                                <label class="form-label fw-semibold"
+                                       style="color:#0a1f5c;">
+
                                     Certificate Reference
+
                                 </label>
 
                                 <input name="reference"
@@ -48,134 +76,219 @@
                                        class="form-control"
                                        placeholder="Enter reference number"
                                        value="@(ViewBag.SearchedReference ?? "")"
-                                       style="height: 50px; border-radius: 10px;" />
+                                       style="height:50px;
+                                              border-radius:12px;
+                                              border:1px solid #dfe5f1;" />
+
                             </div>
+
                         </div>
 
-                        <!-- SEARCH BUTTON -->
-                        <div>
-                            <button type="submit"
-                                    class="btn text-white fw-semibold px-5"
-                                    style="background-color: #0a1f5c; height: 48px; border-radius: 10px; border: none;">
-                                Search
-                            </button>
-                        </div>
+                        <!-- BUTTON -->
+                        <button type="submit"
+                                class="btn text-white fw-semibold px-5 d-inline-flex align-items-center justify-content-center shadow-sm"
+                                style="background-color:#0a1f5c;
+                                       height:48px;
+                                       border-radius:12px;
+                                       border:none;
+                                       font-size:0.9rem;">
+
+                            Search
+
+                        </button>
+
                     </form>
 
-                    <!-- ERROR MESSAGE -->
+                    <!-- ERROR -->
                     @if (ViewBag.ResultMessage != null)
                     {
-                        <div class="alert alert-danger mt-4 rounded-3">
+                        <div class="alert alert-danger border-0 shadow-sm mt-4"
+                             style="border-radius:14px;">
+
                             @ViewBag.ResultMessage
+
                         </div>
                     }
+
                 </div>
+
             </div>
 
             <!-- CERTIFICATE DETAILS -->
             @if (ViewBag.CertificateId != null)
             {
-                <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+                <div class="card border-0 shadow-sm"
+                     style="border-radius:22px;
+                                overflow:hidden;
+                                background-color:white;">
+
+                    <!-- TOP BAR -->
+                    <div class="px-4 py-3 text-white"
+                         style="background: linear-gradient(135deg, #0a1f5c, #163d99);">
+
+                        <h4 class="fw-bold mb-1">
+                            Certificate Details
+                        </h4>
+
+                        <small class="text-white-50">
+                            Certificate and completed course information.
+                        </small>
+
+                    </div>
+
+                    <!-- BODY -->
                     <div class="card-body p-4 p-lg-5">
 
-                        <h5 class="fw-bold mb-4" style="color: #0a1f5c;">
-                            Certificate Details
-                        </h5>
+                        <!-- INFO GRID -->
+                        <div class="row g-4 mb-2">
 
-                        <div class="row">
+                            <!-- TRAINEE -->
+                            <div class="col-md-3">
 
-                            <!-- TRAINEE NAME -->
-                            <div class="col-md-3 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">
+                                <div class="small fw-semibold mb-1"
+                                     style="color:#0a1f5c;">
+
                                     Trainee Name
+
                                 </div>
 
                                 <div class="text-muted">
+
                                     @ViewBag.TraineeName
+
                                 </div>
+
                             </div>
 
                             <!-- CPR -->
-                            <div class="col-md-3 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">
+                            <div class="col-md-2">
+
+                                <div class="small fw-semibold mb-1"
+                                     style="color:#0a1f5c;">
+
                                     CPR
+
                                 </div>
 
                                 <div class="text-muted">
+
                                     @ViewBag.CPR
+
                                 </div>
+
                             </div>
 
                             <!-- REFERENCE -->
-                            <div class="col-md-2 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">
+                            <div class="col-md-3">
+
+                                <div class="small fw-semibold mb-1"
+                                     style="color:#0a1f5c;">
+
                                     Reference
+
                                 </div>
 
                                 <div class="text-muted">
+
                                     @ViewBag.CertificateReferenceNumber
+
                                 </div>
+
                             </div>
 
                             <!-- STATUS -->
-                            <div class="col-md-2 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">
+                            <div class="col-md-2">
+
+                                <div class="small fw-semibold mb-1"
+                                     style="color:#0a1f5c;">
+
                                     Status
+
                                 </div>
 
                                 <div>
+
                                     @{
                                         var status = ViewBag.CertificateStatus as string;
 
                                         string badgeColor = status switch
                                         {
-                                            "Certified" => "background-color: #d4edda; color: #155724;",
-                                            "Eligible" => "background-color: #fff3cd; color: #856404;",
-                                            "In Progress" => "background-color: #cce5ff; color: #004085;",
-                                            _ => "background-color: rgba(10,31,92,0.08); color: #0a1f5c;"
+                                            "Certified" => "background-color:#e7f8ee; color:#198754;",
+                                            "Eligible" => "background-color:#fff3cd; color:#856404;",
+                                            "In Progress" => "background-color:#e7f1ff; color:#0d6efd;",
+                                            _ => "background-color:rgba(10,31,92,0.08); color:#0a1f5c;"
                                         };
                                     }
 
-                                    <span class="badge rounded-pill px-3 py-2" style="@badgeColor">
+                                    <span class="badge rounded-pill px-3 py-2"
+                                          style="@badgeColor
+                                                     font-size:0.75rem;
+                                                     font-weight:600;">
+
                                         @status
+
                                     </span>
+
                                 </div>
+
                             </div>
 
-                            <!-- ISSUED DATE -->
-                            <div class="col-md-2 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">
+                            <!-- DATE -->
+                            <div class="col-md-2">
+
+                                <div class="small fw-semibold mb-1"
+                                     style="color:#0a1f5c;">
+
                                     Issued Date
+
                                 </div>
 
                                 <div class="text-muted">
+
                                     @ViewBag.IssuedDate
+
                                 </div>
+
                             </div>
 
                             <!-- TRACK -->
-                            <div class="col-md-2 mb-3">
-                                <div class="fw-semibold" style="color: #0a1f5c;">
+                            <div class="col-md-3">
+
+                                <div class="small fw-semibold mb-1"
+                                     style="color:#0a1f5c;">
+
                                     Track
+
                                 </div>
 
                                 <div class="text-muted">
+
                                     @ViewBag.TrackName
+
                                 </div>
+
                             </div>
 
                         </div>
 
                         <hr class="my-4" />
 
-                        <!-- COMPLETED COURSES -->
-                        <h5 class="fw-bold mb-3" style="color: #0a1f5c;">
-                            Completed Courses
-                        </h5>
+                        <!-- COURSES -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <h5 class="fw-bold mb-0"
+                                style="color:#0a1f5c;">
+
+                                Completed Courses
+
+                            </h5>
+
+                        </div>
 
                         @if (completedCourses != null)
                         {
                             <div class="row">
+
                                 @{
                                     bool hasCourses = false;
                                 }
@@ -185,54 +298,77 @@
                                     hasCourses = true;
 
                                     <div class="col-md-6 col-lg-4 mb-3">
-                                        <div class="border rounded-3 p-3 h-100"
-                                             style="background-color: #f8f9fc;">
 
-                                            <div class="fw-semibold" style="color: #0a1f5c;">
+                                        <div class="h-100 p-4"
+                                             style="border:1px solid rgba(10,31,92,0.08);
+                                                                border-radius:18px;
+                                                                background-color:#fbfcff;">
+
+                                            <!-- TITLE -->
+                                            <div class="fw-bold mb-2"
+                                                 style="color:#0a1f5c;
+                                                                    font-size:0.95rem;">
+
                                                 @course.GetType().GetProperty("Title")?.GetValue(course, null)
+
                                             </div>
 
+                                            <!-- STATUS -->
                                             @if (course.GetType().GetProperty("IsRequired") != null)
                                             {
                                                 var isRequired =
                                                 course.GetType().GetProperty("IsRequired")
                                                 ?.GetValue(course, null);
 
-                                                <div class="mt-2">
-                                                    <span class="badge rounded-pill px-3 py-2"
-                                                          style="background-color: rgba(10,31,92,0.08); color: #0a1f5c;">
+                                                <span class="badge rounded-pill px-3 py-2"
+                                                      style="background-color:@((isRequired != null && (bool)isRequired) ? "#e7f8ee" : "#eef1f6");
+                                                                             color:@((isRequired != null && (bool)isRequired) ? "#198754" : "#6c757d");
+                                                                             font-size:0.75rem;
+                                                                             font-weight:600;">
 
-                                                        @(isRequired != null && (bool)isRequired
-                                                                                                ? "Required"
-                                                                                                : "Optional")
-                                    </span>
-                                </div>
+                                                    @(isRequired != null && (bool)isRequired
+                                                                                        ? "Required"
+                                                                                        : "Optional")
+
+                                </span>
                                                                 }
+
                                         </div>
+
                                     </div>
                                 }
 
                                 @if (!hasCourses)
                                 {
                                     <div class="col-12">
+
                                         <div class="text-muted">
+
                                             No completed courses found.
+
                                         </div>
+
                                     </div>
                                 }
+
                             </div>
                         }
                         else
                         {
                             <div class="text-muted">
+
                                 No completed courses found.
+
                             </div>
                         }
 
                     </div>
+
                 </div>
             }
 
         </div>
+
     </div>
+
 </div>

@@ -5,7 +5,7 @@ using TrainingSystem.API.Models;
 
 namespace TrainingSystem.MVC.Controllers
 {
-    public class CertificationTracksController : Controller
+    public class CertificationTracksController : BaseController
     {
         private readonly AppDbContext _context;
 
@@ -17,6 +17,7 @@ namespace TrainingSystem.MVC.Controllers
         // ================= INDEX =================
         public async Task<IActionResult> Index()
         {
+
             var tracks = await _context.CertificationTracks.ToListAsync();
             return View(tracks);
         }

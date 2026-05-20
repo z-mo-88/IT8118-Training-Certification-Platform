@@ -5,43 +5,131 @@
 }
 
 <div class="container-fluid py-5 px-3 px-md-5">
-    <div class="mb-4">
-        <h2 class="fw-bold mb-1" style="color: #0a1f5c;">My Enrollments</h2>
-        <p class="text-muted mb-0">Track your enrolled courses, progress, and payment status.</p>
+
+    <!-- HEADER -->
+    <div class="text-center mb-4">
+
+        <h2 class="fw-bold mb-2"
+            style="color: #0a1f5c;">
+            My Enrollments
+        </h2>
+
+        <p class="text-muted mb-0">
+            Track your enrolled courses, progress, and payment status.
+        </p>
+
     </div>
 
+    <!-- ALERTS -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success">
+        <div class="alert alert-success border-0 shadow-sm"
+             style="border-radius: 12px;">
+
             @TempData["Success"]
+
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">
+        <div class="alert alert-danger border-0 shadow-sm"
+             style="border-radius: 12px;">
+
             @TempData["Error"]
+
         </div>
     }
 
-    <div class="card border-0 shadow-sm" style="border-radius: 18px; overflow: hidden;">
-        <div class="card-body p-0">
+    <!-- CARD -->
+    <div class="card border-0 shadow-sm overflow-hidden"
+         style="border-radius: 22px;">
+
+        <!-- TOP BAR -->
+        <div class="px-4 py-3 text-white"
+             style="background: linear-gradient(135deg, #0a1f5c, #123a9c);">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Enrollment List
+                    </h5>
+
+                    <small class="text-white-50">
+                        Total Enrollments:
+                        @(Model?.Count() ?? 0)
+                    </small>
+
+                </div>
+
+                <div class="px-3 py-2 rounded-pill"
+                     style="background: rgba(255,255,255,0.12);">
+
+                    <small>
+                        Student Dashboard
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TABLE -->
+        <div class="card-body p-0"
+             style="background-color:#f8faff;">
 
             <div class="table-responsive">
+
                 <table class="table align-middle mb-0">
-                    <thead style="background-color: rgba(10, 31, 92, 0.06);">
+
+                    <thead style="background-color: rgba(10,31,92,0.05);">
+
                         <tr>
-                            <th class="fw-semibold px-4 py-3" style="color: #0a1f5c;">Course</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Session Date</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Status</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Remaining Balance</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Payment Status</th>
-                            <th class="fw-semibold py-3" style="color: #0a1f5c;">Overdue</th>
-                            <th class="fw-semibold py-3 text-center" style="color: #0a1f5c;">Actions</th>
+
+                            <th class="fw-semibold px-4 py-3"
+                                style="color:#0a1f5c;">
+                                Course
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Session Date
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Status
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Remaining Balance
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Payment Status
+                            </th>
+
+                            <th class="fw-semibold py-3"
+                                style="color:#0a1f5c;">
+                                Overdue
+                            </th>
+
+                            <th class="fw-semibold py-3 text-center"
+                                style="color:#0a1f5c;">
+                                Actions
+                            </th>
+
                         </tr>
+
                     </thead>
 
                     <tbody>
+
                         @if (Model != null && Model.Any())
                         {
                             @foreach (var item in Model)
@@ -60,117 +148,161 @@
                                 item.Session != null &&
                                 item.Session.SessionDate < DateOnly.FromDateTime(DateTime.Now);
 
-                                <tr>
-                                    <td class="px-4 py-3 fw-semibold" style="color: #0a1f5c;">
-                                        @item.Session?.Course?.Title
+                                <tr style="border-bottom:1px solid #eef2f7;">
+
+                                    <!-- COURSE -->
+                                    <td class="px-4 py-4">
+
+                                        <div class="fw-semibold"
+                                             style="color:#0a1f5c;">
+
+                                            @item.Session?.Course?.Title
+
+                                        </div>
+
                                     </td>
 
-                                    <td class="py-3 text-muted">
+                                    <!-- DATE -->
+                                    <td class="text-muted">
+
                                         @item.Session?.SessionDate.ToShortDateString()
+
                                     </td>
 
-                                    <td class="py-3">
+                                    <!-- STATUS -->
+                                    <td>
+
                                         @{
                                             string statusStyle = item.Status switch
                                             {
-                                                "Completed" => "background-color: #198754; color: white; font-weight: 600;",
-                                                "Dropped" => "background-color: #dc3545; color: white; font-weight: 600;",
-                                                "Confirmed" => "background-color: #0d6efd; color: white; font-weight: 600;",
-                                                "Attending" => "background-color: #20c997; color: white; font-weight: 600;",
-                                                _ => "background-color: rgba(10, 31, 92, 0.08); color: #0a1f5c; font-weight: 600;"
+                                                "Completed" => "background-color:#198754;color:white;font-weight:600;",
+                                                "Dropped" => "background-color:#dc3545;color:white;font-weight:600;",
+                                                "Confirmed" => "background-color:#0d6efd;color:white;font-weight:600;",
+                                                "Attending" => "background-color:#20c997;color:white;font-weight:600;",
+                                                _ => "background-color:rgba(10,31,92,0.08);color:#0a1f5c;font-weight:600;"
                                             };
                                         }
 
-                                        <span class="badge rounded-pill px-3 py-2" style="@statusStyle">
+                                        <span class="badge rounded-pill px-3 py-2"
+                                              style="@statusStyle">
+
                                             @item.Status
+
                                         </span>
+
                                     </td>
 
-                                    <td class="py-3 fw-semibold"
-                                        style="color:@(item.Status == "Dropped" ? "#6c757d" : remainingBalance > 0 ? "#dc3545" : "#198754")">
-                                        @(item.Status == "Dropped" ? "-" : remainingBalance)
-                                    </td>
+                                    <!-- BALANCE -->
+                                    <td class="fw-semibold"
+                                        style="color:@(item.Status == "Dropped"
+                                                                                    ? "#6c757d"
+                                                                                    : remainingBalance > 0
+                                                                                    ? "#dc3545"
+                                                                                    : "#198754")">
 
-                                    <td class="py-3">
-                                        @if (paymentStatus == "Paid")
+                                        @(item.Status == "Dropped"
+                                                                        ? "-"
+                                                                        : remainingBalance)
+
+                            </td>
+
+                                    <!-- PAYMENT -->
+                                    <td>
+
+                                @if (paymentStatus == "Paid")
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color: #198754; color: white;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-success">
                                                 Paid
                                             </span>
                                         }
                                         else if (paymentStatus == "Cancelled")
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color: #6c757d; color: white;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-secondary">
                                                 Cancelled
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color: #ffc107; color: #212529;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-warning text-dark">
                                                 Partial / Unpaid
                                             </span>
                                         }
+
                                     </td>
 
-                                    <td class="py-3">
+                                    <!-- OVERDUE -->
+                                    <td>
+
                                         @if (item.Status == "Dropped")
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color: #6c757d; color: white;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-secondary">
                                                 N/A
                                             </span>
                                         }
                                         else if (isOverdue)
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color: #dc3545; color: white;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-danger">
                                                 Overdue
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge rounded-pill px-3 py-2"
-                                                  style="background-color: #198754; color: white;">
+                                            <span class="badge rounded-pill px-3 py-2 bg-success">
                                                 OK
                                             </span>
                                         }
+
                                     </td>
 
-                                    <td class="py-3 text-center">
+                                    <!-- ACTION -->
+                                    <td class="text-center">
+
                                         @if (item.Status == "Enrolled")
                                         {
                                             <a asp-action="Drop"
                                                asp-route-id="@item.EnrollmentId"
-                                               class="btn btn-sm fw-semibold text-white px-3"
-                                               style="background-color: #dc3545; border-radius: 10px; border: none;"
+                                               class="btn btn-sm btn-danger fw-semibold px-3"
+                                               style="border-radius: 10px;"
                                                onclick="return confirm('Are you sure you want to drop this course?');">
+
                                                 Drop
+
                                             </a>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">-</span>
+                                            <span class="text-muted">
+                                                -
+                                            </span>
                                         }
+
                                     </td>
+
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-5">
+
+                                <td colspan="7"
+                                    class="text-center text-muted py-5">
+
                                     No enrollments found.
+
                                 </td>
+
                             </tr>
                         }
+
                     </tbody>
 
                 </table>
+
             </div>
 
         </div>
+
     </div>
+
 </div>

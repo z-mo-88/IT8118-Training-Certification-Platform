@@ -13,185 +13,329 @@
 <div class="container-fluid py-5 px-3 px-md-5">
 
     <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
         <div>
-            <h2 class="fw-bold mb-1" style="color: #0a1f5c;">Courses</h2>
-            <p class="text-muted mb-0">Browse and manage courses.</p>
+
+            <h2 class="fw-bold mb-1"
+                style="color: #0a1f5c;">
+                Courses
+            </h2>
+
+            <p class="text-muted mb-0">
+                Browse and manage courses.
+            </p>
+
         </div>
 
         @if (roleId == 3)
         {
             <a asp-action="Create"
-               class="btn text-white"
-               style="background-color:#0a1f5c; border-radius:10px; font-weight:600;">
+               class="btn text-white fw-semibold px-4 py-2"
+               style="background: linear-gradient(135deg, #0a1f5c, #123a9c);
+                          border-radius: 12px;">
+
                 + Create Course
+
             </a>
         }
+
     </div>
 
+    <!-- ALERTS -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success">@TempData["Success"]</div>
+        <div class="alert alert-success border-0 shadow-sm"
+             style="border-radius: 12px;">
+
+            @TempData["Success"]
+
+        </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">@TempData["Error"]</div>
+        <div class="alert alert-danger border-0 shadow-sm"
+             style="border-radius: 12px;">
+
+            @TempData["Error"]
+
+        </div>
     }
 
     <!-- COURSES -->
     @foreach (var course in Model)
     {
-        <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
-            <div class="card-body p-4">
+        <div class="card border-0 shadow-sm mb-4 overflow-hidden"
+             style="border-radius: 22px;">
 
-                <!-- COURSE HEADER -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- TOP BAR -->
+            <div class="px-4 py-3 text-white"
+                 style="background: linear-gradient(135deg, #0a1f5c, #123a9c);">
 
-                    <h4 class="fw-bold mb-0" style="color: #0a1f5c;">
-                        @course.Title
-                    </h4>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                    <div>
+
+                        <h4 class="fw-bold mb-1">
+                            @course.Title
+                        </h4>
+
+                        <small class="text-white-50">
+                            Course Information & Sessions
+                        </small>
+
+                    </div>
 
                     @if (roleId == 3)
                     {
                         <div class="d-flex gap-2">
+
                             <a asp-action="Edit"
                                asp-route-id="@course.CourseId"
-                               class="btn btn-warning btn-sm">
-                                Edit Course
+                               class="btn btn-warning btn-sm fw-semibold"
+                               style="border-radius: 10px;">
+
+                                Edit
+
                             </a>
 
                             <a asp-action="Delete"
                                asp-route-id="@course.CourseId"
-                               class="btn btn-danger btn-sm">
-                                Delete Course
+                               class="btn btn-danger btn-sm fw-semibold"
+                               style="border-radius: 10px;">
+
+                                Delete
+
                             </a>
+
                         </div>
                     }
+
                 </div>
 
+            </div>
+
+            <!-- BODY -->
+            <div class="card-body p-4"
+                 style="background-color:#f8faff;">
+
                 <!-- COURSE INFO -->
-                <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="d-flex flex-wrap gap-2 mb-4">
 
-                    <span class="badge bg-light text-dark px-3 py-2">
+                    <span class="badge px-3 py-2"
+                          style="background-color: rgba(10,31,92,0.08);
+                                     color:#0a1f5c;">
+
                         Category: @course.Category?.CategoryName
+
                     </span>
 
-                    <span class="badge bg-light text-dark px-3 py-2">
+                    <span class="badge px-3 py-2"
+                          style="background-color: rgba(10,31,92,0.08);
+                                     color:#0a1f5c;">
+
                         Duration: @course.DurationHours hrs
+
                     </span>
 
-                    <span class="badge bg-light text-dark px-3 py-2">
-                        Fee: @course.EnrollmentFee
+                    <span class="badge px-3 py-2"
+                          style="background-color: rgba(10,31,92,0.08);
+                                     color:#0a1f5c;">
+
+                        Fee: @course.EnrollmentFee BD
+
                     </span>
 
                     @if (course.PrerequisiteCourse != null)
                     {
-                        <span class="badge bg-danger-subtle text-danger px-3 py-2">
-                            Prerequisite: @course.PrerequisiteCourse.Title
+                        <span class="badge px-3 py-2"
+                              style="background-color: rgba(220,53,69,0.12);
+                                             color:#dc3545;">
+
+                            Prerequisite:
+                            @course.PrerequisiteCourse.Title
+
                         </span>
                     }
+
                 </div>
 
-                <hr />
+                <!-- SESSION TITLE -->
+                <h5 class="fw-bold mb-3"
+                    style="color:#0a1f5c;">
 
-                <!-- SESSIONS -->
-                <h5 class="fw-semibold mb-3" style="color: #0a1f5c;">
                     Sessions
+
                 </h5>
 
+                <!-- SESSIONS -->
                 @if (course.CourseSessions != null && course.CourseSessions.Any())
                 {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Seats</th>
-                                <th>Instructor</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+                    <div class="table-responsive">
 
-                        <tbody>
-                            @foreach (var session in course.CourseSessions)
-                            {
-                                var alreadyEnrolled = enrolledIds != null && enrolledIds.Contains(session.SessionId);
+                        <table class="table align-middle mb-0">
 
-                                var sessionFull = session.AvailableSeats <= 0;
-
-                                var prerequisiteMissing = course.PrerequisiteCourseId != null &&
-                                (passedCourses == null || !passedCourses.Contains(course.PrerequisiteCourseId.Value));
+                            <thead style="background-color: rgba(10,31,92,0.05);">
 
                                 <tr>
-                                    <td>@session.SessionDate.ToShortDateString()</td>
 
-                                    <td>
-                                        @session.StartTime - @session.EndTime
-                                    </td>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Seats</th>
+                                    <th>Instructor</th>
+                                    <th class="text-center">Action</th>
 
-                                    <td id="seats-@session.SessionId">
-                                        @session.AvailableSeats
-                                    </td>
-
-                                    <td>
-                                        @session.User?.Name <br />
-                                        <small class="text-muted">
-                                            @session.User?.InstructorProfile?.Bio
-                                        </small>
-                                    </td>
-
-                                    <td>
-                                        @if (roleId == 1)
-                                        {
-                                            if (alreadyEnrolled)
-                                            {
-                                                <button class="btn btn-outline-secondary btn-sm" disabled>
-                                                    Enrolled
-                                                </button>
-                                            }
-                                            else if (sessionFull)
-                                            {
-                                                <button class="btn btn-danger btn-sm" disabled>
-                                                    Full
-                                                </button>
-                                            }
-                                            else if (prerequisiteMissing)
-                                            {
-                                                <button class="btn btn-warning btn-sm" disabled>
-                                                    Need Prerequisite
-                                                </button>
-                                            }
-                                            else
-                                            {
-                                                <form asp-controller="Enrollments" asp-action="Enroll" method="post">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="sessionId" value="@session.SessionId" />
-                                                    <button class="btn btn-success btn-sm">
-                                                        Enroll
-                                                    </button>
-                                                </form>
-                                            }
-                                        }
-                                    </td>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var session in course.CourseSessions)
+                                {
+                                    var alreadyEnrolled = enrolledIds != null &&
+                                    enrolledIds.Contains(session.SessionId);
+
+                                    var sessionFull = session.AvailableSeats <= 0;
+
+                                    var prerequisiteMissing =
+                                    course.PrerequisiteCourseId != null &&
+                                    (passedCourses == null ||
+                                    !passedCourses.Contains(course.PrerequisiteCourseId.Value));
+
+                                    <tr style="border-bottom: 1px solid #eef2f7;">
+
+                                        <!-- DATE -->
+                                        <td class="fw-medium">
+
+                                            @session.SessionDate.ToShortDateString()
+
+                                        </td>
+
+                                        <!-- TIME -->
+                                        <td>
+
+                                            @session.StartTime - @session.EndTime
+
+                                        </td>
+
+                                        <!-- SEATS -->
+                                        <td>
+
+                                            <span id="seats-@session.SessionId"
+                                                  class="fw-bold text-success">
+
+                                                @session.AvailableSeats
+
+                                            </span>
+
+                                        </td>
+
+                                        <!-- INSTRUCTOR -->
+                                        <td>
+
+                                            <div class="fw-semibold"
+                                                 style="color:#0a1f5c;">
+
+                                                @session.User?.Name
+
+                                            </div>
+
+                                            <small class="text-muted">
+
+                                                @session.User?.InstructorProfile?.Bio
+
+                                            </small>
+
+                                        </td>
+
+                                        <!-- ACTION -->
+                                        <td class="text-center">
+
+                                            @if (roleId == 1)
+                                            {
+                                                if (alreadyEnrolled)
+                                                {
+                                                    <button class="btn btn-outline-secondary btn-sm"
+                                                            disabled
+                                                            style="border-radius: 10px;">
+
+                                                        Enrolled
+
+                                                    </button>
+                                                }
+                                                else if (sessionFull)
+                                                {
+                                                    <button class="btn btn-danger btn-sm"
+                                                            disabled
+                                                            style="border-radius: 10px;">
+
+                                                        Full
+
+                                                    </button>
+                                                }
+                                                else if (prerequisiteMissing)
+                                                {
+                                                    <button class="btn btn-warning btn-sm"
+                                                            disabled
+                                                            style="border-radius: 10px;">
+
+                                                        Need Prerequisite
+
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-controller="Enrollments"
+                                                          asp-action="Enroll"
+                                                          method="post">
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        <input type="hidden"
+                                                               name="sessionId"
+                                                               value="@session.SessionId" />
+
+                                                        <button class="btn btn-success btn-sm fw-semibold px-3"
+                                                                style="border-radius: 10px;">
+
+                                                            Enroll
+
+                                                        </button>
+
+                                                    </form>
+                                                }
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
                 }
                 else
                 {
-                    <p class="text-muted">No sessions available</p>
+                    <div class="text-center text-muted py-4">
+
+                        No sessions available
+
+                    </div>
                 }
 
             </div>
+
         </div>
     }
 
 </div>
 
 <!-- SIGNALR SCRIPT -->
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
 <script>

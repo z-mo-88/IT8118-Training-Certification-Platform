@@ -5,7 +5,7 @@ using TrainingSystem.API.Models;
 
 namespace TrainingSystem.MVC.Controllers
 {
-    public class CertificationTrackCoursesController : Controller
+    public class CertificationTrackCoursesController : BaseController
     {
         private readonly AppDbContext _context;
 
@@ -17,6 +17,9 @@ namespace TrainingSystem.MVC.Controllers
         // ================= INDEX =================
         public async Task<IActionResult> Index()
         {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             var data = await _context.CertificationTrackCourses
                 .Include(t => t.CertificationTrack)
                 .Include(t => t.Course)
@@ -29,6 +32,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             ViewBag.Tracks = _context.CertificationTracks.ToList();
             ViewBag.Courses = _context.Courses.ToList();
             return View();
@@ -37,6 +43,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(int trackId, int courseId)
         {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             bool isRequired = Request.Form.ContainsKey("isRequired");
 
             var exists = await _context.CertificationTrackCourses
@@ -60,6 +69,7 @@ namespace TrainingSystem.MVC.Controllers
             });
 
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Course assigned successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -68,6 +78,10 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int trackId, int courseId)
         {
+
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             var item = await _context.CertificationTrackCourses
     .Include(x => x.CertificationTrack)
     .Include(x => x.Course)
@@ -86,6 +100,10 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int trackId, int courseId, int newCourseId)
         {
+
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             bool isRequired = Request.Form.ContainsKey("isRequired");
 
             var item = await _context.CertificationTrackCourses
@@ -113,6 +131,7 @@ namespace TrainingSystem.MVC.Controllers
             item.IsRequired = isRequired;
 
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Track course updated successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -121,6 +140,9 @@ namespace TrainingSystem.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int trackId, int courseId)
         {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             var item = await _context.CertificationTrackCourses
                 .Include(x => x.CertificationTrack)
                 .Include(x => x.Course)
@@ -136,6 +158,10 @@ namespace TrainingSystem.MVC.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int trackId, int courseId)
         {
+
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
             var item = await _context.CertificationTrackCourses
                 .FirstOrDefaultAsync(x =>
                     x.CertificationTrackId == trackId &&
