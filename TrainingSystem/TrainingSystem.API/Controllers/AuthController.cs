@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using TrainingSystem.API.Data;
+using TrainingSystem.API.DTOs;
 
 namespace TrainingSystem.API.Controllers
 {
@@ -21,15 +22,11 @@ namespace TrainingSystem.API.Controllers
             _context = context;
         }
 
-        public class LoginRequest
-        {
-            public string Email { get; set; }
-            public string Password { get; set; }
-        }
+      
 
         //  LOGIN 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public IActionResult Login([FromBody] LoginRequestDto request)
         {
             //  Validation
             if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))

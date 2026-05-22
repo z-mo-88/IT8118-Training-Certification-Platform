@@ -126,7 +126,7 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            
+
             return View();
         }
 
@@ -153,6 +153,10 @@ namespace TrainingSystem.MVC.Controllers
             if (await _context.Users.AnyAsync(u => u.CPR == user.CPR))
             {
                 ModelState.AddModelError("CPR", "CPR already exists");
+            }
+            if (string.IsNullOrWhiteSpace(user.Name) || !user.Name.Any(char.IsLetter))
+            {
+                ModelState.AddModelError("Name", "Name must contain letters");
             }
 
             if (string.IsNullOrWhiteSpace(user.PasswordHash) || user.PasswordHash.Length < 6)
@@ -229,6 +233,11 @@ namespace TrainingSystem.MVC.Controllers
                 ModelState.AddModelError("CPR", "CPR must be 9 digits");
             }
 
+            if (string.IsNullOrWhiteSpace(user.Name) || !user.Name.Any(char.IsLetter))
+            {
+                ModelState.AddModelError("Name", "Name must contain letters");
+            }
+
             bool cprExists = await _context.Users
                 .AnyAsync(u => u.CPR == user.CPR && u.UserId != user.UserId);
 
@@ -262,7 +271,7 @@ namespace TrainingSystem.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-           
+
 
             return View(user);
         }
@@ -351,7 +360,7 @@ namespace TrainingSystem.MVC.Controllers
 
         // ================= HELPERS =================
 
-      
+
 
         private void CleanModelState()
         {

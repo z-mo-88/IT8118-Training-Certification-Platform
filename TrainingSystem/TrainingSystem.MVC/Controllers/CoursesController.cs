@@ -126,7 +126,7 @@ namespace TrainingSystem.MVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
+         
         // ================= VALIDATION =================
         private void ValidateCourse(Course course)
         {

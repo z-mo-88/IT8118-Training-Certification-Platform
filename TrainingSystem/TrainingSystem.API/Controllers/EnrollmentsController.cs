@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 using TrainingSystem.API.Hubs;
+using TrainingSystem.API.DTOs;
 
 namespace TrainingSystem.API.Controllers
 {
@@ -30,31 +31,60 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpGet]
-        
-        public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments()
+        public async Task<ActionResult<IEnumerable<EnrollmentDto>>> GetEnrollments()
         {
             var enrollments = await _context.Enrollments
-                .Include(e => e.User)
-                .Include(e => e.Session)
-                    .ThenInclude(s => s.Course)
+                .Select(e => new EnrollmentDto
+                {
+                    EnrollmentId = e.EnrollmentId,
+                    Status = e.Status,
+                    EnrollmentDate = e.EnrollmentDate,
+                    OutstandingBalance = e.OutstandingBalance,
+                    IsOverdue = e.IsOverdue,
+                    UserId = e.UserId,
+                    SessionId = e.SessionId
+                })
                 .ToListAsync();
 
             return Ok(enrollments);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(int id)
+        {
+            var enrollment = await _context.Enrollments
+                .Where(e => e.EnrollmentId == id)
+                .Select(e => new EnrollmentDto
+                {
+                    EnrollmentId = e.EnrollmentId,
+                    Status = e.Status,
+                    EnrollmentDate = e.EnrollmentDate,
+                    OutstandingBalance = e.OutstandingBalance,
+                    IsOverdue = e.IsOverdue,
+                    UserId = e.UserId,
+                    SessionId = e.SessionId
+                })
+                .FirstOrDefaultAsync();
+
+            if (enrollment == null)
+                return NotFound();
+
+            return Ok(enrollment);
+        }
+
         [HttpPost]
         [Authorize(Roles = "1")]
-        public async Task<ActionResult> CreateEnrollment(Enrollment enrollment)
+        public async Task<ActionResult<EnrollmentDto>> CreateEnrollment(CreateEnrollmentDto enrollmentDto)
         {
             var session = await _context.CourseSessions
                 .Include(s => s.Course)
-                .FirstOrDefaultAsync(s => s.SessionId == enrollment.SessionId);
+                .FirstOrDefaultAsync(s => s.SessionId == enrollmentDto.SessionId);
 
             if (session == null)
                 return BadRequest("Invalid session.");
 
             bool alreadyEnrolled = await _context.Enrollments
-                .AnyAsync(e => e.UserId == enrollment.UserId && e.SessionId == enrollment.SessionId);
+                .AnyAsync(e => e.UserId == enrollmentDto.UserId && e.SessionId == enrollmentDto.SessionId);
 
             if (alreadyEnrolled)
                 return BadRequest("User is already enrolled in this session.");
@@ -62,14 +92,15 @@ namespace TrainingSystem.API.Controllers
             if (session.AvailableSeats <= 0)
                 return BadRequest("No available seats for this session.");
 
-            if (enrollment.EnrollmentDate == default)
-                enrollment.EnrollmentDate = DateOnly.FromDateTime(DateTime.Now);
-
-            if (string.IsNullOrWhiteSpace(enrollment.Status))
-                enrollment.Status = "Enrolled";
-
-            if (enrollment.OutstandingBalance < 0)
-                enrollment.OutstandingBalance = 0;
+            var enrollment = new Enrollment
+            {
+                UserId = enrollmentDto.UserId,
+                SessionId = enrollmentDto.SessionId,
+                EnrollmentDate = DateOnly.FromDateTime(DateTime.Now),
+                Status = "Enrolled",
+                OutstandingBalance = 0,
+                IsOverdue = false
+            };
 
             session.AvailableSeats--;
 
@@ -78,7 +109,67 @@ namespace TrainingSystem.API.Controllers
 
             await BroadcastSeatsAsync(session.SessionId);
 
-            return Ok(enrollment);
+            var result = new EnrollmentDto
+            {
+                EnrollmentId = enrollment.EnrollmentId,
+                Status = enrollment.Status,
+                EnrollmentDate = enrollment.EnrollmentDate,
+                OutstandingBalance = enrollment.OutstandingBalance,
+                IsOverdue = enrollment.IsOverdue,
+                UserId = enrollment.UserId,
+                SessionId = enrollment.SessionId
+            };
+
+            return CreatedAtAction(nameof(GetEnrollmentById), new { id = enrollment.EnrollmentId }, result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEnrollment(int id, UpdateEnrollmentDto updatedEnrollment)
+        {
+            var enrollment = await _context.Enrollments.FindAsync(id);
+            if (enrollment == null)
+                return NotFound();
+
+            enrollment.Status = updatedEnrollment.Status;
+            enrollment.EnrollmentDate = updatedEnrollment.EnrollmentDate;
+            enrollment.OutstandingBalance = updatedEnrollment.OutstandingBalance;
+            enrollment.IsOverdue = updatedEnrollment.IsOverdue;
+            enrollment.UserId = updatedEnrollment.UserId;
+            enrollment.SessionId = updatedEnrollment.SessionId;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchEnrollment(int id, PatchEnrollmentDto patchEnrollment)
+        {
+            var enrollment = await _context.Enrollments.FindAsync(id);
+            if (enrollment == null)
+                return NotFound();
+
+            if (patchEnrollment.Status != null)
+                enrollment.Status = patchEnrollment.Status;
+
+            if (patchEnrollment.EnrollmentDate.HasValue)
+                enrollment.EnrollmentDate = patchEnrollment.EnrollmentDate.Value;
+
+            if (patchEnrollment.OutstandingBalance.HasValue)
+                enrollment.OutstandingBalance = patchEnrollment.OutstandingBalance.Value;
+
+            if (patchEnrollment.IsOverdue.HasValue)
+                enrollment.IsOverdue = patchEnrollment.IsOverdue.Value;
+
+            if (patchEnrollment.UserId.HasValue)
+                enrollment.UserId = patchEnrollment.UserId.Value;
+
+            if (patchEnrollment.SessionId.HasValue)
+                enrollment.SessionId = patchEnrollment.SessionId.Value;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -96,9 +187,7 @@ namespace TrainingSystem.API.Controllers
                 .FirstOrDefaultAsync(s => s.SessionId == sessionId);
 
             if (session != null)
-            {
                 session.AvailableSeats++;
-            }
 
             _context.Enrollments.Remove(enrollment);
             await _context.SaveChangesAsync();
@@ -215,9 +304,7 @@ namespace TrainingSystem.API.Controllers
                         progress.ProgressPercent = progressPercent;
 
                         if (completedTrack)
-                        {
                             progress.EligibleDate = DateOnly.FromDateTime(DateTime.Now);
-                        }
                     }
 
                     if (completedTrack)
