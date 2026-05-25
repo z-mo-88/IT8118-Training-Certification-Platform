@@ -13,7 +13,7 @@
 
                     <div class="mb-4">
                         <h3 class="fw-bold mb-2" style="color:#0a1f5c;">Add Equipment</h3>
-                        <p class="text-muted mb-0">Enter the equipment details below.</p>
+                        <p class="text-muted mb-0">Enter the equipment details below and select the provider.</p>
                     </div>
 
                     @if (!ViewData.ModelState.IsValid)
@@ -40,7 +40,7 @@
                                   class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label asp-for="Description"
                                    class="form-label fw-semibold"
                                    style="color:#0a1f5c;">
@@ -53,6 +53,24 @@
                                    style="height:50px; border-radius:10px;" />
 
                             <span asp-validation-for="Description"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ProviderId"
+                                   class="form-label fw-semibold"
+                                   style="color:#0a1f5c;">
+                                Provider
+                            </label>
+
+                            <select asp-for="ProviderId"
+                                    asp-items="ViewBag.Providers"
+                                    class="form-select"
+                                    style="height:50px; border-radius:10px;">
+                                <option value="">-- Select Provider --</option>
+                            </select>
+
+                            <span asp-validation-for="ProviderId"
                                   class="text-danger small"></span>
                         </div>
 
@@ -82,8 +100,8 @@
 
                     </form>
                 </div>
-
             </div>
+
         </div>
     </div>
 </div>

@@ -1,0 +1,55 @@
+﻿@model TrainingSystem.API.Models.Provider
+
+@{
+    ViewData["Title"] = "Add Provider";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="mb-4">Add Provider</h2>
+
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="ProviderName" class="form-label">Provider Name</label>
+                        <input asp-for="ProviderName" class="form-control" />
+                        <span asp-validation-for="ProviderName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">Address</label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input asp-for="IsActive" class="form-check-input" checked />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

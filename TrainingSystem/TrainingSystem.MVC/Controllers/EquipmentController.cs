@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
@@ -19,7 +20,11 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            return View(await _context.Equipment.ToListAsync());
+            var equipment = await _context.Equipment
+                .Include(e => e.Provider)
+                .ToListAsync();
+
+            return View(equipment);
         }
 
         [HttpGet]
@@ -28,6 +33,7 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
+            LoadProviders();
             return View();
         }
 
@@ -41,7 +47,10 @@ namespace TrainingSystem.MVC.Controllers
             ValidateEquipment(equipment);
 
             if (!ModelState.IsValid)
+            {
+                LoadProviders(equipment.ProviderId);
                 return View(equipment);
+            }
 
             _context.Equipment.Add(equipment);
             await _context.SaveChangesAsync();
@@ -56,9 +65,11 @@ namespace TrainingSystem.MVC.Controllers
             if (auth != null) return auth;
 
             var equipment = await _context.Equipment.FindAsync(id);
+
             if (equipment == null)
                 return NotFound();
 
+            LoadProviders(equipment.ProviderId);
             return View(equipment);
         }
 
@@ -72,14 +83,19 @@ namespace TrainingSystem.MVC.Controllers
             ValidateEquipment(equipment);
 
             if (!ModelState.IsValid)
+            {
+                LoadProviders(equipment.ProviderId);
                 return View(equipment);
+            }
 
             var existingEquipment = await _context.Equipment.FindAsync(equipment.EquipmentId);
+
             if (existingEquipment == null)
                 return NotFound();
 
             existingEquipment.EquipmentName = equipment.EquipmentName;
             existingEquipment.Description = equipment.Description;
+            existingEquipment.ProviderId = equipment.ProviderId;
 
             await _context.SaveChangesAsync();
 
@@ -92,7 +108,10 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            var item = await _context.Equipment.FindAsync(id);
+            var item = await _context.Equipment
+                .Include(e => e.Provider)
+                .FirstOrDefaultAsync(e => e.EquipmentId == id);
+
             if (item == null)
                 return NotFound();
 
@@ -107,6 +126,7 @@ namespace TrainingSystem.MVC.Controllers
             if (auth != null) return auth;
 
             var item = await _context.Equipment.FindAsync(id);
+
             if (item == null)
                 return NotFound();
 
@@ -125,13 +145,29 @@ namespace TrainingSystem.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        private void LoadProviders(int? selectedProviderId = null)
+        {
+            ViewBag.Providers = new SelectList(
+                _context.Providers
+                    .Where(p => p.IsActive)
+                    .OrderBy(p => p.ProviderName)
+                    .ToList(),
+                "ProviderId",
+                "ProviderName",
+                selectedProviderId
+            );
+        }
+
         private void ValidateEquipment(Equipment equipment)
         {
             if (string.IsNullOrWhiteSpace(equipment.EquipmentName))
-                ModelState.AddModelError("EquipmentName", "Equipment name is required");
+                ModelState.AddModelError("EquipmentName", "Equipment name is required.");
 
             if (string.IsNullOrWhiteSpace(equipment.Description))
-                ModelState.AddModelError("Description", "Description is required");
+                ModelState.AddModelError("Description", "Description is required.");
+
+            if (equipment.ProviderId == null)
+                ModelState.AddModelError("ProviderId", "Provider is required.");
         }
     }
 }

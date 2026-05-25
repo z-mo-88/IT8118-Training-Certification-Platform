@@ -1,0 +1,64 @@
+﻿@model IEnumerable<TrainingSystem.API.Models.Provider>
+
+@{
+    ViewData["Title"] = "Providers";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Providers</h2>
+    <a asp-action="Create" class="btn btn-primary">Add Provider</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Provider Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th style="width: 160px;" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ProviderName</td>
+                            <td>@item.Email</td>
+                            <td>@item.PhoneNumber</td>
+                            <td>@item.Address</td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Edit" asp-route-id="@item.ProviderId" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.ProviderId" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Are you sure you want to delete this provider?');">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No providers found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

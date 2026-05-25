@@ -17,6 +17,10 @@ public partial class Equipment
     [StringLength(255)]
     public string Description { get; set; } = null!;
 
+    public int? ProviderId { get; set; }
+
+    public virtual Provider? Provider { get; set; }
+
     public virtual ICollection<CourseEquipmentRequirement> CourseEquipmentRequirements { get; set; } = new List<CourseEquipmentRequirement>();
 
     public virtual ICollection<RoomEquipment> RoomEquipments { get; set; } = new List<RoomEquipment>();
