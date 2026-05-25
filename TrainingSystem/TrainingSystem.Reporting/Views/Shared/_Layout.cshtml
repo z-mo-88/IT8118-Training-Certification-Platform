@@ -131,9 +131,11 @@
 
                         <ul class="navbar-nav ms-auto align-items-sm-center gap-2">
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Home</a>
-                            </li>
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Index">
+                                Home
+                            </a>
 
                             @if (isLoggedIn)
                             {
