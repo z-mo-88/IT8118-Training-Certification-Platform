@@ -25,11 +25,6 @@ builder.Services.AddHttpClient("ApiClient", client =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-builder.Services.AddHttpClient("ApiClient", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7258/");
-});
-
 
 builder.Services.AddAuthorization();
 

@@ -68,7 +68,7 @@ namespace TrainingSystem.Reporting.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return Redirect("/Auth/Login");
         }
     }
 }

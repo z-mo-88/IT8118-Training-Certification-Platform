@@ -169,16 +169,32 @@
                 </p>
 
                 <div class="hero-actions">
-                    <a href="/Auth/Login" class="primary-action">
-                        Login
-                    </a>
+                    @{
+                        var token = Context.Session.GetString("token");
+                        var isLoggedIn = !string.IsNullOrEmpty(token);
+                    }     
 
-                    <a href="/Reports" class="secondary-action">
-                        View Reports
-                    </a>
-                </div>
+                        @if (isLoggedIn)
+                        {
+                            <a asp-controller="Reports"
+                               asp-action="Index"
+                               class="secondary-action">
+                                View Reports
+                            </a>
+                        }
+                        else
+                        {
+                        <a href="/Auth/Login" class="primary-action">
+                            Login
+                        </a>
+                        }
+                    </div>
+
             </div>
         </div>
+
+
+
 
         <div class="row g-4 feature-row">
             <div class="col-md-4">
@@ -203,5 +219,3 @@
             </div>
         </div>
 
-    </div>
-</div>

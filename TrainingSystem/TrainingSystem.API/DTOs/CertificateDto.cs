@@ -8,5 +8,7 @@
         public string CertificateStatus { get; set; } = null!;
         public int UserId { get; set; }
         public int CertificationTrackId { get; set; }
+        public string? TraineeName { get; set; }
+        public string? TrackName { get; set; }
     }
 }
