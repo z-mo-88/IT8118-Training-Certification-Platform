@@ -174,24 +174,15 @@ namespace TrainingSystem.Reporting.Controllers
 
             var enrollments = jsonData.Select(enrollment =>
             {
-                string traineeName = "";
-                string courseTitle = "";
+                string traineeName =
+     enrollment.TryGetProperty("traineeName", out var trainee)
+         ? trainee.GetString()
+         : "";
 
-                if (enrollment.TryGetProperty("user", out var user) &&
-                    user.ValueKind != JsonValueKind.Null &&
-                    user.TryGetProperty("name", out var name))
-                {
-                    traineeName = name.GetString();
-                }
-
-                if (enrollment.TryGetProperty("session", out var session) &&
-                    session.ValueKind != JsonValueKind.Null &&
-                    session.TryGetProperty("course", out var course) &&
-                    course.ValueKind != JsonValueKind.Null &&
-                    course.TryGetProperty("title", out var title))
-                {
-                    courseTitle = title.GetString();
-                }
+                string courseTitle =
+                    enrollment.TryGetProperty("courseTitle", out var course)
+                        ? course.GetString()
+                        : "";
 
                 return new EnrollmentViewModel
                 {

@@ -42,7 +42,9 @@ namespace TrainingSystem.API.Controllers
                     OutstandingBalance = e.OutstandingBalance,
                     IsOverdue = e.IsOverdue,
                     UserId = e.UserId,
-                    SessionId = e.SessionId
+                    SessionId = e.SessionId,
+                    TraineeName = e.User.Name,
+                    CourseTitle = e.Session.Course.Title
                 })
                 .ToListAsync();
 

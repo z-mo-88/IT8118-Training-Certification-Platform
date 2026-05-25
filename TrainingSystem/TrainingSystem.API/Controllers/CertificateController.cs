@@ -31,7 +31,9 @@ namespace TrainingSystem.API.Controllers
                     CertificateStatus = c.CertificateStatus,
                     IssuedDate = c.IssuedDate,
                     UserId = c.UserId,
-                    CertificationTrackId = c.CertificationTrackId
+                    CertificationTrackId = c.CertificationTrackId,
+                    TraineeName = c.User.Name,
+                    TrackName = c.CertificationTrack.TrackName
                 })
                 .ToListAsync();
 
