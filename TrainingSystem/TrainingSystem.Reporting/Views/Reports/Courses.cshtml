@@ -8,26 +8,29 @@
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-
         <div>
             <h2 class="fw-bold mb-1" style="color:#0a1f5c;">
                 Courses Report
             </h2>
-
             <p class="text-muted mb-0">
                 View all available training courses and course duration details.
             </p>
         </div>
 
-        <a asp-controller="Reports"
-           asp-action="Index"
-           class="btn px-4 py-2 fw-semibold"
-           style="border:1px solid #0a1f5c;
-                  color:#0a1f5c;
-                  border-radius:12px;">
-            ← Back to Reports
-        </a>
+        <div class="d-flex gap-2">
+            <a asp-controller="Reports"
+               asp-action="Index"
+               class="btn px-4 py-2 fw-semibold"
+               style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:12px;">
+                ← Back to Reports
+            </a>
 
+            <a asp-action="ExportCourses"
+               class="btn px-4 py-2 fw-semibold text-white"
+               style="background:#0a1f5c; border-radius:12px;">
+                Export to Excel
+            </a>
+        </div>
     </div>
 
     <!-- Error Message -->
