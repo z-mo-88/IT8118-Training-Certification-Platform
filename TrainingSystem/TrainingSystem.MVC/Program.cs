@@ -25,9 +25,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7258/");
-
+    client.BaseAddress = new Uri("https://trainingsystem-api-s6g3-cpbbdth0hceycwf5.westeurope-01.azurewebsites.net/");
 });
+
 
 builder.Services.AddDistributedMemoryCache();
 
