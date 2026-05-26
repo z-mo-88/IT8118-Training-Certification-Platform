@@ -29,9 +29,9 @@
     <PackageReference Include="QuestPDF" Version="2026.2.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TrainingSystem.API\TrainingSystem.API.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TrainingSystem.API\TrainingSystem.API.csproj" />
+	</ItemGroup>
 
   <ItemGroup>
     <Folder Include="Views\NewFolder2\" />
