@@ -4,52 +4,99 @@
     ViewData["Title"] = "Edit Provider";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-7">
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <h2 class="mb-4">Edit Provider</h2>
+<div class="container-fluid py-5 px-3 px-md-5">
 
-                <form asp-action="Edit" method="post">
-                    <input type="hidden" asp-for="ProviderId" />
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1" style="color:#0a1f5c;">Edit Provider</h2>
+        <p class="text-muted mb-0">Update provider information.</p>
+    </div>
 
-                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    <div class="card border-0 shadow-sm" style="border-radius:18px;">
+        <div class="card-body p-4 p-md-5">
 
-                    <div class="mb-3">
-                        <label asp-for="ProviderName" class="form-label">Provider Name</label>
-                        <input asp-for="ProviderName" class="form-control" />
-                        <span asp-validation-for="ProviderName" class="text-danger"></span>
-                    </div>
+            <form asp-action="Edit" method="post">
 
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
+                <input type="hidden" asp-for="ProviderId" />
 
-                    <div class="mb-3">
-                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
-                        <input asp-for="PhoneNumber" class="form-control" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="Address" class="form-label">Address</label>
-                        <input asp-for="Address" class="form-control" />
-                        <span asp-validation-for="Address" class="text-danger"></span>
-                    </div>
+                <div class="mb-3">
+                    <label asp-for="ProviderName"
+                           class="form-label fw-semibold"
+                           style="color:#0a1f5c;">
+                        Provider Name
+                    </label>
+                    <input asp-for="ProviderName"
+                           class="form-control"
+                           style="border-radius:10px;" />
+                    <span asp-validation-for="ProviderName" class="text-danger"></span>
+                </div>
 
-                    <div class="form-check mb-3">
-                        <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label">Active</label>
-                    </div>
+                <div class="mb-3">
+                    <label asp-for="Email"
+                           class="form-label fw-semibold"
+                           style="color:#0a1f5c;">
+                        Email
+                    </label>
+                    <input asp-for="Email"
+                           class="form-control"
+                           style="border-radius:10px;" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-                    <button type="submit" class="btn btn-warning">Save Changes</button>
-                    <a asp-action="Index" class="btn btn-secondary">Back</a>
-                </form>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="PhoneNumber"
+                           class="form-label fw-semibold"
+                           style="color:#0a1f5c;">
+                        Phone Number
+                    </label>
+                    <input asp-for="PhoneNumber"
+                           class="form-control"
+                           style="border-radius:10px;" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Address"
+                           class="form-label fw-semibold"
+                           style="color:#0a1f5c;">
+                        Address
+                    </label>
+                    <input asp-for="Address"
+                           class="form-control"
+                           style="border-radius:10px;" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="IsActive"
+                           class="form-check-input" />
+                    <label asp-for="IsActive"
+                           class="form-check-label fw-semibold"
+                           style="color:#0a1f5c;">
+                        Active
+                    </label>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit"
+                            class="btn fw-semibold px-4 text-white"
+                            style="background-color:#0a1f5c; border:none; border-radius:10px;">
+                        Save Changes
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn fw-semibold px-4"
+                       style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px;">
+                        Back
+                    </a>
+                </div>
+
+            </form>
+
         </div>
     </div>
+
 </div>
 
 @section Scripts {

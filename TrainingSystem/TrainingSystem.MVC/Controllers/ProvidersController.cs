@@ -98,13 +98,33 @@ namespace TrainingSystem.MVC.Controllers
             var auth = AuthorizeRole(3);
             if (auth != null) return auth;
 
-            var provider = await _context.Providers.FindAsync(id);
+            var provider = await _context.Providers
+                .FirstOrDefaultAsync(p => p.ProviderId == id);
+
+            if (provider == null)
+                return NotFound();
+
+            return View(provider);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var auth = AuthorizeRole(3);
+            if (auth != null) return auth;
+
+            var provider = await _context.Providers
+                .FirstOrDefaultAsync(p => p.ProviderId == id);
 
             if (provider == null)
                 return NotFound();
 
             _context.Providers.Remove(provider);
+
             await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Provider deleted successfully";
 
             return RedirectToAction(nameof(Index));
         }

@@ -1,0 +1,96 @@
+﻿@model TrainingSystem.API.Models.Provider
+
+@{
+    ViewData["Title"] = "Delete Provider";
+}
+
+<div class="container-fluid py-5 px-3 px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+
+            <div class="card border-0 shadow-sm text-center" style="border-radius:18px;">
+                <div class="card-body p-4 p-lg-5">
+
+                    <h3 class="fw-bold text-danger mb-3">Delete Provider</h3>
+                    <p class="text-muted mb-4">
+                        Are you sure you want to delete this provider?
+                    </p>
+
+                    <div class="mb-4 text-start mx-auto" style="max-width:420px;">
+
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="fw-semibold" style="color:#0a1f5c;">
+                                Provider Name
+                            </span>
+                            <span class="text-muted">
+                                @Model.ProviderName
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="fw-semibold" style="color:#0a1f5c;">
+                                Email
+                            </span>
+                            <span class="text-muted">
+                                @Model.Email
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="fw-semibold" style="color:#0a1f5c;">
+                                Phone Number
+                            </span>
+                            <span class="text-muted">
+                                @Model.PhoneNumber
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="fw-semibold" style="color:#0a1f5c;">
+                                Address
+                            </span>
+                            <span class="text-muted">
+                                @Model.Address
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="fw-semibold" style="color:#0a1f5c;">
+                                Status
+                            </span>
+                            <span class="text-muted">
+                                @(Model.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <input asp-for="ProviderId" type="hidden" />
+
+                        <div class="d-flex justify-content-center gap-3">
+
+                            <a asp-action="Index"
+                               class="btn fw-semibold px-4 d-flex align-items-center justify-content-center"
+                               style="border:1px solid #0a1f5c; color:#0a1f5c; border-radius:10px; height:46px;">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn text-white fw-semibold px-4 d-flex align-items-center justify-content-center"
+                                    style="background-color:#dc3545; height:46px; border-radius:10px; border:none;">
+                                Delete
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
