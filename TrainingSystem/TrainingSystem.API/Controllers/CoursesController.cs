@@ -9,7 +9,7 @@ namespace TrainingSystem.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "3")]
+    [Authorize]
     public class CoursesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -64,6 +64,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "3")]
         public async Task<ActionResult<CourseDto>> CreateCourse(CreateCourseDto courseDto)
         {
             var course = new Course
@@ -96,6 +97,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateCourse(int id, UpdateCourseDto updatedCourse)
         {
             var course = await _context.Courses.FindAsync(id);
@@ -116,6 +118,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> PatchCourse(int id, PatchCourseDto patchCourse)
         {
             var course = await _context.Courses.FindAsync(id);
@@ -149,6 +152,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> DeleteCourse(int id)
         {
             var course = await _context.Courses.FindAsync(id);

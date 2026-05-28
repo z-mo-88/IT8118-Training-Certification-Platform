@@ -31,6 +31,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "3")]
         public async Task<ActionResult<IEnumerable<EnrollmentDto>>> GetEnrollments()
         {
             var enrollments = await _context.Enrollments
@@ -126,6 +127,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateEnrollment(int id, UpdateEnrollmentDto updatedEnrollment)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
@@ -145,6 +147,7 @@ namespace TrainingSystem.API.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> PatchEnrollment(int id, PatchEnrollmentDto patchEnrollment)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
