@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingSystem.API.Data;
 using TrainingSystem.API.Models;
 
 namespace TrainingSystem.MVC.Controllers
 {
+   
     public class MyCertificatesController : BaseController
     {
         private readonly AppDbContext _context;
@@ -16,6 +18,16 @@ namespace TrainingSystem.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
+
+            int? roleId = HttpContext.Session.GetInt32("RoleId");
+
+            if (roleId == null)
+                return RedirectToAction("Login", "Account");
+
+            if (roleId != 1)
+                return RedirectToAction("AccessDenied", "Account");
+
+
             if (UserId == null)
                 return RedirectToAction("Login", "Account");
 
